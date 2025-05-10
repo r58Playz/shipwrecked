@@ -1,6 +1,6 @@
 import { cascade, scope, type Component, type ComponentChild } from "dreamland/core"
 
-import back from "./back.png";
+import back from "./back.webp";
 
 export const Button: Component<{ children: ComponentChild | ComponentChild[], "on:click": () => void }> = function(cx) {
 	cx.css = cascade`

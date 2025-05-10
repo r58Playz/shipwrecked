@@ -5,9 +5,9 @@ import { Button, ForwardIcon } from "../Button";
 
 import shore from "./shore-cropped.webp";
 
-import logo from "./logo-outline.svg";
-import calendar from "./calendar.png";
-import location from "./location.png";
+import logo from "./logo.svg";
+import calendar from "./calendar.webp";
+import location from "./location.webp";
 
 export const ShorePage: Component<{
 	animationRoot: HTMLElement,
@@ -27,6 +27,7 @@ export const ShorePage: Component<{
 		.logo {
 			width: 20rem;
 			height: 20rem;
+			object-fit: contain;
 		}
 
 		.info {
