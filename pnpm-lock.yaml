@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       dreamland:
-        specifier: link:../dl/dreamland
-        version: link:../dl/dreamland
+        specifier: link:../dreamland
+        version: link:../dreamland
     devDependencies:
       typescript:
         specifier: ~5.8.3
