@@ -3,7 +3,7 @@ import { scope, type Component, type DLBoundPointer } from "dreamland/core";
 import { ScrollingBackground } from "../animation";
 import { Button, ForwardIcon } from "../Button";
 
-import shore from "./shore-cropped.webp";
+import shore from "./shore.webp";
 
 import logo from "./logo.svg";
 import calendar from "./calendar.webp";
