@@ -1,7 +1,8 @@
 import { scope, type Component, type DLBoundPointer } from "dreamland/core";
+
 import { ScrollingBackground } from "../animation";
 import { Card } from "../Card";
-import { Button } from "../Button";
+import { BackIcon, Button, ForwardIcon } from "../Button";
 
 import bay from "./bay.webp";
 
@@ -15,6 +16,10 @@ export const BayPage: Component<{
 	middle: HTMLElement,
 }> = function(cx) {
 	cx.css = scope`
+		.bay {
+			object-position: right top;
+		}
+
 		.foreground {
 			width: 100%;
 		}
@@ -45,7 +50,7 @@ export const BayPage: Component<{
 	return (
 		<div id="bay">
 			<ScrollingBackground animation="both" animationRoot={this.animationRoot}>
-				<img src={bay} />
+				<img class="bay" src={bay} />
 				<div class="foreground">
 					<div class="page" this={use(this.top).bind()}>
 						<div>
@@ -53,8 +58,8 @@ export const BayPage: Component<{
 								Through <b>The Bay</b>, you'll earn an invitation to Shipwrecked. In The Bay, you will spend 60 hours making 4 projects (about 15 hours each) with the goal of making them <b>go viral</b>.
 							</Card>
 							<div class="buttons">
-								<Button on:click={this["on:back"]}>back</Button>
-								<Button on:click={() => this.middle.scrollIntoView({ block: "center" })}>What is "going viral"?</Button>
+								<Button on:click={this["on:back"]}><BackIcon /></Button>
+								<Button on:click={() => this.middle.scrollIntoView({ block: "center" })}>What is "going viral"? <ForwardIcon /></Button>
 							</div>
 						</div>
 					</div>
@@ -64,8 +69,8 @@ export const BayPage: Component<{
 								Going viral means making really polished projects you are extremely proud of, which you then promote to get other people to check it out! You can find the criteria for virality <u>here</u>. Once you reach 60 hours, ship 4 projects, and one of your projects has gone viral, you'll receive an invitation to Shipwrecked!
 							</Card>
 							<div class="buttons">
-								<Button on:click={() => this.top.scrollIntoView({ block: "center" })}>back</Button>
-								<Button on:click={() => this.bottom.scrollIntoView({ block: "center" })}>How can I meet my team?</Button>
+								<Button on:click={() => this.top.scrollIntoView({ block: "center" })}><BackIcon /></Button>
+								<Button on:click={() => this.bottom.scrollIntoView({ block: "center" })}>How can I meet my team? <ForwardIcon /></Button>
 							</div>
 						</div>
 					</div>
@@ -75,8 +80,8 @@ export const BayPage: Component<{
 								Every week, you can meet up with your friends either in person or over <u>The Pier</u>, our video game-like digital meeting space to work!
 							</Card>
 							<div class="buttons">
-								<Button on:click={() => this.middle.scrollIntoView({ block: "center" })}>back</Button>
-								<Button on:click={this["on:next"]}>I have more questions!</Button>
+								<Button on:click={() => this.middle.scrollIntoView({ block: "center" })}><BackIcon /></Button>
+								<Button on:click={this["on:next"]}>I have more questions! <ForwardIcon /></Button>
 							</div>
 						</div>
 					</div>

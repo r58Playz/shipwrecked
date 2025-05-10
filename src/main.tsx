@@ -6,6 +6,7 @@ import { ShorePage } from "./pages/shore";
 import { HutPage } from "./pages/hut";
 import { BayPage } from "./pages/bay";
 import { RsvpPage } from "./pages/rsvp";
+import { Button, ForwardIcon } from "./Button";
 
 const App: Component<{}, {
 	shoreRoot: HTMLElement,
@@ -16,14 +17,11 @@ const App: Component<{}, {
 	rsvpRoot: HTMLElement,
 }> = function(cx) {
 	cx.css = scope`
-		.hut {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.full {
-			height: 100vh;
+		.signup {
+			position: fixed;
+			top: 2rem;
+			right: 2rem;
+			z-index: 2;
 		}
 	`;
 
@@ -53,6 +51,11 @@ const App: Component<{}, {
 				root={use(this.rsvpRoot).bind()}
 				on:back={() => this.bayBottom.scrollIntoView({ block: "center" })}
 			/>
+			<div class="signup">
+				<Button on:click={() => this.rsvpRoot.scrollIntoView({ block: "center" })}>
+					Sign Up <ForwardIcon />
+				</Button>
+			</div>
 		</div>
 	)
 }

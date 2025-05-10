@@ -1,7 +1,8 @@
 import { scope, type Component, type DLBoundPointer } from "dreamland/core";
+
 import { ScrollingBackground } from "../animation";
 import { Card } from "../Card";
-import { Button } from "../Button";
+import { BackIcon, Button, ForwardIcon } from "../Button";
 
 import hut from "./hut.webp";
 
@@ -13,6 +14,10 @@ export const HutPage: Component<{
 	"on:next": () => void,
 }> = function(cx) {
 	cx.css = scope`
+		.hut {
+			object-position: right top;
+		}
+
 		.foreground {
 			width: 100%;
 		}
@@ -39,7 +44,7 @@ export const HutPage: Component<{
 	return (
 		<div id="hut">
 			<ScrollingBackground animation="both" animationRoot={this.animationRoot}>
-				<img src={hut} />
+				<img class="hut" src={hut} />
 				<div class="foreground">
 					<div class="page" this={use(this.top).bind()}>
 						<div>
@@ -50,8 +55,8 @@ export const HutPage: Component<{
 								As soon as you get there, you'll all start working together to survive the island you've been stranded on.
 							</Card>
 							<div class="buttons">
-								<Button on:click={this["on:back"]}>back</Button>
-								<Button on:click={() => this.bottom.scrollIntoView({ block: "center" })}>What will we do on the island?</Button>
+								<Button on:click={this["on:back"]}><BackIcon /></Button>
+								<Button on:click={() => this.bottom.scrollIntoView({ block: "center" })}>What will we do on the island? <ForwardIcon /></Button>
 							</div>
 						</div>
 					</div>
@@ -61,8 +66,8 @@ export const HutPage: Component<{
 								Once we're on the island, everyone will work in smaller groups and complete quests. These will be centered around interacting with the world around you: helping the island dwellers develop software or hardware projects that help them sell their produce, helping the pirates plan their routes more effectively, or building projects to help your fellow shipwreck-mates organize your efforts more effectively. <em>(Not literally, of course... there are no pirates or island dwellers in the Boston Harbor. This is similar to Dungeons &amp; Dragons!)</em>
 							</Card>
 							<div class="buttons">
-								<Button on:click={() => this.top.scrollIntoView({ block: "center" })}>back</Button>
-								<Button on:click={this["on:next"]}>How do I get invited?</Button>
+								<Button on:click={() => this.top.scrollIntoView({ block: "center" })}><BackIcon /></Button>
+								<Button on:click={this["on:next"]}>How do I get invited? <ForwardIcon /></Button>
 							</div>
 						</div>
 					</div>

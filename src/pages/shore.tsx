@@ -1,9 +1,13 @@
-import { DLBoundPointer, scope, type Component } from "dreamland/core";
+import { scope, type Component, type DLBoundPointer } from "dreamland/core";
+
 import { ScrollingBackground } from "../animation";
+import { Button, ForwardIcon } from "../Button";
 
 import shore from "./shore-cropped.webp";
+
 import logo from "./logo-outline.svg";
-import { Button } from "../Button";
+import calendar from "./calendar.png";
+import location from "./location.png";
 
 export const ShorePage: Component<{
 	animationRoot: HTMLElement,
@@ -21,8 +25,8 @@ export const ShorePage: Component<{
 		}
 
 		.logo {
-			width: min(20rem, 50vw);
-			height: min(20rem, 50vw);
+			width: 20rem;
+			height: 20rem;
 		}
 
 		.info {
@@ -36,6 +40,15 @@ export const ShorePage: Component<{
 			text-transform: uppercase;
 
 			font-size: 2rem;
+
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.info img {
+			width: 3rem;
+			height: 3rem;
 		}
 	`;
 
@@ -46,13 +59,13 @@ export const ShorePage: Component<{
 				<div class="content" this={use(this.root).bind()}>
 					<img class="logo" src={logo} />
 					<div class="info">
-						<span>📅</span> August 8-11, 2025
+						<img src={calendar} /><span>August 8-11, 2025</span>
 					</div>
 					<div class="info">
-						<span>📅</span> Cathleen Stone Island, Boston Harbor
+						<img src={location} /><span>Cathleen Stone Island, Boston Harbor</span>
 					</div>
 					<div>
-						<Button on:click={this["on:next"]}>What's Hack Club Shipwrecked?</Button>
+						<Button on:click={this["on:next"]}>What's Hack Club Shipwrecked? <ForwardIcon /></Button>
 					</div>
 				</div>
 			</ScrollingBackground>

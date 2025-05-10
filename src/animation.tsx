@@ -2,7 +2,6 @@ import { cascade, DLBasePointer, scope, type Component, type ComponentChild } fr
 
 export const ScrollingBackground: Component<{
 	animation?: "both" | "bottom" | "top",
-	// TODO fix this in dreamland,
 	animationRoot?: HTMLElement,
 	children: [ComponentChild, ComponentChild, ...ComponentChild[]]
 }, {
@@ -39,7 +38,7 @@ export const ScrollingBackground: Component<{
 		}
 		
 		.foreground .animation {
-			height: 120vh;
+			height: 100vh;
 			width: 100vw;
 		}
 
@@ -60,7 +59,11 @@ export const ScrollingBackground: Component<{
 		}
 	}
 
-	const multiplier = 3;
+	function log(percent: number) {
+		console.log("anim:", percent * 100, "%");
+	}
+
+	const multiplier = 2;
 	const offsetPercent = 0;
 
 	cx.mount = () => {
@@ -77,8 +80,8 @@ export const ScrollingBackground: Component<{
 				if (this.animationStart) {
 					const percent = doAnimation(scrollProgress, this.animationStart, multiplier, offsetPercent);
 					if (percent) {
-						console.log((multiplier - percent) * 100);
 						this.animationProgress = multiplier - percent;
+						log(this.animationProgress);
 					} else if (scrollProgress < animationStart) {
 						this.animationProgress = 1;
 					}
@@ -87,8 +90,8 @@ export const ScrollingBackground: Component<{
 				if (this.animationEnd) {
 					const percent = doAnimation(scrollProgress, this.animationEnd, multiplier, -offsetPercent);
 					if (percent) {
-						console.log(percent * 100);
 						this.animationProgress = percent;
+						log(this.animationProgress);
 					} else if (scrollProgress > animationEnd) {
 						this.animationProgress = 1;
 					}
@@ -118,6 +121,7 @@ export const ScrollingBackground: Component<{
 	)
 }
 
+// @ts-expect-error
 const WaveAnimationCanvas: Component<{ progress: DLBasePointer<number> }> = function(cx) {
 	cx.css = scope`
 		:scope {

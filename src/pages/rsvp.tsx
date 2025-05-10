@@ -1,8 +1,9 @@
 import { scope, type Component, type DLBoundPointer } from "dreamland/core";
+
 import { ScrollingBackground } from "../animation";
 
 import rsvp from "./rsvp.webp";
-import { Button } from "../Button";
+import { BackIcon, Button } from "../Button";
 import { Card } from "../Card";
 
 export const RsvpPage: Component<{
@@ -28,9 +29,9 @@ export const RsvpPage: Component<{
 				<div class="content" this={use(this.root).bind()}>
 					<div>
 						<Card title="RSVP">
-							rsvp
+							<div>This is only a demo, not the real site! Go to shipwrecked.hackclub.com to sign up</div>
+							<Button on:click={this["on:back"]}><BackIcon /></Button>
 						</Card>
-						<Button on:click={this["on:back"]}>back</Button>
 					</div>
 				</div>
 			</ScrollingBackground>
