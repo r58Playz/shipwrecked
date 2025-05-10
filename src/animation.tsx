@@ -168,6 +168,7 @@ async function fetchImages() {
 		images[i] = await responseDataUrl(await fetch(`/wave/${i}.webp`));
 	}
 }
+const imagePromise = fetchImages();
 
 const WaveAnimationImage: Component<{ progress: DLBasePointer<number> }> = function(cx) {
 	cx.css = scope`
@@ -176,7 +177,8 @@ const WaveAnimationImage: Component<{ progress: DLBasePointer<number> }> = funct
 		}
 	`;
 
-	cx.mount = () => {
+	cx.mount = async () => {
+		await imagePromise;
 		const root = cx.root as HTMLElement as HTMLImageElement;
 
 		const handle = (progress: number) => {
@@ -197,4 +199,3 @@ const WaveAnimationImage: Component<{ progress: DLBasePointer<number> }> = funct
 }
 
 export const WaveAnimation = WaveAnimationImage;
-await fetchImages();
