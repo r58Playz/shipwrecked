@@ -166,7 +166,7 @@ async function responseDataUrl(resp: Response): Promise<string> {
 async function fetchImages() {
 	images = await Promise.all(images.map(async (_, i) => {
 		if (i > 0) {
-			return await responseDataUrl(await fetch(`/wave/${i}.webp`));
+			return await responseDataUrl(await fetch(`/wave/${i}.svg`));
 		} else {
 			return null!;
 		}
