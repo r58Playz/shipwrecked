@@ -24,7 +24,7 @@ export const ScrollingBackground: Component<{
 			top: 0;
 		}
 		.background * {
-			width: 100vw;
+			width: 100%;
 			height: 100vh;
 			object-fit: cover;
 		}
@@ -39,7 +39,7 @@ export const ScrollingBackground: Component<{
 		
 		.foreground .animation {
 			height: 100vh;
-			width: 100vw;
+			width: 100%;
 		}
 
 		:scope > .animation {
@@ -164,9 +164,13 @@ async function responseDataUrl(resp: Response): Promise<string> {
 }
 
 async function fetchImages() {
-	for (let i = 1; i <= 10; i++) {
-		images[i] = await responseDataUrl(await fetch(`/wave/${i}.webp`));
-	}
+	images = await Promise.all(images.map(async (_, i) => {
+		if (i > 0) {
+			return await responseDataUrl(await fetch(`/wave/${i}.webp`));
+		} else {
+			return null!;
+		}
+	}));
 }
 const imagePromise = fetchImages();
 
