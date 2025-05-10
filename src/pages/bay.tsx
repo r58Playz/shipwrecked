@@ -50,7 +50,7 @@ export const BayPage: Component<{
 	return (
 		<div id="bay">
 			<ScrollingBackground animation="both" animationRoot={this.animationRoot}>
-				<img class="bay" src={bay} />
+				<img class="bay" src={bay} alt="Bay Background" loading="lazy" />
 				<div class="foreground">
 					<div class="page" this={use(this.top).bind()}>
 						<div>
@@ -58,7 +58,7 @@ export const BayPage: Component<{
 								Through <b>The Bay</b>, you'll earn an invitation to Shipwrecked. In The Bay, you will spend 60 hours making 4 projects (about 15 hours each) with the goal of making them <b>go viral</b>.
 							</Card>
 							<div class="buttons">
-								<Button on:click={this["on:back"]}><BackIcon /></Button>
+								<Button on:click={this["on:back"]} label="Back"><BackIcon /></Button>
 								<Button on:click={() => this.middle.scrollIntoView({ block: "center" })}>What is "going viral"? <ForwardIcon /></Button>
 							</div>
 						</div>
@@ -69,7 +69,7 @@ export const BayPage: Component<{
 								Going viral means making really polished projects you are extremely proud of, which you then promote to get other people to check it out! You can find the criteria for virality <u>here</u>. Once you reach 60 hours, ship 4 projects, and one of your projects has gone viral, you'll receive an invitation to Shipwrecked!
 							</Card>
 							<div class="buttons">
-								<Button on:click={() => this.top.scrollIntoView({ block: "center" })}><BackIcon /></Button>
+								<Button on:click={() => this.top.scrollIntoView({ block: "center" })} label="Back"><BackIcon /></Button>
 								<Button on:click={() => this.bottom.scrollIntoView({ block: "center" })}>How can I meet my team? <ForwardIcon /></Button>
 							</div>
 						</div>
@@ -80,7 +80,7 @@ export const BayPage: Component<{
 								Every week, you can meet up with your friends either in person or over <u>The Pier</u>, our video game-like digital meeting space to work!
 							</Card>
 							<div class="buttons">
-								<Button on:click={() => this.middle.scrollIntoView({ block: "center" })}><BackIcon /></Button>
+								<Button on:click={() => this.middle.scrollIntoView({ block: "center" })} label="Back"><BackIcon /></Button>
 								<Button on:click={this["on:next"]}>I have more questions! <ForwardIcon /></Button>
 							</div>
 						</div>

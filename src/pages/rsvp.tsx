@@ -25,12 +25,12 @@ export const RsvpPage: Component<{
 	return (
 		<div id="shore">
 			<ScrollingBackground animation="top" animationRoot={this.animationRoot}>
-				<img src={rsvp} />
+				<img src={rsvp} alt="RSVP Background" loading="lazy" />
 				<div class="content" this={use(this.root).bind()}>
 					<div>
 						<Card title="RSVP">
 							<div>This is only a demo, not the real site! Go to shipwrecked.hackclub.com to sign up</div>
-							<Button on:click={this["on:back"]}><BackIcon /></Button>
+							<Button on:click={this["on:back"]} label="Back"><BackIcon /></Button>
 						</Card>
 					</div>
 				</div>

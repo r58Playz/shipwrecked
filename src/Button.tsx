@@ -2,7 +2,7 @@ import { cascade, scope, type Component, type ComponentChild } from "dreamland/c
 
 import back from "./back.webp";
 
-export const Button: Component<{ children: ComponentChild | ComponentChild[], "on:click": () => void }> = function(cx) {
+export const Button: Component<{ children: ComponentChild | ComponentChild[], "on:click": () => void, label?: string }> = function(cx) {
 	cx.css = cascade`
 		:scope {
 			background: #007bbd;
@@ -43,23 +43,22 @@ export const Button: Component<{ children: ComponentChild | ComponentChild[], "o
 			height: 2rem;
 		}
 
-		:scope:has(:only-child) {
+		${(this.children instanceof Array ? this.children.length === 1 : !!this.children) ? `
+		:scope {
 			padding: 0.5rem;
 		}
+		` : ""}
 	`;
 
 	return (
-		<button on:click={this["on:click"]}>
-			{this.children instanceof Array ?
-				(this.children.map(x => typeof x === "string" ? <span>{x}</span> : x)) :
-				(typeof this.children === "string" ? <span>{this.children}</span> : this.children)
-			}
+		<button on:click={this["on:click"]} aria-label={this.label ? this.label : ""}>
+			{this.children}
 		</button>
 	)
 }
 
 export const BackIcon: Component = function() {
-	return <img src={back} />
+	return <img src={back} alt="Back icon" />
 }
 
 export const ForwardIcon: Component = function(cx) {
@@ -69,5 +68,5 @@ export const ForwardIcon: Component = function(cx) {
 		}
 	`;
 
-	return <img src={back} />
+	return <img src={back} alt="Forward icon" />
 }
