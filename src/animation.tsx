@@ -1,4 +1,4 @@
-import { cascade, DLBasePointer, scope, type Component, type ComponentChild } from "dreamland/core";
+import { DLBasePointer, type Component, type ComponentChild } from "dreamland/core";
 
 export const ScrollingBackground: Component<{
 	animation?: "both" | "bottom" | "top",
@@ -9,7 +9,7 @@ export const ScrollingBackground: Component<{
 	animationStart?: HTMLElement,
 	animationEnd?: HTMLElement,
 }> = function(cx) {
-	cx.css = cascade`
+	cx.css = `
 		:scope, .background {
 			display: grid;
 			grid-template-areas: "a";
@@ -23,13 +23,13 @@ export const ScrollingBackground: Component<{
 			position: sticky;
 			top: 0;
 		}
-		.background * {
+		.background > :global(*) {
 			width: 100%;
 			height: 100vh;
 			object-fit: cover;
 		}
 
-		.background-outer, .foreground, .background * {
+		.background-outer, .foreground {
 			grid-area: a;
 		}
 
@@ -108,12 +108,12 @@ export const ScrollingBackground: Component<{
 		<div>
 			<div class="background-outer">
 				<div class="background">
-					{this.children[0]}
+					{cx.children[0]}
 				</div>
 			</div>
 			<div class="foreground">
 				{this.animation === "both" || this.animation === "top" ? <div class="animation" this={use(this.animationStart).bind()} /> : null}
-				{this.children.slice(1)}
+				{cx.children.slice(1)}
 				{this.animation === "both" || this.animation === "bottom" ? <div class="animation" this={use(this.animationEnd).bind()} /> : null}
 			</div>
 			{this.animation ? <div class="background-outer animation"><div class="background"><WaveAnimation progress={use(this.animationProgress)} /></div></div> : null}
@@ -123,7 +123,7 @@ export const ScrollingBackground: Component<{
 
 // @ts-expect-error
 const WaveAnimationCanvas: Component<{ progress: DLBasePointer<number> }> = function(cx) {
-	cx.css = scope`
+	cx.css = `
 		:scope {
 			z-index: 1;
 		}
@@ -175,7 +175,7 @@ async function fetchImages() {
 const imagePromise = fetchImages();
 
 const WaveAnimationImage: Component<{ progress: DLBasePointer<number> }> = function(cx) {
-	cx.css = scope`
+	cx.css = `
 		:scope {
 			transform: scale(1, -1);
 		}

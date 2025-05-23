@@ -1,9 +1,9 @@
-import { cascade, scope, type Component, type ComponentChild } from "dreamland/core"
+import { type Component, type ComponentChild } from "dreamland/core"
 
 import back from "./back.webp";
 
 export const Button: Component<{ children: ComponentChild | ComponentChild[], "on:click": () => void, label?: string }> = function(cx) {
-	cx.css = cascade`
+	cx.css = `
 		:scope {
 			background: #007bbd;
 			color: white;
@@ -38,12 +38,12 @@ export const Button: Component<{ children: ComponentChild | ComponentChild[], "o
 			scale: 95% 95%;
 		}
 
-		img {
+		:scope > :global(img) {
 			width: 2rem;
 			height: 2rem;
 		}
 
-		${(this.children instanceof Array ? this.children.length === 1 : !!this.children) ? `
+		${(cx.children instanceof Array ? cx.children.length === 1 : !!this.children) ? `
 		:scope {
 			padding: 0.5rem;
 		}
@@ -52,7 +52,7 @@ export const Button: Component<{ children: ComponentChild | ComponentChild[], "o
 
 	return (
 		<button on:click={this["on:click"]} aria-label={this.label ? this.label : ""}>
-			{this.children}
+			{cx.children}
 		</button>
 	)
 }
@@ -62,7 +62,7 @@ export const BackIcon: Component = function() {
 }
 
 export const ForwardIcon: Component = function(cx) {
-	cx.css = scope`
+	cx.css = `
 		:scope {
 			transform: scale(-1, 1);
 		}

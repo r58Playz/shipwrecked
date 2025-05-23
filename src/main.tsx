@@ -1,4 +1,4 @@
-import { scope, type Component } from "dreamland/core";
+import { type Component } from "dreamland/core";
 
 import "./style.css";
 
@@ -16,7 +16,7 @@ const App: Component<{}, {
 	bayBottom: HTMLElement,
 	rsvpRoot: HTMLElement,
 }> = function(cx) {
-	cx.css = scope`
+	cx.css = `
 		.signup {
 			position: fixed;
 			top: 2rem;

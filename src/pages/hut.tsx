@@ -1,4 +1,4 @@
-import { scope, type Component, type DLBoundPointer } from "dreamland/core";
+import { type Component, type DLBoundPointer } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Card } from "../Card";
@@ -13,7 +13,7 @@ export const HutPage: Component<{
 	"on:back": () => void,
 	"on:next": () => void,
 }> = function(cx) {
-	cx.css = scope`
+	cx.css = `
 		.hut {
 			object-position: right top;
 		}

@@ -1,7 +1,7 @@
-import { scope, type Component, type ComponentChild } from "dreamland/core";
+import { type Component, type ComponentChild } from "dreamland/core";
 
 export const Card: Component<{ title: string, children: ComponentChild[] | ComponentChild }> = function(cx) {
-	cx.css = scope`
+	cx.css = `
 		:scope {
 			background: #e6d7d699;
 			backdrop-filter: blur(12px);
@@ -33,7 +33,7 @@ export const Card: Component<{ title: string, children: ComponentChild[] | Compo
 	return (
 		<div>
 			<h1>{this.title}</h1>
-			{this.children}
+			{cx.children}
 		</div>
 	)
 }

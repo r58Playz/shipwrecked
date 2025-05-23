@@ -1,4 +1,4 @@
-import { scope, type Component, type DLBoundPointer } from "dreamland/core";
+import { type Component, type DLBoundPointer } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 
@@ -11,7 +11,7 @@ export const RsvpPage: Component<{
 	root: DLBoundPointer<HTMLElement>,
 	"on:back": () => void,
 }> = function(cx) {
-	cx.css = scope`
+	cx.css = `
 		.content {
 			height: 100vh;
 			padding: min(3rem, 5vh) min(7.5rem, 10vw);

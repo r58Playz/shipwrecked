@@ -1,4 +1,4 @@
-import { scope, type Component, type DLBoundPointer } from "dreamland/core";
+import { type Component, type DLBoundPointer } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Card } from "../Card";
@@ -15,7 +15,7 @@ export const BayPage: Component<{
 }, {
 	middle: HTMLElement,
 }> = function(cx) {
-	cx.css = scope`
+	cx.css = `
 		.bay {
 			object-position: right top;
 		}
