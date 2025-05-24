@@ -43,7 +43,7 @@ export const Button: Component<{ children: ComponentChild | ComponentChild[], "o
 			height: 2rem;
 		}
 
-		${(cx.children instanceof Array ? cx.children.length === 1 : !!this.children) ? `
+		${(cx.children instanceof Array ? cx.children.length === 1 : !!cx.children) ? `
 		:scope {
 			padding: 0.5rem;
 		}
