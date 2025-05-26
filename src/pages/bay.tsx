@@ -1,8 +1,9 @@
 import { type Component, type DLBoundPointer } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
-import { Card } from "../Card";
-import { BackIcon, Button, ForwardIcon } from "../Button";
+import { Card } from "../ui/Card";
+import { Button } from "../ui/Button";
+import { BackIcon, ForwardIcon } from "../ui/Icon";
 
 import bay from "./bay.webp";
 

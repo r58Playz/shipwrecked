@@ -41,7 +41,7 @@ jobs:
         with:
           version: latest
       - name: Build dl
-        run: "cd .. && git clone https://github.com/MercuryWorkshop/dreamlandjs dreamland -b vdom && cd dreamland && pnpm i && pnpm build"
+        run: "cd .. && git clone https://github.com/MercuryWorkshop/dreamlandjs dreamland -b vdom-functional && cd dreamland && pnpm i && pnpm build"
       - name: Install
         run: "pnpm i"
       - name: Build

@@ -1,7 +1,5 @@
 import { type Component, type ComponentChild } from "dreamland/core"
 
-import back from "./back.webp";
-
 export const Button: Component<{ children: ComponentChild | ComponentChild[], "on:click": () => void, label?: string }> = function(cx) {
 	cx.css = `
 		:scope {
@@ -51,22 +49,8 @@ export const Button: Component<{ children: ComponentChild | ComponentChild[], "o
 	`;
 
 	return (
-		<button on:click={this["on:click"]} aria-label={this.label ? this.label : ""}>
+		<button on:click={this["on:click"]} aria-label={this.label ? this.label : ""} class="Ui-button">
 			{cx.children}
 		</button>
 	)
-}
-
-export const BackIcon: Component = function() {
-	return <img src={back} alt="Back icon" />
-}
-
-export const ForwardIcon: Component = function(cx) {
-	cx.css = `
-		:scope {
-			transform: scale(-1, 1);
-		}
-	`;
-
-	return <img src={back} alt="Forward icon" />
 }

@@ -6,7 +6,8 @@ import { ShorePage } from "./pages/shore";
 import { HutPage } from "./pages/hut";
 import { BayPage } from "./pages/bay";
 import { RsvpPage } from "./pages/rsvp";
-import { Button, ForwardIcon } from "./Button";
+import { Button } from "./ui/Button";
+import { ForwardIcon } from "./ui/Icon";
 
 const App: Component<{}, {
 	shoreRoot: HTMLElement,

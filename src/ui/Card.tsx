@@ -31,7 +31,7 @@ export const Card: Component<{ title: string, children: ComponentChild[] | Compo
 	`;
 
 	return (
-		<div>
+		<div class="Ui-card">
 			<h1>{this.title}</h1>
 			{cx.children}
 		</div>

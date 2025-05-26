@@ -1,11 +1,11 @@
 import { type Component, type DLBoundPointer } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
-import { Button, ForwardIcon } from "../Button";
-
-import shore from "./shore.webp";
+import { Button } from "../ui/Button";
+import { ForwardIcon } from "../ui/Icon";
 
 import logo from "./logo.svg";
+import shore from "./shore.webp";
 import calendar from "./calendar.webp";
 import location from "./location.webp";
 

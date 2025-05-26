@@ -1,10 +1,11 @@
 import { type Component, type DLBoundPointer } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
+import { Button } from "../ui/Button";
+import { BackIcon } from "../ui/Icon";
+import { Card } from "../ui/Card";
 
 import rsvp from "./rsvp.webp";
-import { BackIcon, Button } from "../Button";
-import { Card } from "../Card";
 
 export const RsvpPage: Component<{
 	animationRoot: HTMLElement,
@@ -14,11 +15,10 @@ export const RsvpPage: Component<{
 	cx.css = `
 		.content {
 			height: 100vh;
-			padding: min(3rem, 5vh) min(7.5rem, 10vw);
+			padding: 1em;
 			display: flex;
-			flex-direction: column;
-			align-items: left;
-			justify-content: start;
+			align-items: center;
+			justify-content: center;
 		}
 	`;
 
@@ -28,8 +28,7 @@ export const RsvpPage: Component<{
 				<img src={rsvp} alt="RSVP Background" loading="lazy" />
 				<div class="content" this={use(this.root).bind()}>
 					<div>
-						<Card title="RSVP">
-							<div>This is only a demo, not the real site! Go to shipwrecked.hackclub.com to sign up</div>
+						<Card title="Log In">
 							<Button on:click={this["on:back"]} label="Back"><BackIcon /></Button>
 						</Card>
 					</div>
