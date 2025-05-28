@@ -14,7 +14,6 @@ export const Card: Component<{ title: string, children: ComponentChild[] | Compo
 			padding: 1.5rem;
 
 			font-size: 1.125rem;
-			font-family: Poppins, sans-serif;
 		}
 
 		:scope h1 {

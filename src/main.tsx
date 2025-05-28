@@ -8,6 +8,7 @@ import { BayPage } from "./pages/bay";
 import { RsvpPage } from "./pages/rsvp";
 import { Button } from "./ui/Button";
 import { ForwardIcon } from "./ui/Icon";
+import "./epoxy";
 
 const App: Component<{}, {
 	shoreRoot: HTMLElement,

@@ -8,7 +8,6 @@ export const Button: Component<{ children: ComponentChild | ComponentChild[], "o
 			border: 1px rgb(230, 215, 214) solid;
 			border-radius: 3.40282e+38px; /* ??? */
 
-			font-family: Poppins, sans-serif;
 			font-size: 1rem;
 			font-style: italic;
 			line-height: 1.5rem;

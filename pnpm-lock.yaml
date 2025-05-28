@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@mercuryworkshop/epoxy-tls':
+        specifier: 2.1.17-1
+        version: 2.1.17-1
       dreamland:
         specifier: link:../dreamland
         version: link:../dreamland
@@ -170,6 +173,9 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@mercuryworkshop/epoxy-tls@2.1.17-1':
+    resolution: {integrity: sha512-8aKjqfcbQUBNo2ug0i4cdOlCr3BJ9xwseDKs5KApOZ+4K8T7AXipWjQzVJzmwNkCYN0wAe/GBp8w8u9eXwrF0A==}
 
   '@rollup/rollup-android-arm-eabi@4.40.2':
     resolution: {integrity: sha512-JkdNEq+DFxZfUwxvB58tHMHBHVgX23ew41g1OQinthJ+ryhdRk67O31S7sYw8u2lTjHUPFxwar07BBt1KHp/hg==}
@@ -442,6 +448,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.4':
     optional: true
+
+  '@mercuryworkshop/epoxy-tls@2.1.17-1': {}
 
   '@rollup/rollup-android-arm-eabi@4.40.2':
     optional: true
