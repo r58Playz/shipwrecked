@@ -67,7 +67,7 @@ const Page404: Component<{ param?: string }> = function() {
 	return <div>404 page not found: {use(this.param)}</div>
 }
 
-let router = new Router([
+export let router = new Router([
 	{
 		show: <Hero />
 	},

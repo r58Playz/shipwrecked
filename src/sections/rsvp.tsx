@@ -8,6 +8,8 @@ import { Card } from "../ui/Card";
 import rsvp from "./rsvp.webp";
 import { TextInput } from "../ui/Input";
 import { fetchInfo, stealToken, userInfo } from "../frontend/api";
+import { UserName } from "../frontend/apiComponents";
+import { router } from "../main";
 
 const LogIn: Component<{}, {
 	emailLink: string,
@@ -45,9 +47,21 @@ const LogIn: Component<{}, {
 }
 
 const Info: Component = function(cx) {
+	cx.css = `
+		:scope {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 1rem;
+		}
+	`;
+
 	return (
 		<div>
-			Hi {use(userInfo.data).map(x => x?.name)}, you are a {use(userInfo.data).map(x => x?.status)} user.
+			<div>
+				Logged in as <UserName /> with Slack ID {use(userInfo.data).map(x => x?.slack)}.
+			</div>
+			<Button on:click={() => router.navigate("dashboard")}>Go to the Bay<ForwardIcon /></Button>
 		</div>
 	)
 }
@@ -99,7 +113,7 @@ export const RsvpPage: Component<{
 							{use(userInfo.data).andThen(<Info />, <LogIn />)}
 							<div class="options">
 								<Button on:click={this["on:back"]} label="Back"><BackIcon /></Button>
-								<Button on:click={() => window.open("https://shipwrecked.hackclub.com/bay/login")}>Open Shipwrecked Site<ForwardIcon /></Button>
+								<Button on:click={() => window.open("https://shipwrecked.hackclub.com/bay/login")}>Open official site<ForwardIcon /></Button>
 							</div>
 						</div>
 					</Card>
