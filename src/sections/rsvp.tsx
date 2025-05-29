@@ -69,7 +69,7 @@ const Info: Component = function(cx) {
 	return (
 		<div>
 			<div>
-				Logged in as <UserName /> with Slack ID {use(userInfo.data).map(x => x?.slack)}.
+				Logged in as <UserName /> with Hackatime ID {use(userInfo.data).map(x => x?.hackatimeId)}.
 			</div>
 			<div class="options">
 				<Button on:click={() => deleteToken()}><BackIcon />Log Out</Button>
@@ -124,7 +124,7 @@ export const RsvpPage: Component<{
 					<Card title="Log In">
 						<div class="card">
 							<div>
-								Note that this is not the official frontend. You can return to the official frontend using the button below.
+								Note that this is not the official site. You can return to the official site using the button below.
 							</div>
 							{use(userInfo.data).andThen(<Info />, <LogIn />)}
 							<div class="options">
