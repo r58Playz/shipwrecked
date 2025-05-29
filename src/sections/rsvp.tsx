@@ -7,7 +7,7 @@ import { Card } from "../ui/Card";
 
 import rsvp from "./rsvp.webp";
 import { TextInput } from "../ui/Input";
-import { fetchInfo, stealToken, userInfo } from "../frontend/api";
+import { deleteToken, fetchInfo, stealToken, userInfo } from "../frontend/api";
 import { UserName } from "../frontend/apiComponents";
 import { router } from "../main";
 
@@ -35,11 +35,16 @@ const LogIn: Component<{}, {
 	return (
 		<div>
 			<div>
-				This frontend requires you to use the <b>email</b> login method (so that it can steal the token to use).
+				This frontend requires you to use the <b>email</b> login method (so that it can steal the token to use). Right click and copy the log in link's address, then paste it here.
 			</div>
 			<div class="options">
 				<TextInput value={use(this.emailLink).bind()} placeholder="Email Link" />
-				<Button on:click={async () => { if (!await stealToken(this.emailLink)) this.error = "Failed to steal token" }}>Log In<ForwardIcon /></Button>
+				<Button on:click={async () => {
+					if (!await stealToken(this.emailLink))
+						this.error = "Failed to steal token";
+					else
+						await fetchInfo();
+				}}>Log In<ForwardIcon /></Button>
 			</div>
 			{use(this.error).andThen((x: string) => <div class="error">{x}</div>)}
 		</div>
@@ -51,7 +56,12 @@ const Info: Component = function(cx) {
 		:scope {
 			display: flex;
 			flex-direction: column;
-			align-items: flex-start;
+			gap: 1rem;
+		}
+
+		.options {
+			display: flex;
+			flex-direction: row;
 			gap: 1rem;
 		}
 	`;
@@ -61,7 +71,10 @@ const Info: Component = function(cx) {
 			<div>
 				Logged in as <UserName /> with Slack ID {use(userInfo.data).map(x => x?.slack)}.
 			</div>
-			<Button on:click={() => router.navigate("dashboard")}>Go to the Bay<ForwardIcon /></Button>
+			<div class="options">
+				<Button on:click={() => deleteToken()}><BackIcon />Log Out</Button>
+				<Button on:click={() => router.navigate("dashboard")}>Go to the Bay<ForwardIcon /></Button>
+			</div>
 		</div>
 	)
 }
@@ -110,6 +123,9 @@ export const RsvpPage: Component<{
 				<div class="content" this={use(this.root).bind()}>
 					<Card title="Log In">
 						<div class="card">
+							<div>
+								Note that this is not the official frontend. You can return to the official frontend using the button below.
+							</div>
 							{use(userInfo.data).andThen(<Info />, <LogIn />)}
 							<div class="options">
 								<Button on:click={this["on:back"]} label="Back"><BackIcon /></Button>

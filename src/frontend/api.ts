@@ -29,7 +29,7 @@ export async function stealToken(email: string): Promise<boolean> {
 		let headers = (res as any).rawHeaders as any;
 		let cookies = Object.fromEntries(headers["set-cookie"].map((x: string) => x.split(";")[0].split("=")));
 
-		console.log(cookies);
+		console.log("cookies:", cookies);
 
 		if (cookies[TOKEN_COOKIE]) {
 			settings.token = cookies[TOKEN_COOKIE];
@@ -41,6 +41,11 @@ export async function stealToken(email: string): Promise<boolean> {
 		console.error(err);
 		return false;
 	}
+}
+
+export function deleteToken() {
+	settings.token = null;
+	userInfo.data = null;
 }
 
 export async function fetchCookie(url: string, options?: any): Promise<Response> {
