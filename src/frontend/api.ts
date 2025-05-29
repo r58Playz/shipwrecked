@@ -22,3 +22,12 @@ export async function stealToken(email: string): Promise<boolean> {
 		return false;
 	}
 }
+
+export async function fetchCookie(url: string, options?: any): Promise<Response> {
+	options ||= {};
+	options.headers ||= {};
+	options.headers["cookie"] ||= [];
+	options.headers["cookie"].push(`${TOKEN_COOKIE}=${settings.token}`);
+
+	return await fetch(url, options);
+}
