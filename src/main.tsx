@@ -1,16 +1,17 @@
 import { type Component } from "dreamland/core";
+import { Router } from "dreamland/router";
 
 import "./style.css";
 
-import { ShorePage } from "./pages/shore";
-import { HutPage } from "./pages/hut";
-import { BayPage } from "./pages/bay";
-import { RsvpPage } from "./pages/rsvp";
+import { ShorePage } from "./sections/shore";
+import { HutPage } from "./sections/hut";
+import { BayPage } from "./sections/bay";
+import { RsvpPage } from "./sections/rsvp";
 import { Button } from "./ui/Button";
 import { ForwardIcon } from "./ui/Icon";
 import "./epoxy";
 
-const App: Component<{}, {
+const Hero: Component<{}, {
 	shoreRoot: HTMLElement,
 	hutTop: HTMLElement,
 	hutBottom: HTMLElement,
@@ -55,11 +56,32 @@ const App: Component<{}, {
 			/>
 			<div class="signup">
 				<Button on:click={() => this.rsvpRoot.scrollIntoView({ block: "center" })}>
-					Sign Up <ForwardIcon />
+					Log In <ForwardIcon />
 				</Button>
 			</div>
 		</div>
 	)
 }
 
-document.querySelector("#app")!.replaceWith(<App />);
+const Page404: Component<{ param?: string }> = function() {
+	return <div>404 page not found: {use(this.param)}</div>
+}
+
+let router = new Router([
+	{
+		show: <Hero />
+	},
+	{
+		path: "test",
+		show: <div>test</div>
+	},
+	{
+		path: "a/b",
+		show: <div>a/b</div>
+	},
+	{
+		path: ":param",
+		show: <Page404 />
+	}
+]);
+router.mount(document.querySelector("#app")!)

@@ -7,7 +7,50 @@ import { Card } from "../ui/Card";
 
 import rsvp from "./rsvp.webp";
 import { TextInput } from "../ui/Input";
-import { stealToken } from "../frontend/api";
+import { fetchInfo, stealToken, userInfo } from "../frontend/api";
+
+const LogIn: Component<{}, {
+	emailLink: string,
+	error: string | null,
+}> = function(cx) {
+	cx.css = `
+		:scope {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+
+		.options {
+			display: flex;
+			flex-direction: row;
+			gap: 1rem;
+		}
+	`;
+
+	this.emailLink = "";
+	this.error = null as string | null;
+
+	return (
+		<div>
+			<div>
+				This frontend requires you to use the <b>email</b> login method (so that it can steal the token to use).
+			</div>
+			<div class="options">
+				<TextInput value={use(this.emailLink).bind()} placeholder="Email Link" />
+				<Button on:click={async () => { if (!await stealToken(this.emailLink)) this.error = "Failed to steal token" }}>Log In<ForwardIcon /></Button>
+			</div>
+			{use(this.error).andThen((x: string) => <div class="error">{x}</div>)}
+		</div>
+	)
+}
+
+const Info: Component = function(cx) {
+	return (
+		<div>
+			Hi {use(userInfo.data).map(x => x?.name)}, you are a {use(userInfo.data).map(x => x?.status)} user.
+		</div>
+	)
+}
 
 export const RsvpPage: Component<{
 	animationRoot: HTMLElement,
@@ -41,8 +84,10 @@ export const RsvpPage: Component<{
 		.error { color: red; }
 	`;
 
-	this.emailLink = "";
-	this.error = null as string | null;
+
+	cx.mount = async () => {
+		await fetchInfo();
+	};
 
 	return (
 		<div id="shore">
@@ -51,14 +96,7 @@ export const RsvpPage: Component<{
 				<div class="content" this={use(this.root).bind()}>
 					<Card title="Log In">
 						<div class="card">
-							<div>
-								This frontend requires you to use the <b>email</b> login method (so that it can steal the token to use).
-							</div>
-							<div class="options">
-								<TextInput value={use(this.emailLink).bind()} placeholder="Email Link" />
-								<Button on:click={async () => { if (!await stealToken(this.emailLink)) this.error = "Failed to steal token" }}>Log In<ForwardIcon /></Button>
-							</div>
-							{use(this.error).andThen((x: string) => <div class="error">{x}</div>)}
+							{use(userInfo.data).andThen(<Info />, <LogIn />)}
 							<div class="options">
 								<Button on:click={this["on:back"]} label="Back"><BackIcon /></Button>
 								<Button on:click={() => window.open("https://shipwrecked.hackclub.com/bay/login")}>Open Shipwrecked Site<ForwardIcon /></Button>
