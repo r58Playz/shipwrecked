@@ -22,5 +22,5 @@ export const RandomBackground: Component = function(cx) {
 
 	let idx = Math.floor(Math.random() * backgrounds.length);
 	let background = backgrounds[idx];
-	return <img src={background} class={`idx-${idx}`} />
+	return <img src={background} class={`Ui-RandomBackground idx-${idx}`} />
 }

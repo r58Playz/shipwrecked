@@ -1,7 +1,7 @@
 import type { Component } from "dreamland/core";
 
 import { RandomBackground } from "./background";
-import { calculateProgress, fetchProjects, userInfo } from "./api";
+import { calculateProgress, fetchProjects, getProjectHours, userInfo, type Project } from "./api";
 import { Card } from "../ui/Card";
 import { UserName } from "./apiComponents";
 
@@ -69,6 +69,57 @@ const ProgressBar: Component<{}, {}> = function(cx) {
 	)
 }
 
+const ProjectsTable: Component = function(cx) {
+	cx.css = `
+		:scope {
+			width: 100%;
+		}
+
+		th {
+			text-align: left;
+		}
+
+		tr th {
+			width: 100%;
+		}
+
+		tr td {
+			white-space: nowrap;
+		}
+		thead th:not(:first-child), tr td {
+			padding: 0 0.5rem;
+		}
+	`;
+
+	function mapState(project: Project): string {
+		if (project.in_review)
+			return "In Review";
+		else if (project.viral)
+			return "Viral";
+		else if (project.shipped)
+			return "Shipped";
+		else
+			return "Unshipped";
+	}
+
+	return (
+		<table>
+			<thead>
+				<th>Name</th>
+				<th>Hours</th>
+				<th>State</th>
+			</thead>
+			{use(userInfo.projects).map(x => (x || []).sort((a, b) => getProjectHours(b) - getProjectHours(a))).mapEach(x => (
+				<tr>
+					<th>{x.name}</th>
+					<td>{getProjectHours(x).toFixed(0)}h</td>
+					<td>{mapState(x)}</td>
+				</tr>
+			))}
+		</table>
+	)
+}
+
 const RealDashboard: Component = function(cx) {
 	cx.css = `
 		:scope {
@@ -91,7 +142,7 @@ const RealDashboard: Component = function(cx) {
 			flex: 1;
 
 			display: flex;
-			gap: 1rem;
+			gap: 2rem;
 		}
 
 		.projects > :global(*) {
@@ -105,7 +156,7 @@ const RealDashboard: Component = function(cx) {
 	}
 
 	return (
-		<div>
+		<div class="dashboard">
 			<div class="progress">
 				<Card title={<span><UserName />'s Progress</span>} small={true}>
 					<ProgressBar />
@@ -113,6 +164,7 @@ const RealDashboard: Component = function(cx) {
 			</div>
 			<div class="projects">
 				<Card title="Projects" small={true}>
+					<ProjectsTable />
 				</Card>
 				<div />
 			</div>
@@ -145,6 +197,12 @@ export const Dashboard: Component = function(cx) {
 			display: grid;
 			grid-template-areas: "a";
 		}
+
+		/*
+		:scope:has(:global(.Ui-RandomBackground.idx-0)) :global(.dashboard .projects) {
+			flex-direction: row-reverse;
+		}
+		*/
 
 		:scope > :global(*) {
 			grid-area: a;

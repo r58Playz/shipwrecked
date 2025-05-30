@@ -112,7 +112,7 @@ export async function fetchProjects() {
 	userInfo.projects = data;
 }
 
-function getProjectHours(project: Project): number {
+export function getProjectHours(project: Project): number {
 	if (project.hackatimeLinks && project.hackatimeLinks.length > 0) {
 		return project.hackatimeLinks.reduce((sum, link) => {
 			const effectiveHours = link.hoursOverride || (link.rawHours || 0);

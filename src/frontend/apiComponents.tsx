@@ -20,7 +20,7 @@ export const UserName: Component = function(cx) {
 			border-radius: 2em;
 
 			margin-left: 0.25em;
-			vertical-align: 10%;
+			vertical-align: 5%;
 
 			text-transform: uppercase;
 			font-size: 0.8em;
