@@ -10,6 +10,7 @@ import { RsvpPage } from "./sections/rsvp";
 import { Button } from "./ui/Button";
 import { ForwardIcon } from "./ui/Icon";
 import "./epoxy";
+import { Dashboard } from "./frontend/main";
 
 const Hero: Component<{}, {
 	shoreRoot: HTMLElement,
@@ -72,12 +73,8 @@ export let router = new Router([
 		show: <Hero />
 	},
 	{
-		path: "test",
-		show: <div>test</div>
-	},
-	{
-		path: "a/b",
-		show: <div>a/b</div>
+		path: "dashboard",
+		show: <Dashboard />
 	},
 	{
 		path: ":param",

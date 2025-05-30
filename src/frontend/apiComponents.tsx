@@ -4,11 +4,11 @@ import { userInfo } from "./api";
 export const UserName: Component = function(cx) {
 	cx.css = `
 		img {
-			width: 2rem;
-			height: 2rem;
+			width: 1.25em;
+			height: 1.25em;
 			vertical-align: middle;
 
-			margin-right: 0.25rem;
+			margin-right: 0.25em;
 
 			border: 2px solid white;
 			border-radius: 100%;
@@ -16,14 +16,14 @@ export const UserName: Component = function(cx) {
 
 		.chip {
 			background: white;
-			padding: 0 0.5rem;
-			border-radius: 2rem;
+			padding: 0 0.5em;
+			border-radius: 2em;
 
-			margin-left: 0.25rem;
+			margin-left: 0.25em;
 			vertical-align: 10%;
 
 			text-transform: uppercase;
-			font-size: 0.8rem;
+			font-size: 0.8em;
 		}
 
 		.chip.FraudSuspect {
