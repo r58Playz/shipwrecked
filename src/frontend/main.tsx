@@ -91,6 +91,11 @@ const RealDashboard: Component = function(cx) {
 			flex: 1;
 
 			display: flex;
+			gap: 1rem;
+		}
+
+		.projects > :global(*) {
+			flex: 1;
 		}
 	`;
 
@@ -108,8 +113,8 @@ const RealDashboard: Component = function(cx) {
 			</div>
 			<div class="projects">
 				<Card title="Projects" small={true}>
-					Project
 				</Card>
+				<div />
 			</div>
 		</div>
 	)
@@ -146,10 +151,12 @@ export const Dashboard: Component = function(cx) {
 		}
 	`;
 
+	let allData = use(userInfo.data).zip(use(userInfo.projects));
+
 	return (
 		<div>
 			<RandomBackground />
-			{use(userInfo.data).andThen(<RealDashboard />, <Loading />)}
+			{allData.map(([a, b]) => !!a && !!b).andThen(<RealDashboard />, <Loading />)}
 		</div>
 	)
 }
