@@ -1,9 +1,11 @@
-import type { Component } from "dreamland/core";
+import type { Component, DLBoundPointer } from "dreamland/core";
 
 import { RandomBackground } from "./background";
-import { calculateProgress, fetchProjects, getProjectHours, userInfo, type Project } from "./api";
+import { calculateProgress, calculateProjectProgress, fetchProjects, getProjectHours, userInfo, type HackatimeLink, type Project } from "./api";
 import { Card } from "../ui/Card";
 import { UserName } from "./apiComponents";
+import { Button } from "../ui/Button";
+import { ForwardIcon } from "../ui/Icon";
 
 const ProgressBar: Component<{}, {}> = function(cx) {
 	cx.css = `
@@ -42,7 +44,7 @@ const ProgressBar: Component<{}, {}> = function(cx) {
 			background-color: #3b82f6;
 			background-size: 30px 30px;
 			background-image: linear-gradient(135deg, rgba(255, 255, 255, .2) 25%, transparent 0, transparent 50%, rgba(255, 255, 255, .2) 0, rgba(255, 255, 255, .2) 75%, transparent 0, transparent);
-			animation: unshippedAnimation .5s linear infinite;
+			animation: unshippedAnimation .75s linear infinite;
 		}
 
 		b {
@@ -69,7 +71,7 @@ const ProgressBar: Component<{}, {}> = function(cx) {
 	)
 }
 
-const ProjectsTable: Component = function(cx) {
+const ProjectsTable: Component<{ selectedId: DLBoundPointer<string | null> }> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -107,20 +109,140 @@ const ProjectsTable: Component = function(cx) {
 			<thead>
 				<th>Name</th>
 				<th>Hours</th>
+				<th>Contribution</th>
 				<th>State</th>
 			</thead>
-			{use(userInfo.projects).map(x => (x || []).sort((a, b) => getProjectHours(b) - getProjectHours(a))).mapEach(x => (
+			{use(userInfo.projects).map(x => (x || []).sort((a, b) => getProjectHours(b) - getProjectHours(a))).mapEach(x => {
+				let contrib = calculateProjectProgress(x);
+				return (
+					<tr on:click={() => this.selectedId = x.projectID}>
+						<th>{x.name}</th>
+						<td>{getProjectHours(x).toFixed(0)}h</td>
+						<td>{((contrib.unshipped + contrib.shipped + contrib.viral) / 60 * 100).toFixed(0)}%</td>
+						<td>{mapState(x)}</td>
+					</tr>
+				)
+			})}
+		</table>
+	)
+}
+
+const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
+	cx.css = `
+		:scope {
+			width: 100%;
+		}
+
+		th {
+			text-align: left;
+		}
+
+		tr th {
+			width: 100%;
+		}
+
+		tr td, thead th {
+			white-space: nowrap;
+		}
+		thead th:not(:first-child), tr td {
+			padding: 0 0.5rem;
+		}
+	`;
+
+	return (
+		<table>
+			<thead>
+				<th>Project Name</th>
+				<th>Hours</th>
+				<th>Approved Hours</th>
+			</thead>
+			{this.links.map(x => (
 				<tr>
-					<th>{x.name}</th>
-					<td>{getProjectHours(x).toFixed(0)}h</td>
-					<td>{mapState(x)}</td>
+					<th>{x.hackatimeName}</th>
+					<td>{x.rawHours}h</td>
+					<td>{x.hoursOverride ? x.hoursOverride + "h" : "None"}</td>
 				</tr>
 			))}
 		</table>
 	)
 }
 
-const RealDashboard: Component = function(cx) {
+const SelectedProject: Component<{ id: string }> = function(cx) {
+	cx.css = `
+		:scope, :global(.Ui-card) {
+			height: 100%;
+		}
+
+		:global(.Ui-card) {
+			overflow: scroll;
+		}
+
+		.content {
+			display: flex;
+			flex-direction: column;
+			gap: 1em;
+
+			overflow: scroll;
+		}
+
+		.content img {
+			width: 100%;
+		}
+	`;
+
+	const project = userInfo.projects!.find(x => x.projectID === this.id)!;
+
+	let contrib = calculateProjectProgress(project);
+
+	let contribString = "";
+
+	if (contrib.viral) {
+		contribString += `${contrib.viral} viral hours (${(contrib.viral / 60 * 100).toFixed(0)}%)`;
+	}
+
+	if (contrib.shipped) {
+		if (contribString.length)
+			contribString += ", "
+		contribString += `${contrib.shipped} shipped hours (${(contrib.shipped / 60 * 100).toFixed(0)}%)`;
+	}
+
+	if (contrib.unshipped) {
+		if (contribString.length)
+			contribString += ", "
+		contribString += `${contrib.unshipped} unshipped hours (${(contrib.unshipped / 60 * 100).toFixed(0)}%)`;
+	}
+
+	if (!contribString.length)
+		contribString = "no hours";
+
+	return (
+		<div>
+			<Card title={project.name} small={true}>
+				<div class="content">
+					<div>
+						<div>Contributes {contribString} to <UserName />'s progress.</div>
+						<HackatimeTable links={project.hackatimeLinks || []} />
+					</div>
+					{project.screenshot ? <img src={project.screenshot} /> : null}
+					<div>
+						{project.description}
+					</div>
+					<div>
+						<div><b>Viral:</b> {project.viral}</div>
+						<div><b>Shipped:</b> {project.shipped}</div>
+						<div><b>In review:</b> {project.in_review}</div>
+					</div>
+					<div>{project.codeUrl ? <Button on:click={() => window.open(project.codeUrl)}>Code<ForwardIcon /></Button> : null}</div>
+					<div>{project.playableUrl ? <Button on:click={() => window.open(project.playableUrl)}>Demo<ForwardIcon /></Button> : null}</div>
+				</div>
+			</Card>
+		</div>
+	)
+}
+
+const RealDashboard: Component<{}, {
+	selectedId: string | null
+}> = function(cx) {
 	cx.css = `
 		:scope {
 			padding: 1rem;
@@ -129,6 +251,8 @@ const RealDashboard: Component = function(cx) {
 			flex-direction: column;
 			align-items: center;
 			gap: 1rem;
+
+			min-height: 0;
 		}
 
 		.progress :global(.Ui-card) {
@@ -143,6 +267,8 @@ const RealDashboard: Component = function(cx) {
 
 			display: flex;
 			gap: 2rem;
+
+			min-height: 0;
 		}
 
 		.projects > :global(*) {
@@ -155,6 +281,8 @@ const RealDashboard: Component = function(cx) {
 		await fetchProjects();
 	}
 
+	this.selectedId = null;
+
 	return (
 		<div class="dashboard">
 			<div class="progress">
@@ -164,9 +292,9 @@ const RealDashboard: Component = function(cx) {
 			</div>
 			<div class="projects">
 				<Card title="Projects" small={true}>
-					<ProjectsTable />
+					<ProjectsTable selectedId={use(this.selectedId).bind()} />
 				</Card>
-				<div />
+				{use(this.selectedId).andThen((id: string) => <SelectedProject id={id} />, <div />)}
 			</div>
 		</div>
 	)

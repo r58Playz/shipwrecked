@@ -21,6 +21,13 @@ export interface UserData {
 	status: "Unknown" | "L1" | "L2" | "FraudSuspect",
 }
 
+export interface HackatimeLink {
+	id: string;
+	hackatimeName: string;
+	rawHours: number;
+	hoursOverride?: number | null;
+}
+
 export interface Project {
 	projectID: string
 	name: string
@@ -36,12 +43,7 @@ export interface Project {
 	rawHours?: number;
 	hoursOverride?: number | null;
 	hackatime?: string;
-	hackatimeLinks?: {
-		id: string;
-		hackatimeName: string;
-		rawHours: number;
-		hoursOverride?: number | null;
-	}[];
+	hackatimeLinks?: HackatimeLink[];
 }
 
 export const userInfo: Stateful<{
@@ -112,8 +114,10 @@ export async function fetchProjects() {
 	userInfo.projects = data;
 }
 
+// stolen and cleaned up from the real shipwrecked
+// wow that code really sucked
 export function getProjectHours(project: Project): number {
-	if (project.hackatimeLinks && project.hackatimeLinks.length > 0) {
+	if (project.hackatimeLinks?.length) {
 		return project.hackatimeLinks.reduce((sum, link) => {
 			const effectiveHours = link.hoursOverride || (link.rawHours || 0);
 			return sum + effectiveHours;
@@ -129,22 +133,28 @@ export interface ShipwreckedProgress {
 	unshipped: number,
 }
 
-// stolen and cleaned up from the real shipwrecked
+export function calculateProjectProgress(project: Project): ShipwreckedProgress {
+	const hours = getProjectHours(project);
+
+	if (project?.viral) {
+		return { viral: 15, shipped: 0, unshipped: 0 };
+	} else if (project?.shipped) {
+		return { viral: 0, shipped: Math.min(hours, 15), unshipped: 0 };
+	} else {
+		return { viral: 0, shipped: 0, unshipped: Math.min(hours, 14.75) };
+	}
+}
+
 export function calculateProgress(projects: Project[]): ShipwreckedProgress {
-	let shipped = 0;
 	let viral = 0;
+	let shipped = 0;
 	let unshipped = 0;
 
 	for (const project of projects) {
-		const hours = getProjectHours(project);
-
-		if (project?.viral === true) {
-			viral += 15;
-		} else if (project?.shipped === true) {
-			shipped += Math.min(hours, 15);
-		} else {
-			unshipped += Math.min(hours, 14.75);
-		}
+		let progress = calculateProjectProgress(project);
+		viral += progress.viral;
+		shipped += progress.shipped;
+		unshipped += progress.unshipped;
 	}
 
 	return {
