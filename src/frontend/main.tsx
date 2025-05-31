@@ -1,11 +1,12 @@
 import type { Component, DLBoundPointer } from "dreamland/core";
 
 import { RandomBackground } from "./background";
-import { calculateProgress, calculateProjectProgress, fetchProjects, getProjectHours, userInfo, type HackatimeLink, type Project } from "./api";
+import { calculateProgress, calculateProjectProgress, deleteToken, fetchProjects, getProjectHours, userInfo, type HackatimeLink, type Project } from "./api";
 import { Card } from "../ui/Card";
 import { UserName } from "./apiComponents";
 import { Button } from "../ui/Button";
-import { ForwardIcon } from "../ui/Icon";
+import { BackIcon, ForwardIcon } from "../ui/Icon";
+import { router } from "../main";
 
 const ProgressBar: Component<{}, {}> = function(cx) {
 	cx.css = `
@@ -188,6 +189,18 @@ const SelectedProject: Component<{ id: string }> = function(cx) {
 		.content img {
 			width: 100%;
 		}
+
+		.headline {
+			font-family: ohno-softie-variable, sans-serif;
+			line-height: 1.1;
+			font-weight: 600;
+			font-size: 1.75rem;
+		}
+
+		.buttons {
+			display: flex;
+			gap: 1em;
+		}
 	`;
 
 	const project = userInfo.projects!.find(x => x.projectID === this.id)!;
@@ -220,20 +233,27 @@ const SelectedProject: Component<{ id: string }> = function(cx) {
 			<Card title={project.name} small={true}>
 				<div class="content">
 					<div>
+						<div class="headline">Time</div>
 						<div>Contributes {contribString} to <UserName />'s progress.</div>
 						<HackatimeTable links={project.hackatimeLinks || []} />
 					</div>
-					{project.screenshot ? <img src={project.screenshot} /> : null}
 					<div>
-						{project.description}
+						<div class="headline">Description</div>
+						{project.screenshot ? <img src={project.screenshot} /> : null}
+						<div>
+							{project.description}
+						</div>
 					</div>
 					<div>
+						<div class="headline">Stats</div>
 						<div><b>Viral:</b> {project.viral}</div>
 						<div><b>Shipped:</b> {project.shipped}</div>
 						<div><b>In review:</b> {project.in_review}</div>
 					</div>
-					<div>{project.codeUrl ? <Button on:click={() => window.open(project.codeUrl)}>Code<ForwardIcon /></Button> : null}</div>
-					<div>{project.playableUrl ? <Button on:click={() => window.open(project.playableUrl)}>Demo<ForwardIcon /></Button> : null}</div>
+					<div class="buttons">
+						<div>{project.codeUrl ? <Button on:click={() => window.open(project.codeUrl)}>Code<ForwardIcon /></Button> : null}</div>
+						<div>{project.playableUrl ? <Button on:click={() => window.open(project.playableUrl)}>Demo<ForwardIcon /></Button> : null}</div>
+					</div>
 				</div>
 			</Card>
 		</div>
@@ -335,6 +355,10 @@ export const Dashboard: Component = function(cx) {
 		:scope > :global(*) {
 			grid-area: a;
 		}
+
+		.logout-container {
+			padding: 1em;
+		}
 	`;
 
 	let allData = use(userInfo.data).zip(use(userInfo.projects));
@@ -343,6 +367,9 @@ export const Dashboard: Component = function(cx) {
 		<div>
 			<RandomBackground />
 			{allData.map(([a, b]) => !!a && !!b).andThen(<RealDashboard />, <Loading />)}
+			<div class="logout-container">
+				<Button on:click={() => { deleteToken(); router.navigate("/") }}><BackIcon />Log Out</Button>
+			</div>
 		</div>
 	)
 }
