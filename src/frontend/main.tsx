@@ -168,20 +168,22 @@ const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
 	)
 }
 
-const SelectedProject: Component<{ id: string }> = function(cx) {
+const SelectedProject: Component<{ id: string, "on:close": () => void }> = function(cx) {
 	cx.css = `
 		:scope, :global(.Ui-card) {
 			height: 100%;
 		}
 
 		:global(.Ui-card) {
-			overflow: scroll;
+			display: flex;
+			flex-direction: column;
 		}
 
 		.content {
 			display: flex;
 			flex-direction: column;
 			gap: 1em;
+			min-height: 0;
 
 			overflow: scroll;
 		}
@@ -200,6 +202,16 @@ const SelectedProject: Component<{ id: string }> = function(cx) {
 		.buttons {
 			display: flex;
 			gap: 1em;
+		}
+
+		.close-container {
+			position: relative;
+			z-index: 1;
+		}
+		.close-container > :global(*) {
+			position: absolute;
+			top: 2rem;
+			right: 1rem;
 		}
 	`;
 
@@ -230,6 +242,9 @@ const SelectedProject: Component<{ id: string }> = function(cx) {
 
 	return (
 		<div>
+			<div class="close-container">
+				<Button on:click={this["on:close"]}>Close</Button>
+			</div>
 			<Card title={project.name} small={true}>
 				<div class="content">
 					<div>
@@ -314,7 +329,7 @@ const RealDashboard: Component<{}, {
 				<Card title="Projects" small={true}>
 					<ProjectsTable selectedId={use(this.selectedId).bind()} />
 				</Card>
-				{use(this.selectedId).andThen((id: string) => <SelectedProject id={id} />, <div />)}
+				{use(this.selectedId).andThen((id: string) => <SelectedProject id={id} on:close={() => this.selectedId = null} />, <div />)}
 			</div>
 		</div>
 	)
