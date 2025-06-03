@@ -145,13 +145,20 @@ export function calculateProjectProgress(project: Project): ShipwreckedProgress 
 	}
 }
 
+export function getTotalHours(progress: ShipwreckedProgress): number {
+	return progress.viral + progress.shipped + progress.unshipped;
+}
+
+function sortProjects(projects: Project[]): Project[] {
+	return projects.sort((a, b) => getTotalHours(calculateProjectProgress(b)) - getTotalHours(calculateProjectProgress(a)));
+}
+
 export function calculateProgress(projects: Project[]): ShipwreckedProgress {
 	let viral = 0;
 	let shipped = 0;
 	let unshipped = 0;
 
-	for (const project of projects) {
-		let progress = calculateProjectProgress(project);
+	for (const progress of sortProjects(projects).map(calculateProjectProgress).slice(0, 4)) {
 		viral += progress.viral;
 		shipped += progress.shipped;
 		unshipped += progress.unshipped;
@@ -162,4 +169,26 @@ export function calculateProgress(projects: Project[]): ShipwreckedProgress {
 		shipped: (shipped / 60) * 100,
 		unshipped: (unshipped / 60) * 100,
 	};
+}
+
+export function calculateShells(projects: Project[]): number {
+	const phi = (1 + Math.sqrt(5)) / 2;
+	const top4 = sortProjects(projects).slice(0, 4).map(x => x.projectID);
+
+	let shells = 0;
+
+	for (const project of projects) {
+		if (project.shipped) {
+			let hours = getProjectHours(project);
+
+			if (top4.includes(project.projectID)) {
+				if (hours > 15)
+					shells += (hours - 15) * (phi * 10);
+			} else {
+				shells += hours * (phi * 10);
+			}
+		}
+	}
+
+	return Math.floor(shells);
 }

@@ -1,7 +1,7 @@
 import type { Component, DLBoundPointer } from "dreamland/core";
 
 import { RandomBackground } from "./background";
-import { calculateProgress, calculateProjectProgress, deleteToken, fetchProjects, getProjectHours, userInfo, type HackatimeLink, type Project } from "./api";
+import { calculateProgress, calculateProjectProgress, calculateShells, deleteToken, fetchProjects, getProjectHours, getTotalHours, userInfo, type HackatimeLink, type Project } from "./api";
 import { Card } from "../ui/Card";
 import { UserName } from "./apiComponents";
 import { Button } from "../ui/Button";
@@ -59,6 +59,7 @@ const ProgressBar: Component<{}, {}> = function(cx) {
 	`;
 
 	const progress = use(userInfo.projects).map(x => x ? calculateProgress(x) : { viral: 0, shipped: 0, unshipped: 0 });
+	const shells = use(userInfo.projects).map(x => x ? calculateShells(x) : 0);
 
 	return (
 		<div>
@@ -67,7 +68,7 @@ const ProgressBar: Component<{}, {}> = function(cx) {
 				<div class="shipped" style={progress.map(x => `width: ${x.shipped}%`)} />
 				<div class="unshipped" style={progress.map(x => `width: ${x.unshipped}%`)} />
 			</div>
-			<b>{progress.map(x => (x.viral + x.unshipped + x.shipped).toFixed(0))}%</b>
+			<b>{progress.map(x => getTotalHours(x).toFixed(0))}% - {shells} 🐚</b>
 		</div>
 	)
 }
