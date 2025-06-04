@@ -3,14 +3,14 @@ import { stateProxy, type Component } from "dreamland/core";
 import { router } from "../main";
 import { Loading } from "./apiComponents";
 import { RandomBackground } from "./background";
-import { fetchGallery, getProjectHours, userInfo, type Project } from "./api";
+import { fetchGallery, getProjectHours, upvote, userInfo, type ProjectGallery } from "./api";
 
 import { BackIcon } from "../ui/Icon";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { TextInput } from "../ui/Input";
 
-const GalleryProject: Component<{ project: Project }, { img: HTMLImageElement | string }> = function(cx) {
+const GalleryProject: Component<{ project: ProjectGallery }, { img: HTMLImageElement | string, upvoted: boolean, upvotes: number }> = function(cx) {
 	cx.css = `
 		:global(.Ui-card) {
 			height: 100%;
@@ -49,13 +49,25 @@ const GalleryProject: Component<{ project: Project }, { img: HTMLImageElement | 
 			gap: 0.5rem;
 		}
 
-		.chips span, a {
+		.chips > span, a {
 			backdrop-filter: blur(2px);
 			border-radius: 1rem;
 			padding: 0 0.5rem;
 			color: unset;
 		}
 
+		.star {
+			transform: scale(1.5);
+			display: inline-block;
+		}
+		.upvote {
+			cursor: pointer;
+		}
+
+		.yellow {
+			background-color: #efb10033;
+			color: #efb100;
+		}
 		.blue {
 			background-color: #155dfc33;
 			color: #155dfc;
@@ -71,6 +83,8 @@ const GalleryProject: Component<{ project: Project }, { img: HTMLImageElement | 
 	`;
 
 	this.img = "Loading";
+	this.upvoted = this.project.userUpvoted;
+	this.upvotes = this.project.upvoteCount;
 
 	cx.mount = async () => {
 		let img = new Image();
@@ -96,11 +110,20 @@ const GalleryProject: Component<{ project: Project }, { img: HTMLImageElement | 
 		}
 	};
 
+	let toggleUpvote = async () => {
+		let res = await upvote(this.project.projectID);
+		console.log(this.project.projectID, res);
+		this.upvoted = res.upvoted;
+		this.upvotes = res.count;
+		await fetchGallery();
+	}
+
 	return (
 		<div>
 			<Card title={this.project.name} project={true}>
 				<div class="content">
 					<div class="chips">
+						<span on:click={toggleUpvote} class="upvote" class:yellow={use(this.upvoted)}>{use(this.upvotes)} <span class="star">٭</span></span>
 						<span class="blue">{getProjectHours(this.project)}h</span>
 						{this.project.viral ? <span class="pink">Viral</span> : null}
 						{this.project.shipped ? <span class="green">Shipped</span> : null}
@@ -116,7 +139,7 @@ const GalleryProject: Component<{ project: Project }, { img: HTMLImageElement | 
 }
 
 const RealGallery: Component<{}, {
-	projects: { el: HTMLElement, project: Project }[],
+	projects: { el: HTMLElement, project: ProjectGallery }[],
 	filter: string,
 }> = function(cx) {
 	cx.css = `
@@ -140,6 +163,18 @@ const RealGallery: Component<{}, {
 		:scope > div > :global(.Ui-card > h1) {
 			text-align: center;
 		}
+
+		@media (max-width: 1330px) {
+			.grid {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		@media (max-width: 900px) {
+			.grid {
+				grid-template-columns: 1fr;
+			}
+		}
 	`;
 
 	this.filter = "";
@@ -153,7 +188,8 @@ const RealGallery: Component<{}, {
 		return arr.sort(({ project: a }, { project: b }) => {
 			if (a.screenshot && !b.screenshot) return -1;
 			if (b.screenshot && !a.screenshot) return 1;
-			return a.name.localeCompare(b.name);
+			let ret = b.upvoteCount - a.upvoteCount;
+			return ret === 0 ? a.name.localeCompare(b.name) : ret;
 		});
 	}).mapEach(({ el }) => el);
 

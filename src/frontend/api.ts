@@ -35,7 +35,6 @@ export interface Project {
 	codeUrl: string
 	playableUrl: string
 	screenshot: string
-	submitted: boolean
 	userId: string
 	viral: boolean
 	shipped: boolean
@@ -46,10 +45,27 @@ export interface Project {
 	hackatimeLinks?: HackatimeLink[];
 }
 
+export interface ProjectGallery {
+	projectID: string
+	name: string
+	description: string
+	codeUrl: string
+	playableUrl: string
+	screenshot: string
+	shipped: boolean
+	viral: boolean
+	userId: string
+	hackatimeLinks?: HackatimeLink[];
+	hackatimeName?: string;
+	rawHours?: number;
+	upvoteCount: number,
+	userUpvoted: boolean,
+}
+
 export const userInfo: Stateful<{
 	data: UserData | null;
 	projects: Project[] | null;
-	gallery: Project[] | null;
+	gallery: ProjectGallery[] | null;
 }> = createState({
 	data: null,
 	projects: null,
@@ -124,9 +140,18 @@ export async function fetchProjects() {
 	userInfo.projects = data;
 }
 
+export async function upvote(projectID: string): Promise<{ count: number, upvoted: boolean }> {
+	let res = await fetchCookie(`${SHIPWRECKED}/api/projects/${projectID}/upvote`, { method: "POST" }).then(r => r.json());
+	if ("upvoted" in res) {
+		return { count: res.upvoteCount, upvoted: res.upvoted };
+	} else {
+		throw new Error("failed to upvote");
+	}
+}
+
 // stolen and cleaned up from the real shipwrecked
 // wow that code really sucked
-export function getProjectHours(project: Project): number {
+export function getProjectHours(project: { hackatimeLinks?: HackatimeLink[], rawHours?: number }): number {
 	if (project.hackatimeLinks?.length) {
 		return project.hackatimeLinks.reduce((sum, link) => {
 			const effectiveHours = link.hoursOverride || (link.rawHours || 0);
