@@ -11,6 +11,7 @@ import { Button } from "./ui/Button";
 import { ForwardIcon } from "./ui/Icon";
 import "./epoxy";
 import { Dashboard } from "./frontend/main";
+import { Gallery } from "./frontend/gallery";
 
 const Hero: Component<{}, {
 	shoreRoot: HTMLElement,
@@ -75,6 +76,10 @@ export let router = new Router([
 	{
 		path: "dashboard",
 		show: <Dashboard />
+	},
+	{
+		path: "gallery",
+		show: <Gallery />
 	},
 	{
 		path: ":param",

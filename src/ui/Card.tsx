@@ -1,6 +1,6 @@
 import { DLPointer, type Component, type ComponentChild } from "dreamland/core";
 
-export const Card: Component<{ title: ComponentChild, children?: ComponentChild[] | ComponentChild, small?: boolean }> = function(cx) {
+export const Card: Component<{ title: ComponentChild, children?: ComponentChild[] | ComponentChild, small?: boolean, project?: boolean }> = function(cx) {
 	cx.css = `
 		:scope {
 			background: #e6d7d699;
@@ -33,6 +33,13 @@ export const Card: Component<{ title: ComponentChild, children?: ComponentChild[
 		:scope.small h1 {
 			font-size: 2.75rem;
 		}
+		:scope.project {
+			display: flex;
+			flex-direction: column;
+		}
+		:scope.project h1 {
+			font-size: 2rem;
+		}
 
 		h1:not(:last-child) {
 			margin-top: 0;
@@ -41,7 +48,7 @@ export const Card: Component<{ title: ComponentChild, children?: ComponentChild[
 	`;
 
 	return (
-		<div class="Ui-card" class:small={use(this.small) as DLPointer<boolean>}>
+		<div class="Ui-card" class:small={use(this.small) as DLPointer<boolean>} class:project={use(this.project) as DLPointer<boolean>}>
 			<h1>{this.title}</h1>
 			{cx.children}
 		</div>

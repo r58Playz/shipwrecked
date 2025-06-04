@@ -1,5 +1,6 @@
 import type { Component } from "dreamland/core";
 import { userInfo } from "./api";
+import { Card } from "../ui/Card";
 
 export const UserName: Component = function(cx) {
 	cx.css = `
@@ -38,5 +39,21 @@ export const UserName: Component = function(cx) {
 			{use(userInfo.data).map(x => x?.name)}
 			<span class={use(userInfo.data).map(x => `chip ${x?.status}`)}>{use(userInfo.data).map(x => x?.status)}</span>
 		</span>
+	)
+}
+
+export const Loading: Component = function(cx) {
+	cx.css = `
+		:scope {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	`;
+
+	return (
+		<div>
+			<Card title="Loading"></Card>
+		</div>
 	)
 }

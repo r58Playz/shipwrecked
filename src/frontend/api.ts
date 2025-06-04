@@ -49,9 +49,11 @@ export interface Project {
 export const userInfo: Stateful<{
 	data: UserData | null;
 	projects: Project[] | null;
+	gallery: Project[] | null;
 }> = createState({
 	data: null,
 	projects: null,
+	gallery: null,
 });
 
 export async function stealToken(email: string): Promise<boolean> {
@@ -108,9 +110,17 @@ export async function fetchInfo(): Promise<boolean> {
 	}
 }
 
+export async function fetchGallery() {
+	let data = await fetchCookie(`${SHIPWRECKED}/api/gallery`).then(r => r.json());
+	console.log("gallery:", data);
+	userInfo.gallery = data;
+}
+
 export async function fetchProjects() {
 	let data = await fetchCookie(`${SHIPWRECKED}/api/projects`).then(r => r.json());
 	console.log("projects:", data);
+	if (data.error) throw new Error(data.error);
+
 	userInfo.projects = data;
 }
 

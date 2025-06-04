@@ -3,7 +3,7 @@ import type { Component, DLBoundPointer } from "dreamland/core";
 import { RandomBackground } from "./background";
 import { calculateProgress, calculateProjectProgress, calculateShells, deleteToken, fetchProjects, getProjectHours, getTotalHours, userInfo, type HackatimeLink, type Project } from "./api";
 import { Card } from "../ui/Card";
-import { UserName } from "./apiComponents";
+import { Loading, UserName } from "./apiComponents";
 import { Button } from "../ui/Button";
 import { BackIcon, ForwardIcon } from "../ui/Icon";
 import { router } from "../main";
@@ -336,22 +336,6 @@ const RealDashboard: Component<{}, {
 	)
 }
 
-const Loading: Component = function(cx) {
-	cx.css = `
-		:scope {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-	`;
-
-	return (
-		<div>
-			<Card title="Loading"></Card>
-		</div>
-	)
-}
-
 export const Dashboard: Component = function(cx) {
 	cx.css = `
 		:scope {
@@ -374,6 +358,9 @@ export const Dashboard: Component = function(cx) {
 
 		.logout-container {
 			padding: 1em;
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
 		}
 	`;
 
@@ -385,6 +372,7 @@ export const Dashboard: Component = function(cx) {
 			{allData.map(([a, b]) => !!a && !!b).andThen(<RealDashboard />, <Loading />)}
 			<div class="logout-container">
 				<Button on:click={() => { deleteToken(); router.navigate("/") }}><BackIcon />Log Out</Button>
+				<Button on:click={() => { router.navigate("/gallery") }}>Gallery<ForwardIcon /></Button>
 			</div>
 		</div>
 	)
