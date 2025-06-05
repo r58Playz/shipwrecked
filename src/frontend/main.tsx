@@ -114,13 +114,13 @@ const ProjectsTable: Component<{ selectedId: DLBoundPointer<string | null> }> = 
 				<th>Contribution</th>
 				<th>State</th>
 			</thead>
-			{use(userInfo.projects).map(x => (x || []).sort((a, b) => getProjectHours(b) - getProjectHours(a))).mapEach(x => {
+			{use(userInfo.projects).map(x => (x || []).sort((a, b) => getProjectHours(b) - getProjectHours(a))).mapEach((x, i) => {
 				let contrib = calculateProjectProgress(x);
 				return (
 					<tr on:click={() => this.selectedId = x.projectID}>
 						<th>{x.name}</th>
 						<td>{getProjectHours(x).toFixed(0)}h</td>
-						<td>{((contrib.unshipped + contrib.shipped + contrib.viral) / 60 * 100).toFixed(0)}%</td>
+						<td>{((i < 4 ? getTotalHours(contrib) : 0) / 60 * 100).toFixed(0)}%</td>
 						<td>{mapState(x)}</td>
 					</tr>
 				)
@@ -171,7 +171,7 @@ const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
 
 const SelectedProject: Component<{ id: string, "on:close": () => void }> = function(cx) {
 	cx.css = `
-		:scope, :global(.Ui-card) {
+		:scope, :scope :global(.Ui-card) {
 			height: 100%;
 		}
 
@@ -217,8 +217,10 @@ const SelectedProject: Component<{ id: string, "on:close": () => void }> = funct
 	`;
 
 	const project = userInfo.projects!.find(x => x.projectID === this.id)!;
+	const contributes = userInfo.projects!.sort((a, b) => getProjectHours(b) - getProjectHours(a)).findIndex(x => x.projectID === this.id) < 4;
 
-	let contrib = calculateProjectProgress(project);
+	let contrib = { viral: 0, shipped: 0, unshipped: 0 };
+	if (contributes) contrib = calculateProjectProgress(project);
 
 	let contribString = "";
 

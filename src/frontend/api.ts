@@ -141,7 +141,7 @@ export async function fetchProjects() {
 }
 
 export async function upvote(projectID: string): Promise<{ count: number, upvoted: boolean }> {
-	let res = await fetchCookie(`${SHIPWRECKED}/api/projects/${projectID}/upvote`, { method: "POST" }).then(r => r.json());
+	let res = await fetchCookie(`${SHIPWRECKED}/api/projects/project/${projectID}/upvote`, { method: "POST" }).then(r => r.json());
 	if ("upvoted" in res) {
 		return { count: res.upvoteCount, upvoted: res.upvoted };
 	} else {

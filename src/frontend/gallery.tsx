@@ -12,7 +12,7 @@ import { TextInput } from "../ui/Input";
 
 const GalleryProject: Component<{ project: ProjectGallery }, { img: HTMLImageElement | string, upvoted: boolean, upvotes: number }> = function(cx) {
 	cx.css = `
-		:global(.Ui-card) {
+		:scope :global(.Ui-card) {
 			height: 100%;
 		}
 
