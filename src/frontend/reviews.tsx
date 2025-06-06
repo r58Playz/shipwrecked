@@ -75,7 +75,7 @@ const RealReviews: Component<{ review: Review[], "on:submit": (comment: string) 
 	)
 }
 
-export const Reviews: Component<{ project?: string }, { review?: Review[] }, { "on:routeshown": () => void }> = function(cx) {
+export const Reviews: Component<{ project?: string, location?: string }, { review?: Review[] }, { "on:routeshown": () => void }> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -118,7 +118,7 @@ export const Reviews: Component<{ project?: string }, { review?: Review[] }, { "
 			<RandomBackground />
 			{use(this.review).andThen((x: Review[]) => <RealReviews review={x} on:submit={submit} />, <Loading />)}
 			<div class="logout-container">
-				<Button on:click={() => { router.navigate("/dashboard") }}><BackIcon />Back</Button>
+				<Button on:click={() => { router.navigate("/" + this.location) }}><BackIcon />Back</Button>
 			</div>
 		</div>
 	)

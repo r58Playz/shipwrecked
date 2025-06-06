@@ -271,7 +271,7 @@ const SelectedProject: Component<{ id: string, "on:close": () => void }> = funct
 					<div class="buttons">
 						<div>{project.codeUrl ? <Button on:click={() => window.open(project.codeUrl)}>Code<ForwardIcon /></Button> : null}</div>
 						<div>{project.playableUrl ? <Button on:click={() => window.open(project.playableUrl)}>Demo<ForwardIcon /></Button> : null}</div>
-						<div><Button on:click={() => router.navigate("/reviews/" + project.projectID)}>View Reviews<ForwardIcon /></Button></div>
+						<div><Button on:click={() => router.navigate("/reviews/" + project.projectID + "/dashboard")}>View Reviews<ForwardIcon /></Button></div>
 					</div>
 				</div>
 			</Card>

@@ -131,7 +131,7 @@ const GalleryProject: Component<{ project: ProjectGallery }, { img: HTMLImageEle
 						{this.project.shipped ? <span class="green">Shipped</span> : null}
 						{this.project.codeUrl ? <a href={this.project.codeUrl} target="_blank">Code</a> : null}
 						{this.project.playableUrl ? <a href={this.project.playableUrl} target="_blank">Demo</a> : null}
-						<span on:click={() => router.navigate("/reviews/" + this.project.projectID)} class="upvote">Reviews</span>
+						<span on:click={() => router.navigate("/reviews/" + this.project.projectID + "/gallery")} class="upvote">Reviews</span>
 					</div>
 					{use(this.img).map(x => typeof x === "string" ? <div class="img text" src={this.project.screenshot}>{x}</div> : x)}
 					{this.project.description}

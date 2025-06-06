@@ -88,7 +88,7 @@ export let router = new Router([
 		path: "reviews",
 		children: [
 			{
-				path: ":project",
+				path: ":project/:location",
 				show: <Reviews />
 			}
 		]
