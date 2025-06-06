@@ -8,6 +8,7 @@ export const TextInput: Component<{ value: DLBoundPointer<string>, placeholder?:
 			border: none;
 			border-radius: 4px;
 
+			font-family: Poppins;
 			font-size: 18px;
 
 			padding: 0.5rem;

@@ -3,7 +3,7 @@ import { stateProxy, type Component } from "dreamland/core";
 import { router } from "../main";
 import { Loading } from "./apiComponents";
 import { RandomBackground } from "./background";
-import { fetchGallery, getProjectHours, upvote, userInfo, type ProjectGallery } from "./api";
+import { clearCache, fetchGallery, getProjectHours, upvote, userInfo, type ProjectGallery } from "./api";
 
 import { BackIcon } from "../ui/Icon";
 import { Button } from "../ui/Button";
@@ -46,14 +46,16 @@ const GalleryProject: Component<{ project: ProjectGallery }, { img: HTMLImageEle
 
 		.chips {
 			display: flex;
+			flex-wrap: wrap;
 			gap: 0.5rem;
 		}
 
-		.chips > span, a {
+		.chips > span, .chips > a {
 			backdrop-filter: blur(2px);
 			border-radius: 1rem;
 			padding: 0 0.5rem;
 			color: unset;
+			white-space: nowrap;
 		}
 
 		.star {
@@ -129,6 +131,7 @@ const GalleryProject: Component<{ project: ProjectGallery }, { img: HTMLImageEle
 						{this.project.shipped ? <span class="green">Shipped</span> : null}
 						{this.project.codeUrl ? <a href={this.project.codeUrl} target="_blank">Code</a> : null}
 						{this.project.playableUrl ? <a href={this.project.playableUrl} target="_blank">Demo</a> : null}
+						<span on:click={() => router.navigate("/reviews/" + this.project.projectID)} class="upvote">Reviews</span>
 					</div>
 					{use(this.img).map(x => typeof x === "string" ? <div class="img text" src={this.project.screenshot}>{x}</div> : x)}
 					{this.project.description}
@@ -144,7 +147,7 @@ const RealGallery: Component<{}, {
 }> = function(cx) {
 	cx.css = `
 		:scope {
-			padding: 2em;
+			padding: 1em;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -207,7 +210,7 @@ const RealGallery: Component<{}, {
 	)
 }
 
-export const Gallery: Component = function(cx) {
+export const Gallery: Component<{}, {}, { "on:routeshown": () => void }> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -229,17 +232,17 @@ export const Gallery: Component = function(cx) {
 		}
 	`;
 
-	let allData = use(userInfo.data).zip(use(userInfo.gallery));
+	let allData = use(userInfo.gallery);
 
-	cx.mount = async () => {
-		await new Promise(r => setTimeout(r, 200));
+	this["on:routeshown"] = async () => {
+		clearCache();
 		await fetchGallery();
 	}
 
 	return (
 		<div>
 			<RandomBackground />
-			{allData.map(([a, b]) => !!a && !!b).andThen(<RealGallery />, <Loading />)}
+			{allData.andThen(<RealGallery />, <Loading />)}
 			<div class="logout-container">
 				<Button on:click={() => { router.navigate("/dashboard") }}><BackIcon />Back</Button>
 			</div>

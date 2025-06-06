@@ -112,10 +112,6 @@ export const RsvpPage: Component<{
 	`;
 
 
-	cx.mount = async () => {
-		await fetchInfo();
-	};
-
 	return (
 		<div id="shore">
 			<ScrollingBackground animation="top" animationRoot={this.animationRoot}>

@@ -12,6 +12,8 @@ import { ForwardIcon } from "./ui/Icon";
 import "./epoxy";
 import { Dashboard } from "./frontend/main";
 import { Gallery } from "./frontend/gallery";
+import { clearCache, fetchInfo } from "./frontend/api";
+import { Reviews } from "./frontend/reviews";
 
 const Hero: Component<{}, {
 	shoreRoot: HTMLElement,
@@ -20,7 +22,7 @@ const Hero: Component<{}, {
 	bayTop: HTMLElement,
 	bayBottom: HTMLElement,
 	rsvpRoot: HTMLElement,
-}> = function(cx) {
+}, { "on:routeshown": () => void }> = function(cx) {
 	cx.css = `
 		.signup {
 			position: fixed;
@@ -29,6 +31,11 @@ const Hero: Component<{}, {
 			z-index: 2;
 		}
 	`;
+
+	this["on:routeshown"] = async () => {
+		clearCache();
+		await fetchInfo();
+	}
 
 	return (
 		<div id="app">
@@ -65,10 +72,6 @@ const Hero: Component<{}, {
 	)
 }
 
-const Page404: Component<{ param?: string }> = function() {
-	return <div>404 page not found: {use(this.param)}</div>
-}
-
 export let router = new Router([
 	{
 		show: <Hero />
@@ -82,8 +85,13 @@ export let router = new Router([
 		show: <Gallery />
 	},
 	{
-		path: ":param",
-		show: <Page404 />
+		path: "reviews",
+		children: [
+			{
+				path: ":project",
+				show: <Reviews />
+			}
+		]
 	}
 ]);
 router.mount(document.querySelector("#app")!)

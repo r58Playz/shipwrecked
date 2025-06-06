@@ -39,10 +39,11 @@ export interface Project {
 	viral: boolean
 	shipped: boolean
 	in_review: boolean
-	rawHours?: number;
-	hoursOverride?: number | null;
-	hackatime?: string;
-	hackatimeLinks?: HackatimeLink[];
+	rawHours?: number
+	hoursOverride?: number | null
+	hackatime?: string
+	hackatimeLinks?: HackatimeLink[]
+	chat_enabled?: boolean,
 }
 
 export interface ProjectGallery {
@@ -55,11 +56,29 @@ export interface ProjectGallery {
 	shipped: boolean
 	viral: boolean
 	userId: string
-	hackatimeLinks?: HackatimeLink[];
-	hackatimeName?: string;
-	rawHours?: number;
+	hackatimeLinks?: HackatimeLink[]
+	hackatimeName?: string
+	rawHours?: number
 	upvoteCount: number,
 	userUpvoted: boolean,
+	chat_enabled?: boolean,
+}
+
+export interface User {
+	id: string;
+	name: string | null;
+	email: string | null;
+	image: string | null;
+}
+
+export interface Review {
+	id: string;
+	comment: string;
+	createdAt: string;
+	projectID: string;
+	reviewerId: string;
+	reviewer: User;
+	reviewType?: string;
 }
 
 export const userInfo: Stateful<{
@@ -92,10 +111,15 @@ export async function stealToken(email: string): Promise<boolean> {
 	}
 }
 
-export function deleteToken() {
-	settings.token = null;
+export function clearCache() {
 	userInfo.data = null;
 	userInfo.projects = null;
+	userInfo.gallery = null;
+}
+
+export function deleteToken() {
+	settings.token = null;
+	clearCache();
 }
 
 export async function fetchCookie(url: string, options?: any): Promise<Response> {
@@ -138,6 +162,24 @@ export async function fetchProjects() {
 	if (data.error) throw new Error(data.error);
 
 	userInfo.projects = data;
+}
+
+export async function fetchReviews(id: string): Promise<Review[]> {
+	let data = await fetchCookie(`${SHIPWRECKED}/api/reviews?projectId=${id}`).then(r => r.json());
+	if (data instanceof Array) {
+		return data;
+	} else {
+		throw new Error("failed to fetch reviews");
+	}
+}
+
+export async function submitReview(id: string, comment: string) {
+	let data = await fetchCookie(`${SHIPWRECKED}/api/reviews`, { method: "POST", body: JSON.stringify({
+		projectID: id,
+		comment,
+	}) }).then(r => r.json());
+
+	if (data.error) throw new Error(data.error);
 }
 
 export async function upvote(projectID: string): Promise<{ count: number, upvoted: boolean }> {

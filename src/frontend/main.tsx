@@ -1,7 +1,7 @@
 import type { Component, DLBoundPointer } from "dreamland/core";
 
 import { RandomBackground } from "./background";
-import { calculateProgress, calculateProjectProgress, calculateShells, deleteToken, fetchProjects, getProjectHours, getTotalHours, userInfo, type HackatimeLink, type Project } from "./api";
+import { calculateProgress, calculateProjectProgress, calculateShells, clearCache, deleteToken, fetchInfo, fetchProjects, getProjectHours, getTotalHours, userInfo, type HackatimeLink, type Project } from "./api";
 import { Card } from "../ui/Card";
 import { Loading, UserName } from "./apiComponents";
 import { Button } from "../ui/Button";
@@ -271,6 +271,7 @@ const SelectedProject: Component<{ id: string, "on:close": () => void }> = funct
 					<div class="buttons">
 						<div>{project.codeUrl ? <Button on:click={() => window.open(project.codeUrl)}>Code<ForwardIcon /></Button> : null}</div>
 						<div>{project.playableUrl ? <Button on:click={() => window.open(project.playableUrl)}>Demo<ForwardIcon /></Button> : null}</div>
+						<div><Button on:click={() => router.navigate("/reviews/" + project.projectID)}>View Reviews<ForwardIcon /></Button></div>
 					</div>
 				</div>
 			</Card>
@@ -314,11 +315,6 @@ const RealDashboard: Component<{}, {
 		}
 	`;
 
-	cx.mount = async () => {
-		await new Promise(r => setTimeout(r, 100));
-		await fetchProjects();
-	}
-
 	this.selectedId = null;
 
 	return (
@@ -338,7 +334,7 @@ const RealDashboard: Component<{}, {
 	)
 }
 
-export const Dashboard: Component = function(cx) {
+export const Dashboard: Component<{}, {}, { "on:routeshown": () => void }> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -367,6 +363,12 @@ export const Dashboard: Component = function(cx) {
 	`;
 
 	let allData = use(userInfo.data).zip(use(userInfo.projects));
+
+	this["on:routeshown"] = async () => {
+		clearCache();
+		await fetchInfo();
+		await fetchProjects();
+	}
 
 	return (
 		<div>
