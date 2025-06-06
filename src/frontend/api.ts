@@ -214,7 +214,7 @@ export function calculateProjectProgress(project: Project): ShipwreckedProgress 
 	const hours = getProjectHours(project);
 
 	if (project?.viral) {
-		return { viral: 15, shipped: 0, unshipped: 0 };
+		return { viral: Math.min(hours, 15), shipped: 0, unshipped: 0 };
 	} else if (project?.shipped) {
 		return { viral: 0, shipped: Math.min(hours, 15), unshipped: 0 };
 	} else {
