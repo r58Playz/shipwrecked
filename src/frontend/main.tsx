@@ -252,7 +252,7 @@ const SelectedProject: Component<{ id: string, "on:close": () => void }> = funct
 				<div class="content">
 					<div>
 						<div class="headline">Time</div>
-						<div>Contributes {contribString} to <UserName />'s progress.</div>
+						<div>Contributes {contribString} to <UserName user={use(userInfo.data)} />'s progress.</div>
 						<HackatimeTable links={project.hackatimeLinks || []} />
 					</div>
 					<div>
@@ -320,7 +320,7 @@ const RealDashboard: Component<{}, {
 	return (
 		<div class="dashboard">
 			<div class="progress">
-				<Card title={<span><UserName />'s Progress</span>} small={true}>
+				<Card title={<span><UserName user={use(userInfo.data)} />'s Progress</span>} small={true}>
 					<ProgressBar />
 				</Card>
 			</div>

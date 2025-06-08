@@ -5,7 +5,8 @@ import { settings } from "../store";
 const TOKEN_COOKIE = "__Secure-next-auth.session-token";
 const SHIPWRECKED = "https://shipwrecked.hackclub.com";
 
-export interface UserData {
+export type UserStatus = "Unknown" | "L1" | "L2" | "FraudSuspect";
+export interface UserData extends User {
 	id: string,
 	hackatimeId: string,
 
@@ -18,7 +19,7 @@ export interface UserData {
 	email: string,
 	emailVerified: Date,
 
-	status: "Unknown" | "L1" | "L2" | "FraudSuspect",
+	status: UserStatus,
 }
 
 export interface HackatimeLink {
@@ -174,10 +175,12 @@ export async function fetchReviews(id: string): Promise<Review[]> {
 }
 
 export async function submitReview(id: string, comment: string) {
-	let data = await fetchCookie(`${SHIPWRECKED}/api/reviews`, { method: "POST", body: JSON.stringify({
-		projectID: id,
-		comment,
-	}) }).then(r => r.json());
+	let data = await fetchCookie(`${SHIPWRECKED}/api/reviews`, {
+		method: "POST", body: JSON.stringify({
+			projectID: id,
+			comment,
+		})
+	}).then(r => r.json());
 
 	if (data.error) throw new Error(data.error);
 }

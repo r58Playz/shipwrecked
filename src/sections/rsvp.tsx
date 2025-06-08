@@ -69,7 +69,7 @@ const Info: Component = function(cx) {
 	return (
 		<div>
 			<div>
-				Logged in as <UserName /> with Hackatime ID {use(userInfo.data).map(x => x?.hackatimeId)}.
+				Logged in as <UserName user={use(userInfo.data)} /> with Hackatime ID {use(userInfo.data).map(x => x?.hackatimeId)}.
 			</div>
 			<div class="options">
 				<Button on:click={() => deleteToken()}><BackIcon />Log Out</Button>
