@@ -10,6 +10,7 @@ import { TextInput } from "../ui/Input";
 import { deleteToken, fetchInfo, stealToken, userInfo } from "../frontend/api";
 import { UserName } from "../frontend/apiComponents";
 import { router } from "../main";
+import { settings } from "../store";
 
 const LogIn: Component<{}, {
 	emailLink: string,
@@ -109,6 +110,16 @@ export const RsvpPage: Component<{
 		}
 
 		.error { color: red; }
+
+		.wisp {
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
+		}
+
+		.wisp :global(input) {
+			flex: 1;
+		}
 	`;
 
 
@@ -121,6 +132,10 @@ export const RsvpPage: Component<{
 						<div class="card">
 							<div>
 								Note that this is not the official site. You can return to the official site using the button below.
+							</div>
+							<div class="wisp">
+								Wisp Server:
+								<TextInput value={use(settings.wispServer).bind()} placeholder="Wisp Server" />
 							</div>
 							{use(userInfo.data).andThen(<Info />, <LogIn />)}
 							<div class="options">
