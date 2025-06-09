@@ -13,30 +13,10 @@ import { fetch } from "../epoxy";
 
 let parser = new DOMParser();
 
-async function fetchImgur(url: URL): Promise<URL> {
+async function fetchTransform(url: URL, callback: (doc: Document) => string): Promise<URL> {
 	let html = parser.parseFromString(await fetch(url.toString()).then(r => r.text()), "text/html");
 
-	let src = (html.querySelector("meta[name='twitter:image']") as HTMLMetaElement).content;
-	let srcUrl = new URL(src);
-	srcUrl.search = "";
-
-	return srcUrl;
-}
-
-async function fetchIbb(url: URL): Promise<URL> {
-	let html = parser.parseFromString(await fetch(url.toString()).then(r => r.text()), "text/html");
-
-	let src = (html.querySelector(".image-viewer-container img") as HTMLImageElement).src;
-	let srcUrl = new URL(src);
-	srcUrl.search = "";
-
-	return srcUrl;
-}
-
-async function fetchPostImg(url: URL): Promise<URL> {
-	let html = parser.parseFromString(await fetch(url.toString()).then(r => r.text()), "text/html");
-
-	let src = (html.querySelector("#main-image") as HTMLImageElement).src;
+	let src = callback(html);
 	let srcUrl = new URL(src);
 	srcUrl.search = "";
 
@@ -93,11 +73,11 @@ async function preprocessScreenshot(urlStr: string, set: (str: string) => void, 
 	try {
 		let host = url.host.toLowerCase();
 		if (host === "imgur.com")
-			url = await fetchImgur(url);
+			url = await fetchTransform(url, x => (x.querySelector("meta[name='twitter:image']") as HTMLMetaElement).content);
 		else if (host === "ibb.co")
-			url = await fetchIbb(url);
+			url = await fetchTransform(url, x => (x.querySelector(".image-viewer-container img") as HTMLImageElement).src);
 		else if (host === "postimg.cc")
-			url = await fetchPostImg(url);
+			url = await fetchTransform(url, x => (x.querySelector("#main-image") as HTMLImageElement).src);
 		else if (host === "github.com" && (!url.search.toLowerCase().includes("raw") || !url.pathname.toLowerCase().includes("raw")))
 			url.searchParams.set("raw", "true");
 		else if (host === "drive.google.com") {
