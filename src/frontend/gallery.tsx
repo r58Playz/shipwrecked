@@ -1,7 +1,7 @@
 import { stateProxy, type Component } from "dreamland/core";
 
 import { router } from "../main";
-import { Loading } from "./apiComponents";
+import { Loading, UserName } from "./apiComponents";
 import { RandomBackground } from "./background";
 import { clearCache, fetchGallery, getProjectHours, upvote, userInfo, type ProjectGallery } from "./api";
 
@@ -176,6 +176,11 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 			background-color: #01663033;
 			color: #016630;
 		}
+
+		:scope :global(.Ui-UserName) {
+			font-size: 1.2em;
+			margin-bottom: 1rem;
+		}
 	`;
 
 	this.img = "Loading";
@@ -253,8 +258,9 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 
 	return (
 		<div>
-			<Card title={this.project.name} project={true}>
+			<Card title={this.project.name} project={true} noPadding={true}>
 				<div class="content">
+					<UserName user={use(this.project).map(x => x.user)} />
 					<div class="chips">
 						<span on:click={toggleUpvote} class="upvote" class:yellow={use(this.upvoted)}>{use(this.upvotes)} <span class="star">٭</span></span>
 						<span class="blue">{getProjectHours(this.project)}h</span>

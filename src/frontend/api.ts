@@ -57,6 +57,11 @@ export interface ProjectGallery {
 	shipped: boolean
 	viral: boolean
 	userId: string
+	user: {
+		name: string | null,
+		slack: string | null,
+		image: string | null,
+	},
 	hackatimeLinks?: HackatimeLink[]
 	hackatimeName?: string
 	rawHours?: number
