@@ -36,7 +36,8 @@ const LogIn: Component<{}, {
 	return (
 		<div>
 			<div>
-				This frontend requires you to use the <b>email</b> login method (so that it can steal the token to use). Right click and copy the log in link's address, then paste it here.
+				This frontend requires you to use the <b>email</b> login method (so that it can steal the token to use).{" "}
+				Right click and copy the log in link's address, then paste it here.
 			</div>
 			<div class="options">
 				<TextInput value={use(this.emailLink).bind()} placeholder="Email Link" />

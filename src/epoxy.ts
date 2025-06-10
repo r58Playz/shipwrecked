@@ -1,7 +1,8 @@
-import epoxyInit, { EpoxyClient, EpoxyClientOptions } from "@mercuryworkshop/epoxy-tls/minimal-epoxy";
+import epoxyInit, { EpoxyClient, EpoxyClientOptions, info as epoxyInfo } from "@mercuryworkshop/epoxy-tls/minimal-epoxy";
 import { settings } from "./store";
 import EPOXY_PATH from "../node_modules/@mercuryworkshop/epoxy-tls/minimal/epoxy.wasm?url";
-import { epoxyVersion } from "./epoxyVersion";
+
+export let epoxyVersion = epoxyInfo.version;
 
 let cache: Cache;
 let initted: boolean = false;
