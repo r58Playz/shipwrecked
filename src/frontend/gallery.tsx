@@ -10,6 +10,7 @@ import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { TextInput } from "../ui/Input";
 import { fetch } from "../epoxy";
+import { ToggleButton } from "../ui/ToggleButton";
 
 let parser = new DOMParser();
 
@@ -90,6 +91,9 @@ async function preprocessScreenshot(urlStr: string, set: (str: string) => void, 
 
 	return url.toString();
 }
+
+type ScreenshotEntry = { valid: true, url: string } | { valid: false, error: string };
+let screenshotUrlCache = new Map<string, ScreenshotEntry>();
 
 const GalleryProject: Component<{ project: ProjectGallery }, {
 	img: HTMLImageElement | HTMLVideoElement | string,
@@ -186,13 +190,30 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 
 		let isVideo = false;
 
-		try {
-			this.transformed = await preprocessScreenshot(this.transformed, x => this.transformed = x, () => isVideo = true);
-		} catch (err) {
-			if (typeof err === "string") {
-				this.img = err;
+		let cached = screenshotUrlCache.get(this.project.screenshot);
+		if (cached) {
+			if (cached.valid) {
+				this.transformed = cached.url;
+			} else {
+				this.img = cached.error;
 				return;
 			}
+		} else {
+			let entry: ScreenshotEntry = { valid: false, error: "" };
+			try {
+				this.transformed = await preprocessScreenshot(this.transformed, x => this.transformed = x, () => isVideo = true);
+				entry = { valid: true, url: this.transformed };
+			} catch (err) {
+				if (typeof err === "string") {
+					this.img = err;
+					entry = { valid: false, error: err };
+				}
+			}
+
+			screenshotUrlCache.set(this.project.screenshot, entry);
+
+			if (!entry.valid)
+				return;
 		}
 
 		let embed = isVideo ? document.createElement("video") : new Image();
@@ -266,7 +287,10 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 
 const RealGallery: Component<{}, {
 	projects: { el: HTMLElement, project: ProjectGallery }[],
-	filter: string,
+	search: string,
+	filterViral: boolean,
+	filterShipped: boolean,
+	sort: "upvotes" | "hours",
 }> = function(cx) {
 	cx.css = `
 		:scope {
@@ -286,6 +310,22 @@ const RealGallery: Component<{}, {
 			gap: 1em;
 		}
 
+		.filters {
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
+		}
+
+		.filtercard {
+			display: flex;
+			gap: 0.5rem;
+			flex-direction: column;
+		}
+
+		.stats {
+			text-align: center;
+		}
+
 		:scope > div > :global(.Ui-card > h1) {
 			text-align: center;
 		}
@@ -303,18 +343,32 @@ const RealGallery: Component<{}, {
 		}
 	`;
 
-	this.filter = "";
+	this.search = "";
+	this.sort = "upvotes" as ("upvotes" | "hours");
+	this.filterShipped = false;
+	this.filterViral = false;
 
 	stateProxy(this, "projects", use(userInfo.gallery).map(x => x || []).mapEach(x => ({ el: <GalleryProject project={x} />, project: x })));
 
-	let projects = use(this.projects).zip(use(this.filter)).map(([arr, filter]) => {
-		if (filter)
-			arr = arr.filter(x => x.project.name.toLowerCase().includes(filter.toLowerCase()));
+	let projects = use(this.projects).zip(use(this.search), use(this.sort), use(this.filterViral), use(this.filterShipped)).map(([arr, search, sort, viral, shipped]) => {
+		if (search)
+			arr = arr.filter(x => x.project.name.toLowerCase().includes(search.toLowerCase()));
+
+		if (viral)
+			arr = arr.filter(x => x.project.viral);
+		if (shipped)
+			arr = arr.filter(x => x.project.shipped);
 
 		return arr.sort(({ project: a }, { project: b }) => {
 			if (a.screenshot && !b.screenshot) return -1;
 			if (b.screenshot && !a.screenshot) return 1;
-			let ret = b.upvoteCount - a.upvoteCount;
+
+			let ret = 0;
+			if (sort === "upvotes")
+				ret = b.upvoteCount - a.upvoteCount;
+			else if (sort === "hours")
+				ret = getProjectHours(b) - getProjectHours(a);
+
 			return ret === 0 ? a.name.localeCompare(b.name) : ret;
 		});
 	}).mapEach(({ el }) => el);
@@ -323,7 +377,22 @@ const RealGallery: Component<{}, {
 		<div>
 			<div>
 				<Card title="Gallery">
-					<TextInput value={use(this.filter).bind()} placeholder="Search" />
+					<div class="filtercard">
+						<div class="stats">
+							{projects.map(x => x.length)} projects shown out of {use(this.projects).map(x => x.length)}
+						</div>
+						<TextInput value={use(this.search).bind()} placeholder="Search" />
+						<div class="filters">
+							Filter:
+							<ToggleButton value={use(this.filterViral).bind()}>Viral</ToggleButton>
+							<ToggleButton value={use(this.filterShipped).bind()}>Shipped</ToggleButton>
+						</div>
+						<div class="filters">
+							Sort:
+							<ToggleButton value={use(this.sort).bind().map(x => x === "upvotes", x => x ? "upvotes" : "hours")}>Upvotes</ToggleButton>
+							<ToggleButton value={use(this.sort).bind().map(x => x === "hours", x => x ? "hours" : "upvotes")}>Hours</ToggleButton>
+						</div>
+					</div>
 				</Card>
 			</div>
 			<div class="grid">
