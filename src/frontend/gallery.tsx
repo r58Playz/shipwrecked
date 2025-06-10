@@ -73,6 +73,7 @@ async function preprocessScreenshot(urlStr: string, set: (str: string) => void, 
 
 	try {
 		let host = url.host.toLowerCase();
+
 		if (host === "imgur.com")
 			url = await fetchTransform(url, x => (x.querySelector("meta[name='twitter:image']") as HTMLMetaElement).content);
 		else if (host === "ibb.co")
@@ -81,9 +82,9 @@ async function preprocessScreenshot(urlStr: string, set: (str: string) => void, 
 			url = await fetchTransform(url, x => (x.querySelector("#main-image") as HTMLImageElement).src);
 		else if (host === "github.com" && (!url.search.toLowerCase().includes("raw") || !url.pathname.toLowerCase().includes("raw")))
 			url.searchParams.set("raw", "true");
-		else if (host === "drive.google.com") {
+		else if (host === "drive.google.com")
 			return await fetchDrive(url, set, useVideo);
-		}
+
 	} catch (err) {
 		console.warn("transform failed for", urlStr, err);
 		throw `Failed to apply host-specific transform for "${url.host}"${typeof err === "string" ? `: ${err}` : ""}`;
@@ -113,7 +114,7 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 			flex: 1;
 		}
 
-		.img {
+		.embed {
 			flex: 1;
 			width: 100%;
 
@@ -126,7 +127,7 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 			aspect-ratio: 16 / 8;
 		}
 		
-		.img.text {
+		.embed.failed {
 			padding: 1em;
 
 			display: flex;
@@ -223,7 +224,7 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 		});
 
 		embed.src = this.transformed;
-		embed.classList.add("img");
+		embed.classList.add("embed");
 		if (this.transformed !== this.project.screenshot) {
 			console.debug("transformed", this.project.screenshot, "->", this.transformed.startsWith("data") ? "data url" : this.transformed);
 			embed.setAttribute("data-transform", this.project.screenshot);
@@ -264,7 +265,7 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 						<span on:click={() => router.navigate("/reviews/" + this.project.projectID + "/gallery")} class="upvote">Reviews</span>
 					</div>
 					{use(this.img).map(x => typeof x === "string" ? (
-						<div class="img text" data-url={this.project.screenshot} data-transform={this.transformed}>
+						<div class="embed failed" data-url={this.project.screenshot} data-transform={this.transformed}>
 							{x}
 							{this.project.screenshot ? (
 								<div class="chips">
