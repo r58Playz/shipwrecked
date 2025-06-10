@@ -291,6 +291,7 @@ const RealGallery: Component<{}, {
 	filterViral: boolean,
 	filterShipped: boolean,
 	sort: "upvotes" | "hours",
+	sortScreenshot: boolean,
 }> = function(cx) {
 	cx.css = `
 		:scope {
@@ -347,31 +348,37 @@ const RealGallery: Component<{}, {
 	this.sort = "upvotes" as ("upvotes" | "hours");
 	this.filterShipped = false;
 	this.filterViral = false;
+	this.sortScreenshot = true;
 
 	stateProxy(this, "projects", use(userInfo.gallery).map(x => x || []).mapEach(x => ({ el: <GalleryProject project={x} />, project: x })));
 
-	let projects = use(this.projects).zip(use(this.search), use(this.sort), use(this.filterViral), use(this.filterShipped)).map(([arr, search, sort, viral, shipped]) => {
-		if (search)
-			arr = arr.filter(x => x.project.name.toLowerCase().includes(search.toLowerCase()));
+	let projects = use(this.projects)
+		.zip(use(this.search), use(this.sort), use(this.sortScreenshot), use(this.filterViral), use(this.filterShipped))
+		.map(([arr, search, sort, sortScreenshot, viral, shipped]) => {
+			if (search)
+				arr = arr.filter(x => x.project.name.toLowerCase().includes(search.toLowerCase()));
 
-		if (viral)
-			arr = arr.filter(x => x.project.viral);
-		if (shipped)
-			arr = arr.filter(x => x.project.shipped);
+			if (viral)
+				arr = arr.filter(x => x.project.viral);
+			if (shipped)
+				arr = arr.filter(x => x.project.shipped);
 
-		return arr.sort(({ project: a }, { project: b }) => {
-			if (a.screenshot && !b.screenshot) return -1;
-			if (b.screenshot && !a.screenshot) return 1;
+			return arr.sort(({ project: a }, { project: b }) => {
+				if (sortScreenshot) {
+					if (a.screenshot && !b.screenshot) return -1;
+					if (b.screenshot && !a.screenshot) return 1;
+				}
 
-			let ret = 0;
-			if (sort === "upvotes")
-				ret = b.upvoteCount - a.upvoteCount;
-			else if (sort === "hours")
-				ret = getProjectHours(b) - getProjectHours(a);
+				let ret = 0;
+				if (sort === "upvotes")
+					ret = b.upvoteCount - a.upvoteCount;
+				else if (sort === "hours")
+					ret = getProjectHours(b) - getProjectHours(a);
 
-			return ret === 0 ? a.name.localeCompare(b.name) : ret;
-		});
-	}).mapEach(({ el }) => el);
+				return ret === 0 ? a.name.localeCompare(b.name) : ret;
+			});
+		})
+		.mapEach(({ el }) => el);
 
 	return (
 		<div>
@@ -392,6 +399,7 @@ const RealGallery: Component<{}, {
 							<ToggleButton value={use(this.sort).bind().map(x => x === "upvotes", x => x ? "upvotes" : "hours")}>Upvotes</ToggleButton>
 							<ToggleButton value={use(this.sort).bind().map(x => x === "hours", x => x ? "hours" : "upvotes")}>Hours</ToggleButton>
 						</div>
+						<ToggleButton value={use(this.sortScreenshot).bind()}>Sort screenshotless projects away</ToggleButton>
 					</div>
 				</Card>
 			</div>
