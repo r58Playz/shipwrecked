@@ -1,6 +1,6 @@
 import type { Component, DLPointer } from "dreamland/core";
 
-import { calculateProgress, calculateShells, clearCache, fetchGallery, fetchInfo, fetchReviews, getTotalHours, userInfo, type MinimalProject, type ProjectGallery, type Review, type UserData } from "./api";
+import { calculateProgress, calculateShells, clearCache, fetchGallery, fetchInfo, fetchReviews, getProjectHours, getTotalHours, userInfo, type MinimalProject, type ProjectGallery, type Review, type UserData } from "./api";
 
 import { RandomBackground } from "./background";
 import { Loading, ProgressBar, UserName } from "./apiComponents";
@@ -67,6 +67,14 @@ function lookupGraham(graham: UserClusterAnalysis, id: string) {
 	return { category: "unknown", description: "#ERROR!", emoji: "❌" };
 }
 
+function islandStatus(user: GalleryUser): "invitation" | "waitlist" | undefined {
+	if (user.projects.filter(x => getProjectHours(x) >= 15).length >= 4) {
+		if (!!user.projects.find(x => x.viral))
+			return "invitation";
+		return "waitlist";
+	}
+}
+
 export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserClusterAnalysis, scammer: GalleryUser[], self: UserData }> = function(cx) {
 	cx.css = `
 		:scope {
@@ -107,11 +115,50 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 			gap: 0.5rem;
 			align-items: center;
 
+			margin-bottom: 0.5rem;
+			padding-bottom: 0.5rem;
 			border-bottom: 1px currentColor solid;
 		}
 
 		.scammer > * {
 			flex: 1;
+		}
+		.scammer .name {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		.chips {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+
+		.chips > span, .chips > a {
+			backdrop-filter: blur(2px);
+			border-radius: 1rem;
+			padding: 0 0.5rem;
+			color: unset;
+			white-space: nowrap;
+		}
+
+		.shipper {
+			background-color: #efb10033;
+			color: #efb100;
+		}
+		.whale {
+			background-color: #155dfc33;
+			color: #155dfc;
+		}
+
+		.invitation {
+			background-color: #a3004c33;
+			color: #a3004c;
+		}
+		.waitlist {
+			background-color: #01663033;
+			color: #016630;
 		}
 	`;
 
@@ -172,6 +219,8 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 			</Card>
 			<div class="group">
 				<Card title="Categories" project={true}>
+					<div>Invitations: {use(this.scammer).mapEach(islandStatus).map(x => x.filter(x => x === "invitation").length)}</div>
+					<div>Waitlists: {use(this.scammer).mapEach(islandStatus).map(x => x.filter(x => x === "waitlist").length)}</div>
 					<div>Whales: {use(this.graham).map(x => x.clusters.whales.count)}</div>
 					<div>Shippers: {use(this.graham).map(x => x.clusters.shippers.count)}</div>
 					<div>Newbies: {use(this.graham).map(x => x.clusters.newbies.count)}</div>
@@ -185,10 +234,14 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 			<div class="group">
 				<Card title="Everyone" small={true}>
 					<div class="card">
-						{use(this.scammer).mapEach((x, i) => (
+						{use(this.scammer).mapEach(x => ({ ...x, graham: lookupGraham(this.graham, x.user.id), island: islandStatus(x) })).mapEach((x, i) => (
 							<div class="scammer">
 								<div class="name">
-									{x.user.name || "#ERROR!"} (#{i})- {lookupGraham(this.graham, x.user.id).emoji} {lookupGraham(this.graham, x.user.id).category}
+									<div>#{i + 1}: <UserName user={x.user as any} /></div>
+									<div class="chips">
+										<span class={x.graham.category}>{x.graham.emoji} {x.graham.category}</span>
+										{x.island ? <span class={x.island}>{x.island}</span> : null}
+									</div>
 								</div>
 								{<ProgressBar projects={x.projects as any as DLPointer<MinimalProject[]>} />}
 							</div>

@@ -2,6 +2,8 @@ import type { Component, DLBasePointer } from "dreamland/core";
 import { calculateProgress, calculateShells, getTotalHours, type MinimalProject, type UserStatus } from "./api";
 import { Card } from "../ui/Card";
 
+import logo from "../sections/logo.svg";
+
 type UserNameUser = { image: string | null, name: string | null, status?: UserStatus } | null;
 export const UserName: Component<{ user: DLBasePointer<UserNameUser> }> = function(cx) {
 	cx.css = `
@@ -36,8 +38,8 @@ export const UserName: Component<{ user: DLBasePointer<UserNameUser> }> = functi
 
 	return (
 		<span class="Ui-UserName">
-			<img src={use(this.user).map(x => x?.image)} />
-			{use(this.user).map(x => x?.name)}
+			<img src={use(this.user).map(x => x?.image || logo)} />
+			{use(this.user).map(x => x?.name || "#ERROR!")}
 			{use(this.user).map(x => x?.status).andThen((x: string) => <span class={`chip ${x}`}>{x}</span>)}
 		</span>
 	)
