@@ -62,8 +62,8 @@ export interface ProjectGallery {
 		slack: string | null,
 		image: string | null,
 	},
-	hackatimeLinks?: HackatimeLink[]
 	hackatimeName?: string
+	hackatimeLinks?: HackatimeLink[]
 	rawHours?: number
 	upvoteCount: number,
 	userUpvoted: boolean,
@@ -218,7 +218,15 @@ export interface ShipwreckedProgress {
 	unshipped: number,
 }
 
-export function calculateProjectProgress(project: Project): ShipwreckedProgress {
+export interface MinimalProject {
+	projectID: string,
+	hackatimeLinks?: HackatimeLink[]
+	rawHours?: number,
+	viral: boolean,
+	shipped: boolean,
+}
+
+export function calculateProjectProgress(project: MinimalProject): ShipwreckedProgress {
 	const hours = getProjectHours(project);
 
 	if (project?.viral) {
@@ -234,11 +242,11 @@ export function getTotalHours(progress: ShipwreckedProgress): number {
 	return progress.viral + progress.shipped + progress.unshipped;
 }
 
-function sortProjects(projects: Project[]): Project[] {
+function sortProjects(projects: MinimalProject[]): MinimalProject[] {
 	return projects.sort((a, b) => getTotalHours(calculateProjectProgress(b)) - getTotalHours(calculateProjectProgress(a)));
 }
 
-export function calculateProgress(projects: Project[]): ShipwreckedProgress {
+export function calculateProgress(projects: MinimalProject[]): ShipwreckedProgress {
 	let viral = 0;
 	let shipped = 0;
 	let unshipped = 0;
@@ -256,7 +264,7 @@ export function calculateProgress(projects: Project[]): ShipwreckedProgress {
 	};
 }
 
-export function calculateShells(projects: Project[]): number {
+export function calculateShells(projects: MinimalProject[]): number {
 	const phi = (1 + Math.sqrt(5)) / 2;
 	const top4 = sortProjects(projects).slice(0, 4).map(x => x.projectID);
 

@@ -1,5 +1,5 @@
 import type { Component, DLBasePointer } from "dreamland/core";
-import { type UserStatus } from "./api";
+import { calculateProgress, calculateShells, getTotalHours, type MinimalProject, type UserStatus } from "./api";
 import { Card } from "../ui/Card";
 
 type UserNameUser = { image: string | null, name: string | null, status?: UserStatus } | null;
@@ -55,6 +55,71 @@ export const Loading: Component = function(cx) {
 	return (
 		<div>
 			<Card title="Loading"></Card>
+		</div>
+	)
+}
+
+export const ProgressBar: Component<{ projects: DLBasePointer<MinimalProject[]> }, {}> = function(cx) {
+	cx.css = `
+		:scope {
+			max-width: 576px;
+			width: 100%;
+
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.bar {
+			align-self: stretch;
+			height: 1rem;
+
+			background: #e5e7eb;
+			border-radius: 1rem;
+			overflow: hidden;
+
+			display: flex;
+			align-items: center;
+		}
+
+		.bar > * {
+			height: 1rem;
+		}
+
+		.viral {
+			background: #f59e0b;
+		}
+		.shipped {
+			background: #10b981;
+		}
+		.unshipped {
+			background-color: #3b82f6;
+			background-size: 30px 30px;
+			background-image: linear-gradient(135deg, rgba(255, 255, 255, .2) 25%, transparent 0, transparent 50%, rgba(255, 255, 255, .2) 0, rgba(255, 255, 255, .2) 75%, transparent 0, transparent);
+			animation: unshippedAnimation .75s linear infinite;
+		}
+
+		b {
+			font-size: 1.5rem;
+		}
+
+		@keyframes unshippedAnimation {
+			0% { background-position: 0 0 }
+			100% { background-position: 60px 0 }
+		}
+	`;
+
+	const progress = use(this.projects).map(x => x ? calculateProgress(x) : { viral: 0, shipped: 0, unshipped: 0 });
+	const shells = use(this.projects).map(x => x ? calculateShells(x) : 0);
+
+	return (
+		<div>
+			<div class="bar">
+				<div class="viral" style={progress.map(x => `width: ${x.viral}%`)} />
+				<div class="shipped" style={progress.map(x => `width: ${x.shipped}%`)} />
+				<div class="unshipped" style={progress.map(x => `width: ${x.unshipped}%`)} />
+			</div>
+			<b>{progress.map(x => getTotalHours(x).toFixed(0))}% - {shells} 🐚</b>
 		</div>
 	)
 }

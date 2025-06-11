@@ -1,15 +1,50 @@
-import type { Component } from "dreamland/core";
+import type { Component, DLPointer } from "dreamland/core";
 
-import { clearCache, fetchGallery, fetchInfo, fetchReviews, userInfo, type ProjectGallery, type Review, type UserData } from "./api";
+import { calculateProgress, calculateShells, clearCache, fetchGallery, fetchInfo, fetchReviews, getTotalHours, userInfo, type MinimalProject, type ProjectGallery, type Review, type UserData } from "./api";
 
 import { RandomBackground } from "./background";
-import { Loading, UserName } from "./apiComponents";
+import { Loading, ProgressBar, UserName } from "./apiComponents";
 import { Card } from "../ui/Card";
 import { galleryToMetrics, generateUserClusterAnalysis, type UserClusterAnalysis } from "./clustering";
 
 type EnhancedGallery = { project: ProjectGallery, reviews?: Review[] };
 
-export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserClusterAnalysis, self: UserData }> = function(cx) {
+interface GalleryUser {
+	user: {
+		id: string,
+		name: string | null,
+		slack: string | null,
+		image: string | null,
+	},
+	projects: ProjectGallery[],
+}
+
+function galleryToUsers(gallery: ProjectGallery[]): GalleryUser[] {
+	let map = new Map<string, GalleryUser>();
+
+	for (const project of gallery) {
+		const mapMetrics = map.get(project.userId);
+		let user: GalleryUser;
+		if (mapMetrics) {
+			user = mapMetrics;
+		} else {
+			user = {
+				user: {
+					id: project.userId,
+					...project.user
+				},
+				projects: []
+			};
+			map.set(project.userId, user);
+		}
+
+		user.projects.push(project);
+	}
+
+	return [...map.values()];
+}
+
+export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserClusterAnalysis, scammer: GalleryUser[], self: UserData }> = function(cx) {
 	cx.css = `
 		:scope {
 			display: flex;
@@ -42,6 +77,18 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 			overflow: scroll;
 			height: 0;
 			min-height: calc(100% - 3.5rem);
+		}
+
+		.scammer {
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
+
+			border-bottom: 1px currentColor solid;
+		}
+
+		.scammer > * {
+			flex: 1;
 		}
 	`;
 
@@ -133,6 +180,20 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 					</div>
 				</Card>
 			</div>
+			<div class="group">
+				<Card title="Everyone" small={true}>
+					<div class="card">
+						{use(this.scammer).mapEach(x => (
+							<div class="scammer">
+								<div class="name">
+									{x.user.name || "#ERROR!"}
+								</div>
+								{<ProgressBar projects={x.projects as any as DLPointer<MinimalProject[]>} />}
+							</div>
+						))}
+					</div>
+				</Card>
+			</div>
 		</div>
 	)
 }
@@ -140,6 +201,7 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 export const ApiScamming: Component<{}, {
 	enhancedGallery: EnhancedGallery[] | null,
 	graham: UserClusterAnalysis | null,
+	scammer: GalleryUser[] | null,
 }, { "on:routeshown": () => void }> = function(cx) {
 	cx.css = `
 		:scope {
@@ -171,11 +233,17 @@ export const ApiScamming: Component<{}, {
 			// stupid test project 
 			this.enhancedGallery = enhanced.filter(x => x.project.projectID !== "27504540-15dc-4226-ace4-ccc4d394d213");
 			this.graham = generateUserClusterAnalysis(galleryToMetrics(x));
+			this.scammer = galleryToUsers(x).sort((a, b) => {
+				let progress = getTotalHours(calculateProgress(b.projects)) - getTotalHours(calculateProgress(a.projects));
+				let shells = calculateShells(b.projects) - calculateShells(a.projects);
+				return progress === 0 ? shells : progress;
+			});
 			console.log("graham", this.graham);
+			console.log("scammer", this.scammer);
 		}
 	});
 
-	let allData = use(this.enhancedGallery).zip(use(this.graham), use(userInfo.data));
+	let allData = use(this.enhancedGallery).zip(use(this.graham), use(this.scammer), use(userInfo.data));
 
 	this["on:routeshown"] = async () => {
 		clearCache();
@@ -186,8 +254,8 @@ export const ApiScamming: Component<{}, {
 	return (
 		<div>
 			<RandomBackground />
-			{allData.map(([gallery, graham, self]) => (
-				gallery && graham && self ? <RealScamming gallery={gallery} graham={graham} self={self} /> : <Loading />
+			{allData.map(([gallery, graham, scammer, self]) => (
+				gallery && graham && scammer && self ? <RealScamming gallery={gallery} graham={graham} self={self} scammer={scammer} /> : <Loading />
 			))}
 		</div>
 	)
