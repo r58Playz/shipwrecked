@@ -14,6 +14,7 @@ import { Dashboard } from "./frontend/main";
 import { Gallery } from "./frontend/gallery";
 import { clearCache, fetchInfo } from "./frontend/api";
 import { Reviews } from "./frontend/reviews";
+import { ApiScamming } from "./frontend/scamming";
 
 const Hero: Component<{}, {
 	shoreRoot: HTMLElement,
@@ -83,6 +84,10 @@ export let router = new Router([
 	{
 		path: "gallery",
 		show: <Gallery />
+	},
+	{
+		path: "scamming",
+		show: <ApiScamming />
 	},
 	{
 		path: "reviews",
