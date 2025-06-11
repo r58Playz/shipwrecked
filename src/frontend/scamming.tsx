@@ -44,6 +44,29 @@ function galleryToUsers(gallery: ProjectGallery[]): GalleryUser[] {
 	return [...map.values()];
 }
 
+function lookupGraham(graham: UserClusterAnalysis, id: string) {
+	const cats = graham.clusters;
+	const descriptions = {
+		whale: 'high-impact creator with significant hours, multiple projects, and regular shipping',
+		shipper: 'active contributor with balanced engagement and shipping activity',
+		newbie: 'new or low-activity user with minimal projects and shipping'
+	};
+	const emojis = {
+		whale: "🐳",
+		shipper: "📦",
+		newbie: "👶",
+	};
+
+	for (const _cat in cats) {
+		let cat: "whales" | "shippers" | "newbies" = _cat as any;
+		if (cats[cat].users.includes(id)) {
+			const name: "whale" | "shipper" | "newbie" = cat.slice(0, cat.length - 1) as any;
+			return { category: name, description: descriptions[name], emoji: emojis[name] };
+		}
+	}
+	return { category: "unknown", description: "#ERROR!", emoji: "❌" };
+}
+
 export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserClusterAnalysis, scammer: GalleryUser[], self: UserData }> = function(cx) {
 	cx.css = `
 		:scope {
@@ -105,28 +128,7 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 		.map(x => x.sort((a, b) => (a.project.user.name || "").localeCompare(b.project.user.name || "")))
 		.map(x => x.filter((x, i, s) => x.project.shipped && i === s.findIndex(y => x.project.userId === y.project.userId)))
 
-	let currentUser = use(this.graham).map(x => {
-		const cats = x.clusters;
-		const descriptions = {
-			whale: 'high-impact creator with significant hours, multiple projects, and regular shipping',
-			shipper: 'active contributor with balanced engagement and shipping activity',
-			newbie: 'new or low-activity user with minimal projects and shipping'
-		};
-		const emojis = {
-			whale: "🐳",
-			shipper: "📦",
-			newbie: "👶",
-		};
-
-		for (const _cat in cats) {
-			let cat: "whales" | "shippers" | "newbies" = _cat as any;
-			if (cats[cat].users.includes(this.self.id)) {
-				const name: "whale" | "shipper" | "newbie" = cat.slice(0, cat.length - 1) as any;
-				return { category: name, description: descriptions[name], emoji: emojis[name] };
-			}
-		}
-		return { category: "unknown", description: "#ERROR!", emoji: "❌" };
-	});
+	let currentUser = use(this.graham).map(x => lookupGraham(x, this.self.id));
 
 	return (
 		<div>
@@ -183,10 +185,10 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 			<div class="group">
 				<Card title="Everyone" small={true}>
 					<div class="card">
-						{use(this.scammer).mapEach(x => (
+						{use(this.scammer).mapEach((x, i) => (
 							<div class="scammer">
 								<div class="name">
-									{x.user.name || "#ERROR!"}
+									{x.user.name || "#ERROR!"} (#{i})- {lookupGraham(this.graham, x.user.id).emoji} {lookupGraham(this.graham, x.user.id).category}
 								</div>
 								{<ProgressBar projects={x.projects as any as DLPointer<MinimalProject[]>} />}
 							</div>
