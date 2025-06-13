@@ -68,6 +68,8 @@ export interface ProjectGallery {
 	upvoteCount: number,
 	userUpvoted: boolean,
 	chat_enabled?: boolean,
+	chatCount: number,
+	lastChatActivity: string | null,
 }
 
 export interface User {
@@ -85,6 +87,14 @@ export interface Review {
 	reviewerId: string;
 	reviewer: User;
 	reviewType?: string;
+}
+
+export interface ChatMessage {
+	id: string,
+	content: string,
+	userId: string,
+	createdAt: string,
+	isAuthor: boolean,
 }
 
 export const userInfo: Stateful<{
@@ -197,6 +207,24 @@ export async function upvote(projectID: string): Promise<{ count: number, upvote
 	} else {
 		throw new Error("failed to upvote");
 	}
+}
+
+export async function fetchChat(id: string): Promise<ChatMessage[]> {
+	let data = await fetchCookie(`${SHIPWRECKED}/api/projects/${id}/chat/messages`).then(r => r.json());
+	if (data instanceof Array) {
+		return data;
+	} else {
+		throw new Error("failed to fetch chat: " + JSON.stringify(data));
+	}
+}
+export async function submitChat(id: string, comment: string) {
+	let data = await fetchCookie(`${SHIPWRECKED}/api/projects/${id}/chat/messages`, {
+		method: "POST", body: JSON.stringify({
+			content: comment,
+		})
+	}).then(r => r.json());
+
+	if (data.error) throw new Error(data.error);
 }
 
 // stolen and cleaned up from the real shipwrecked

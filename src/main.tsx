@@ -15,6 +15,7 @@ import { Gallery } from "./frontend/gallery";
 import { clearCache, fetchInfo } from "./frontend/api";
 import { Reviews } from "./frontend/reviews";
 import { ApiScamming } from "./frontend/scamming";
+import { Chat } from "./frontend/chat";
 
 const Hero: Component<{}, {
 	shoreRoot: HTMLElement,
@@ -97,6 +98,10 @@ export let router = new Router([
 				show: <Reviews />
 			}
 		]
+	},
+	{
+		path: "chat/:project/:location",
+		show: <Chat />
 	}
 ]);
 router.mount(document.querySelector("#app")!)

@@ -269,6 +269,9 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 						{this.project.codeUrl ? <a href={this.project.codeUrl} target="_blank">Code</a> : null}
 						{this.project.playableUrl ? <a href={this.project.playableUrl} target="_blank">Demo</a> : null}
 						<span on:click={() => router.navigate("/reviews/" + this.project.projectID + "/gallery")} class="upvote">Reviews</span>
+						{this.project.chat_enabled ?
+							<span on:click={() => router.navigate("/chat/" + this.project.projectID + "/gallery")} class="upvote">Chat ({this.project.chatCount})</span>
+						: null}
 					</div>
 					{use(this.img).map(x => typeof x === "string" ? (
 						<div class="embed failed" data-url={this.project.screenshot} data-transform={this.transformed}>
