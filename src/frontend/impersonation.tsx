@@ -1,6 +1,6 @@
 import type { Component } from "dreamland/core";
 
-import { fetchGallery, fetchReviews, submitReview, userInfo, type Review } from "./api";
+import { fetchGallery, userInfo, } from "./api";
 import { RandomBackground } from "./background";
 import { DashboardComponent, Loading } from "./apiComponents";
 import { Button } from "../ui/Button";
