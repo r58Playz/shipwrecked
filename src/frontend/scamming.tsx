@@ -6,10 +6,13 @@ import { RandomBackground } from "./background";
 import { Loading, ProgressBar, UserName } from "./apiComponents";
 import { Card } from "../ui/Card";
 import { galleryToMetrics, generateUserClusterAnalysis, type UserClusterAnalysis } from "./clustering";
+import { Button } from "../ui/Button";
+import { router } from "../main";
+import { ForwardIcon } from "../ui/Icon";
 
 type EnhancedGallery = { project: ProjectGallery, reviews?: Review[] };
 
-interface GalleryUser {
+export interface GalleryUser {
 	user: {
 		id: string,
 		name: string | null,
@@ -19,7 +22,7 @@ interface GalleryUser {
 	projects: ProjectGallery[],
 }
 
-function galleryToUsers(gallery: ProjectGallery[]): GalleryUser[] {
+export function galleryToUsers(gallery: ProjectGallery[]): GalleryUser[] {
 	let map = new Map<string, GalleryUser>();
 
 	for (const project of gallery) {
@@ -243,7 +246,8 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 										{x.island ? <span class={x.island}>{x.island}</span> : null}
 									</div>
 								</div>
-								{<ProgressBar projects={x.projects as any as DLPointer<MinimalProject[]>} />}
+								<ProgressBar projects={x.projects as any as DLPointer<MinimalProject[]>} />
+								<Button on:click={() => router.navigate("/impersonate/" + x.user.id)}>Impersonate<ForwardIcon /></Button>
 							</div>
 						))}
 					</div>

@@ -16,6 +16,7 @@ import { clearCache, fetchInfo } from "./frontend/api";
 import { Reviews } from "./frontend/reviews";
 import { ApiScamming } from "./frontend/scamming";
 import { Chat } from "./frontend/chat";
+import { Impersonation } from "./frontend/impersonation";
 
 const Hero: Component<{}, {
 	shoreRoot: HTMLElement,
@@ -102,6 +103,10 @@ export let router = new Router([
 	{
 		path: "chat/:project/:location",
 		show: <Chat />
+	},
+	{
+		path: "impersonate/:user",
+		show: <Impersonation />
 	}
 ]);
 router.mount(document.querySelector("#app")!)
