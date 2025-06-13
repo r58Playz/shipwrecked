@@ -1,5 +1,5 @@
 import type { Component, DLBasePointer, DLBoundPointer, DLPointer } from "dreamland/core";
-import { calculateProgress, calculateProjectProgress, calculateShells, getProjectHours, getTotalHours, type HackatimeLink, type MinimalProject, type Project, type UserStatus } from "./api";
+import { calculateProgress, calculateProjectProgress, calculateShells, getProjectHours, getTotalHours, type HackatimeLink, type MinimalProject, type Project, type ProjectCommon, type UserStatus } from "./api";
 import { Card } from "../ui/Card";
 
 import logo from "../sections/logo.svg";
@@ -129,7 +129,9 @@ export const ProgressBar: Component<{ projects: DLBasePointer<MinimalProject[]> 
 	)
 }
 
-const ProjectsTable: Component<{ projects: DLPointer<Project[]>, selectedId: DLBoundPointer<string | null> }> = function(cx) {
+type MaybeCommonProject = ProjectCommon | Project;
+
+const ProjectsTable: Component<{ projects: DLPointer<MaybeCommonProject[]>, selectedId: DLBoundPointer<string | null> }> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -151,8 +153,8 @@ const ProjectsTable: Component<{ projects: DLPointer<Project[]>, selectedId: DLB
 		}
 	`;
 
-	function mapState(project: Project): string {
-		if (project.in_review)
+	function mapState(project: MaybeCommonProject): string {
+		if ("in_review" in project && project.in_review)
 			return "In Review";
 		else if (project.viral)
 			return "Viral";
@@ -225,7 +227,7 @@ const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
 	)
 }
 
-const SelectedProject: Component<{ project: Project, projects: Project[], user: UserNameUser, "on:close": () => void }> = function(cx) {
+const SelectedProject: Component<{ project: MaybeCommonProject, projects: MaybeCommonProject[], user: UserNameUser, "on:close": () => void }> = function(cx) {
 	cx.css = `
 		:scope, :scope :global(.Ui-card) {
 			height: 100%;
@@ -322,7 +324,7 @@ const SelectedProject: Component<{ project: Project, projects: Project[], user: 
 						<div class="headline">Stats</div>
 						<div><b>Viral:</b> {this.project.viral}</div>
 						<div><b>Shipped:</b> {this.project.shipped}</div>
-						<div><b>In review:</b> {this.project.in_review}</div>
+						{"in_review" in this.project ? <div><b>In review:</b> {this.project.in_review}</div> : null}
 					</div>
 					<div class="buttons">
 						<div>{this.project.codeUrl ? <Button on:click={() => window.open(this.project.codeUrl)}>Code<ForwardIcon /></Button> : null}</div>
@@ -343,7 +345,7 @@ const SelectedProject: Component<{ project: Project, projects: Project[], user: 
 
 export const DashboardComponent: Component<{
 	user: UserNameUser,
-	projects: Project[],
+	projects: MaybeCommonProject[],
 }, {
 	selectedId: string | null
 }> = function(cx) {

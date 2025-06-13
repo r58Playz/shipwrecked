@@ -29,45 +29,35 @@ export interface HackatimeLink {
 	hoursOverride?: number | null;
 }
 
-export interface Project {
+export interface ProjectCommon {
 	projectID: string
 	name: string
 	description: string
 	codeUrl: string
 	playableUrl: string
 	screenshot: string
-	userId: string
-	viral: boolean
 	shipped: boolean
-	in_review: boolean
-	rawHours?: number
-	hoursOverride?: number | null
+	viral: boolean
+	userId: string
 	hackatime?: string
 	hackatimeLinks?: HackatimeLink[]
+	rawHours?: number
 	chat_enabled?: boolean,
 }
 
-export interface ProjectGallery {
-	projectID: string
-	name: string
-	description: string
-	codeUrl: string
-	playableUrl: string
-	screenshot: string
-	shipped: boolean
-	viral: boolean
-	userId: string
+export interface Project extends ProjectCommon {
+	in_review: boolean
+	hoursOverride?: number | null
+}
+
+export interface ProjectGallery extends ProjectCommon {
 	user: {
 		name: string | null,
 		slack: string | null,
 		image: string | null,
 	},
-	hackatimeName?: string
-	hackatimeLinks?: HackatimeLink[]
-	rawHours?: number
 	upvoteCount: number,
 	userUpvoted: boolean,
-	chat_enabled?: boolean,
 	chatCount: number,
 	lastChatActivity: string | null,
 }
