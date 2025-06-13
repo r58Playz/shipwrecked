@@ -271,7 +271,7 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 						<span on:click={() => router.navigate("/reviews/" + this.project.projectID + "/gallery")} class="upvote">Reviews</span>
 						{this.project.chat_enabled ?
 							<span on:click={() => router.navigate("/chat/" + this.project.projectID + "/gallery")} class="upvote">Chat ({this.project.chatCount})</span>
-						: null}
+							: null}
 					</div>
 					{use(this.img).map(x => typeof x === "string" ? (
 						<div class="embed failed" data-url={this.project.screenshot} data-transform={this.transformed}>
@@ -300,6 +300,7 @@ const RealGallery: Component<{}, {
 	search: string,
 	filterViral: boolean,
 	filterShipped: boolean,
+	filterChat: boolean,
 	sort: "upvotes" | "hours",
 	sortScreenshot: boolean,
 }> = function(cx) {
@@ -358,13 +359,14 @@ const RealGallery: Component<{}, {
 	this.sort = "upvotes" as ("upvotes" | "hours");
 	this.filterShipped = false;
 	this.filterViral = false;
+	this.filterChat = false;
 	this.sortScreenshot = true;
 
 	stateProxy(this, "projects", use(userInfo.gallery).map(x => x || []).mapEach(x => ({ el: <GalleryProject project={x} />, project: x })));
 
 	let projects = use(this.projects)
-		.zip(use(this.search), use(this.sort), use(this.sortScreenshot), use(this.filterViral), use(this.filterShipped))
-		.map(([arr, search, sort, sortScreenshot, viral, shipped]) => {
+		.zip(use(this.search), use(this.sort), use(this.sortScreenshot), use(this.filterViral), use(this.filterShipped), use(this.filterChat))
+		.map(([arr, search, sort, sortScreenshot, viral, shipped, chat]) => {
 			if (search)
 				arr = arr.filter(x => x.project.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -372,6 +374,8 @@ const RealGallery: Component<{}, {
 				arr = arr.filter(x => x.project.viral);
 			if (shipped)
 				arr = arr.filter(x => x.project.shipped);
+			if (chat)
+				arr = arr.filter(x => x.project.chat_enabled);
 
 			return arr.sort(({ project: a }, { project: b }) => {
 				if (sortScreenshot) {
@@ -396,13 +400,15 @@ const RealGallery: Component<{}, {
 				<Card title="Gallery">
 					<div class="filtercard">
 						<div class="stats">
-							{projects.map(x => x.length)} projects shown out of {use(this.projects).map(x => x.length)}
+							{projects.map(x => x.length)} projects shown out of {use(this.projects).map(x => x.length)}{" "}
+							({use(this.projects).map(x => x.length).zip(projects.map(x => x.length)).map(([b, t]) => (t / b * 100).toFixed(1))}%)
 						</div>
 						<TextInput value={use(this.search).bind()} placeholder="Search" />
 						<div class="filters">
 							Filter:
 							<ToggleButton value={use(this.filterViral).bind()}>Viral</ToggleButton>
 							<ToggleButton value={use(this.filterShipped).bind()}>Shipped</ToggleButton>
+							<ToggleButton value={use(this.filterChat).bind()}>Chat Enabled</ToggleButton>
 						</div>
 						<div class="filters">
 							Sort:

@@ -138,6 +138,7 @@ const SelectedProject: Component<{ id: string, "on:close": () => void }> = funct
 		.buttons {
 			display: flex;
 			gap: 1em;
+			flex-wrap: wrap;
 		}
 
 		.close-container {
@@ -207,6 +208,12 @@ const SelectedProject: Component<{ id: string, "on:close": () => void }> = funct
 						<div>{project.codeUrl ? <Button on:click={() => window.open(project.codeUrl)}>Code<ForwardIcon /></Button> : null}</div>
 						<div>{project.playableUrl ? <Button on:click={() => window.open(project.playableUrl)}>Demo<ForwardIcon /></Button> : null}</div>
 						<div><Button on:click={() => router.navigate("/reviews/" + project.projectID + "/dashboard")}>View Reviews<ForwardIcon /></Button></div>
+						{project.chat_enabled ?
+							<div><Button on:click={() => router.navigate("/chat/" + project.projectID + "/dashboard")}>View Chat<ForwardIcon /></Button></div>
+							: null}
+						{project.chat_enabled ?
+							<div><Button on:click={() => router.navigate("/chat/" + project.projectID + "/dashboard-doxx")}>View Chat (doxx)<ForwardIcon /></Button></div>
+							: null}
 					</div>
 				</div>
 			</Card>
