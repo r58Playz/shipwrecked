@@ -217,6 +217,12 @@ export async function submitChat(id: string, comment: string) {
 	if (data.error) throw new Error(data.error);
 }
 
+export async function fetchUserCount() {
+	let data = await fetchCookie(`${SHIPWRECKED}/api/health`).then(r=>r.json());
+	if (data.counts.users) return data.counts.users;
+	else throw new Error("unable to fetch user count");
+}
+
 // stolen and cleaned up from the real shipwrecked
 // wow that code really sucked
 export function getProjectHours(project: { hackatimeLinks?: HackatimeLink[], rawHours?: number }): number {

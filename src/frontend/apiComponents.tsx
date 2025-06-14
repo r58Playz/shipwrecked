@@ -327,9 +327,9 @@ const SelectedProject: Component<{ project: MaybeCommonProject, projects: MaybeC
 						{"in_review" in this.project ? <div><b>In review:</b> {this.project.in_review}</div> : null}
 					</div>
 					<div class="buttons">
-						<div>{this.project.codeUrl ? <Button on:click={() => window.open(this.project.codeUrl)}>Code<ForwardIcon /></Button> : null}</div>
-						<div>{this.project.playableUrl ? <Button on:click={() => window.open(this.project.playableUrl)}>Demo<ForwardIcon /></Button> : null}</div>
-						<div><Button on:click={() => router.navigate("/reviews/" + this.project.projectID + "/dashboard")}>View Reviews<ForwardIcon /></Button></div>
+						{this.project.codeUrl ? <Button on:click={() => window.open(this.project.codeUrl)}>Code<ForwardIcon /></Button> : null}
+						{this.project.playableUrl ? <Button on:click={() => window.open(this.project.playableUrl)}>Demo<ForwardIcon /></Button> : null}
+						<Button on:click={() => router.navigate("/reviews/" + this.project.projectID + "/dashboard")}>View Reviews<ForwardIcon /></Button>
 						{this.project.chat_enabled ?
 							<div><Button on:click={() => router.navigate("/chat/" + this.project.projectID + "/dashboard")}>View Chat<ForwardIcon /></Button></div>
 							: null}

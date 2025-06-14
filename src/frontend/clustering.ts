@@ -103,12 +103,22 @@ function calculatePercentile(sortedArray: number[], percentile: number): number 
 	return sortedArray[lower] * (1 - weight) + sortedArray[upper] * weight;
 }
 
-function categorizeUsers(userMetrics: UserMetrics[]): {
+function categorizeUsers(userMetrics: UserMetrics[], userCount: number): {
 	whales: UserMetrics[];
 	shippers: UserMetrics[];
 	newbies: UserMetrics[];
 	thresholds: any;
 } {
+	let len = userMetrics.length;
+	for (let i = 0; i < userCount - len; i++) {
+		userMetrics.push({
+			userId: crypto.randomUUID(),
+			totalHours: 0,
+			projectCount: 0,
+			shippedProjectCount: 0,
+		});
+	}
+
 	if (userMetrics.length === 0) {
 		return {
 			whales: [],
@@ -200,9 +210,9 @@ function categorizeUsers(userMetrics: UserMetrics[]): {
 	};
 }
 
-export function generateUserClusterAnalysis(userMetrics: UserMetrics[]): UserClusterAnalysis {
+export function generateUserClusterAnalysis(userMetrics: UserMetrics[], userCount: number): UserClusterAnalysis {
 	// Categorize users
-	const { whales, shippers, newbies, thresholds } = categorizeUsers(userMetrics);
+	const { whales, shippers, newbies, thresholds } = categorizeUsers([...userMetrics], userCount);
 
 	// Calculate statistics
 	const sortedHours = userMetrics.map(u => u.totalHours).sort((a, b) => a - b);

@@ -1,6 +1,6 @@
 import type { Component, DLPointer } from "dreamland/core";
 
-import { calculateProgress, calculateShells, clearCache, fetchGallery, fetchInfo, fetchReviews, getProjectHours, getTotalHours, userInfo, type MinimalProject, type ProjectGallery, type Review, type UserData } from "./api";
+import { calculateProgress, calculateShells, clearCache, fetchGallery, fetchInfo, fetchReviews, fetchUserCount, getProjectHours, getTotalHours, userInfo, type MinimalProject, type ProjectGallery, type Review, type UserData } from "./api";
 
 import { RandomBackground } from "./background";
 import { Loading, ProgressBar, UserName } from "./apiComponents";
@@ -78,7 +78,13 @@ function islandStatus(user: GalleryUser): "invitation" | "waitlist" | undefined 
 	}
 }
 
-export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserClusterAnalysis, scammer: GalleryUser[], self: UserData }> = function(cx) {
+export const RealScamming: Component<{
+	gallery: EnhancedGallery[],
+	graham: UserClusterAnalysis,
+	scammer: GalleryUser[],
+	self: UserData,
+	actualUserCount: number,
+}> = function(cx) {
 	cx.css = `
 		:scope {
 			display: flex;
@@ -227,6 +233,7 @@ export const RealScamming: Component<{ gallery: EnhancedGallery[], graham: UserC
 					<div>Whales: {use(this.graham).map(x => x.clusters.whales.count)}</div>
 					<div>Shippers: {use(this.graham).map(x => x.clusters.shippers.count)}</div>
 					<div>Newbies: {use(this.graham).map(x => x.clusters.newbies.count)}</div>
+					<div>Users with no projects (included in newbies): {use(this.scammer).zip(use(this.actualUserCount)).map(([a, b]) => b - a.length)}</div>
 				</Card>
 				<Card title="Stats" project={true}>
 					<div>
@@ -261,6 +268,7 @@ export const ApiScamming: Component<{}, {
 	enhancedGallery: EnhancedGallery[] | null,
 	graham: UserClusterAnalysis | null,
 	scammer: GalleryUser[] | null,
+	userCount: number,
 }, { "on:routeshown": () => void }> = function(cx) {
 	cx.css = `
 		:scope {
@@ -289,9 +297,10 @@ export const ApiScamming: Component<{}, {
 	use(userInfo.gallery).listen(async x => {
 		if (x) {
 			let enhanced = await Promise.all(x.map(async x => ({ project: x, reviews: x.viral ? await fetchReviews(x.projectID) : undefined })));
+			this.userCount = await fetchUserCount();
 			// stupid test project 
 			this.enhancedGallery = enhanced.filter(x => x.project.projectID !== "27504540-15dc-4226-ace4-ccc4d394d213");
-			this.graham = generateUserClusterAnalysis(galleryToMetrics(x));
+			this.graham = generateUserClusterAnalysis(galleryToMetrics(x), this.userCount);
 			this.scammer = galleryToUsers(x).sort((a, b) => {
 				let progress = getTotalHours(calculateProgress(b.projects)) - getTotalHours(calculateProgress(a.projects));
 				let shells = calculateShells(b.projects) - calculateShells(a.projects);
@@ -302,7 +311,7 @@ export const ApiScamming: Component<{}, {
 		}
 	});
 
-	let allData = use(this.enhancedGallery).zip(use(this.graham), use(this.scammer), use(userInfo.data));
+	let allData = use(this.enhancedGallery).zip(use(this.graham), use(this.scammer), use(userInfo.data), use(this.userCount));
 
 	this["on:routeshown"] = async () => {
 		clearCache();
@@ -313,8 +322,10 @@ export const ApiScamming: Component<{}, {
 	return (
 		<div>
 			<RandomBackground />
-			{allData.map(([gallery, graham, scammer, self]) => (
-				gallery && graham && scammer && self ? <RealScamming gallery={gallery} graham={graham} self={self} scammer={scammer} /> : <Loading />
+			{allData.map(([gallery, graham, scammer, self, userCount]) => (
+				gallery && graham && scammer && self && userCount ?
+					<RealScamming gallery={gallery} graham={graham} self={self} scammer={scammer} actualUserCount={userCount} />
+					: <Loading />
 			))}
 		</div>
 	)
