@@ -76,6 +76,7 @@ const Info: Component = function(cx) {
 			<div class="options">
 				<Button on:click={() => deleteToken()}><BackIcon />Log Out</Button>
 				<Button on:click={() => router.navigate("dashboard")}>Go to the Bay<ForwardIcon /></Button>
+				<Button on:click={() => router.navigate("scamming")}>API Scamming<ForwardIcon /></Button>
 			</div>
 		</div>
 	)
