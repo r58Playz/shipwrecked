@@ -7,7 +7,7 @@ import rsvp from "../sections/rsvp.webp";
 
 let backgrounds = [shore, hut, bay, rsvp];
 
-export const RandomBackground: Component = function(cx) {
+export const RandomBackground: Component = function (cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -22,5 +22,5 @@ export const RandomBackground: Component = function(cx) {
 
 	let idx = Math.floor(Math.random() * backgrounds.length);
 	let background = backgrounds[idx];
-	return <img src={background} class={`Ui-RandomBackground idx-${idx}`} />
-}
+	return <img src={background} class={`Ui-RandomBackground idx-${idx}`} />;
+};

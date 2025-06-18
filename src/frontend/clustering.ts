@@ -75,7 +75,12 @@ export function galleryToMetrics(gallery: ProjectGallery[]): UserMetrics[] {
 		if (mapMetrics) {
 			metrics = mapMetrics;
 		} else {
-			metrics = { userId: project.userId, totalHours: 0, projectCount: 0, shippedProjectCount: 0 };
+			metrics = {
+				userId: project.userId,
+				totalHours: 0,
+				projectCount: 0,
+				shippedProjectCount: 0,
+			};
 			map.set(project.userId, metrics);
 		}
 
@@ -88,7 +93,10 @@ export function galleryToMetrics(gallery: ProjectGallery[]): UserMetrics[] {
 }
 
 // taken straight from lib/userClustering.ts
-function calculatePercentile(sortedArray: number[], percentile: number): number {
+function calculatePercentile(
+	sortedArray: number[],
+	percentile: number
+): number {
 	if (sortedArray.length === 0) return 0;
 
 	const index = (percentile / 100) * (sortedArray.length - 1);
@@ -103,7 +111,10 @@ function calculatePercentile(sortedArray: number[], percentile: number): number 
 	return sortedArray[lower] * (1 - weight) + sortedArray[upper] * weight;
 }
 
-function categorizeUsers(userMetrics: UserMetrics[], userCount: number): {
+function categorizeUsers(
+	userMetrics: UserMetrics[],
+	userCount: number
+): {
 	whales: UserMetrics[];
 	shippers: UserMetrics[];
 	newbies: UserMetrics[];
@@ -124,14 +135,20 @@ function categorizeUsers(userMetrics: UserMetrics[], userCount: number): {
 			whales: [],
 			shippers: [],
 			newbies: [],
-			thresholds: { whale: {}, shipper: {}, newbie: {} }
+			thresholds: { whale: {}, shipper: {}, newbie: {} },
 		};
 	}
 
 	// Calculate percentiles for each dimension
-	const sortedHours = userMetrics.map(u => u.totalHours).sort((a, b) => a - b);
-	const sortedProjects = userMetrics.map(u => u.projectCount).sort((a, b) => a - b);
-	const sortedShipped = userMetrics.map(u => u.shippedProjectCount).sort((a, b) => a - b);
+	const sortedHours = userMetrics
+		.map((u) => u.totalHours)
+		.sort((a, b) => a - b);
+	const sortedProjects = userMetrics
+		.map((u) => u.projectCount)
+		.sort((a, b) => a - b);
+	const sortedShipped = userMetrics
+		.map((u) => u.shippedProjectCount)
+		.sort((a, b) => a - b);
 
 	// Define thresholds
 	const hoursP75 = calculatePercentile(sortedHours, 75);
@@ -149,40 +166,46 @@ function categorizeUsers(userMetrics: UserMetrics[], userCount: number): {
 	const whaleThresholds = {
 		minHours: hoursP50,
 		minProjects: projectsP50,
-		minShipped: Math.max(1, shippedP50) // At least 1 shipped project
+		minShipped: Math.max(1, shippedP50), // At least 1 shipped project
 	};
 
 	// Newbie criteria: Bottom 25% in hours AND projects, and 0 shipped
 	const newbieThresholds = {
 		maxHours: hoursP25,
 		maxProjects: Math.max(1, projectsP25), // 0-1 projects
-		maxShipped: 0 // No shipped projects
+		maxShipped: 0, // No shipped projects
 	};
 
 	// Shipper criteria: Everything in between
 	const shipperThresholds = {
 		hourRange: [hoursP25, hoursP75] as [number, number],
 		projectRange: [projectsP25, projectsP75] as [number, number],
-		shippedRange: [0, shippedP75] as [number, number]
+		shippedRange: [0, shippedP75] as [number, number],
 	};
 
 	const whales: UserMetrics[] = [];
 	const newbies: UserMetrics[] = [];
 	const shippers: UserMetrics[] = [];
 
-	userMetrics.forEach(user => {
+	userMetrics.forEach((user) => {
 		// Check for Whale: High performance in at least 2/3 dimensions
 		const isHighHours = user.totalHours >= hoursP75;
 		const isHighProjects = user.projectCount >= projectsP75;
 		const isHighShipped = user.shippedProjectCount >= shippedP75;
-		const highDimensionCount = [isHighHours, isHighProjects, isHighShipped].filter(Boolean).length;
+		const highDimensionCount = [
+			isHighHours,
+			isHighProjects,
+			isHighShipped,
+		].filter(Boolean).length;
 
-		const meetsWhaleMinimums = user.totalHours >= whaleThresholds.minHours &&
+		const meetsWhaleMinimums =
+			user.totalHours >= whaleThresholds.minHours &&
 			user.projectCount >= whaleThresholds.minProjects &&
 			user.shippedProjectCount >= whaleThresholds.minShipped;
 
 		// Check for Newbie: Low engagement across all dimensions
-		const isNewbie = user.totalHours <= newbieThresholds.maxHours &&
+		const isNewbie =
+			user.totalHours <= newbieThresholds.maxHours &&
 			user.projectCount <= newbieThresholds.maxProjects &&
 			user.shippedProjectCount <= newbieThresholds.maxShipped;
 
@@ -205,39 +228,52 @@ function categorizeUsers(userMetrics: UserMetrics[], userCount: number): {
 		thresholds: {
 			whale: whaleThresholds,
 			shipper: shipperThresholds,
-			newbie: newbieThresholds
-		}
+			newbie: newbieThresholds,
+		},
 	};
 }
 
-export function generateUserClusterAnalysis(userMetrics: UserMetrics[], userCount: number): UserClusterAnalysis {
+export function generateUserClusterAnalysis(
+	userMetrics: UserMetrics[],
+	userCount: number
+): UserClusterAnalysis {
 	// Categorize users
-	const { whales, shippers, newbies, thresholds } = categorizeUsers([...userMetrics], userCount);
+	const { whales, shippers, newbies, thresholds } = categorizeUsers(
+		[...userMetrics],
+		userCount
+	);
 
 	// Calculate statistics
-	const sortedHours = userMetrics.map(u => u.totalHours).sort((a, b) => a - b);
-	const sortedProjects = userMetrics.map(u => u.projectCount).sort((a, b) => a - b);
-	const sortedShipped = userMetrics.map(u => u.shippedProjectCount).sort((a, b) => a - b);
+	const sortedHours = userMetrics
+		.map((u) => u.totalHours)
+		.sort((a, b) => a - b);
+	const sortedProjects = userMetrics
+		.map((u) => u.projectCount)
+		.sort((a, b) => a - b);
+	const sortedShipped = userMetrics
+		.map((u) => u.shippedProjectCount)
+		.sort((a, b) => a - b);
 
 	const statistics = {
 		hours: {
 			mean: sortedHours.reduce((sum, h) => sum + h, 0) / sortedHours.length,
 			median: calculatePercentile(sortedHours, 50),
 			p75: calculatePercentile(sortedHours, 75),
-			p90: calculatePercentile(sortedHours, 90)
+			p90: calculatePercentile(sortedHours, 90),
 		},
 		projects: {
-			mean: sortedProjects.reduce((sum, p) => sum + p, 0) / sortedProjects.length,
+			mean:
+				sortedProjects.reduce((sum, p) => sum + p, 0) / sortedProjects.length,
 			median: calculatePercentile(sortedProjects, 50),
 			p75: calculatePercentile(sortedProjects, 75),
-			p90: calculatePercentile(sortedProjects, 90)
+			p90: calculatePercentile(sortedProjects, 90),
 		},
 		shipped: {
 			mean: sortedShipped.reduce((sum, s) => sum + s, 0) / sortedShipped.length,
 			median: calculatePercentile(sortedShipped, 50),
 			p75: calculatePercentile(sortedShipped, 75),
-			p90: calculatePercentile(sortedShipped, 90)
-		}
+			p90: calculatePercentile(sortedShipped, 90),
+		},
 	};
 
 	const totalActiveUsers = userMetrics.length;
@@ -248,21 +284,21 @@ export function generateUserClusterAnalysis(userMetrics: UserMetrics[], userCoun
 			whales: {
 				count: whales.length,
 				percentage: (whales.length / totalActiveUsers) * 100,
-				users: whales.map(u => u.userId),
-				thresholds: thresholds.whale
+				users: whales.map((u) => u.userId),
+				thresholds: thresholds.whale,
 			},
 			shippers: {
 				count: shippers.length,
 				percentage: (shippers.length / totalActiveUsers) * 100,
-				users: shippers.map(u => u.userId),
-				thresholds: thresholds.shipper
+				users: shippers.map((u) => u.userId),
+				thresholds: thresholds.shipper,
 			},
 			newbies: {
 				count: newbies.length,
 				percentage: (newbies.length / totalActiveUsers) * 100,
-				users: newbies.map(u => u.userId),
-				thresholds: thresholds.newbie
-			}
+				users: newbies.map((u) => u.userId),
+				thresholds: thresholds.newbie,
+			},
 		},
 		statistics,
 	};

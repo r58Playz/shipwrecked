@@ -12,10 +12,13 @@ import { UserName } from "../frontend/apiComponents";
 import { router } from "../main";
 import { settings } from "../store";
 
-const LogIn: Component<{}, {
-	emailLink: string,
-	error: string | null,
-}> = function(cx) {
+const LogIn: Component<
+	{},
+	{
+		emailLink: string;
+		error: string | null;
+	}
+> = function (cx) {
 	cx.css = `
 		:scope {
 			display: flex;
@@ -36,24 +39,34 @@ const LogIn: Component<{}, {
 	return (
 		<div>
 			<div>
-				This frontend requires you to use the <b>email</b> login method (so that it can steal the token to use).{" "}
-				Right click and copy the log in link's address, then paste it here.
+				This frontend requires you to use the <b>email</b> login method (so that
+				it can steal the token to use). Right click and copy the log in link's
+				address, then paste it here.
 			</div>
 			<div class="options">
-				<TextInput value={use(this.emailLink).bind()} placeholder="Email Link" />
-				<Button on:click={async () => {
-					if (!await stealToken(this.emailLink))
-						this.error = "Failed to steal token";
-					else
-						await fetchInfo();
-				}}>Log In<ForwardIcon /></Button>
+				<TextInput
+					value={use(this.emailLink).bind()}
+					placeholder="Email Link"
+				/>
+				<Button
+					on:click={async () => {
+						if (!(await stealToken(this.emailLink)))
+							this.error = "Failed to steal token";
+						else await fetchInfo();
+					}}
+				>
+					Log In
+					<ForwardIcon />
+				</Button>
 			</div>
-			{use(this.error).andThen((x: string) => <div class="error">{x}</div>)}
+			{use(this.error).andThen((x: string) => (
+				<div class="error">{x}</div>
+			))}
 		</div>
-	)
-}
+	);
+};
 
-const Info: Component = function(cx) {
+const Info: Component = function (cx) {
 	cx.css = `
 		:scope {
 			display: flex;
@@ -71,25 +84,38 @@ const Info: Component = function(cx) {
 	return (
 		<div>
 			<div>
-				Logged in as <UserName user={use(userInfo.data)} /> with Hackatime ID {use(userInfo.data).map(x => x?.hackatimeId)}.
+				Logged in as <UserName user={use(userInfo.data)} /> with Hackatime ID{" "}
+				{use(userInfo.data).map((x) => x?.hackatimeId)}.
 			</div>
 			<div class="options">
-				<Button on:click={() => deleteToken()}><BackIcon />Log Out</Button>
-				<Button on:click={() => router.navigate("dashboard")}>Go to the Bay<ForwardIcon /></Button>
-				<Button on:click={() => router.navigate("scamming")}>API Scamming<ForwardIcon /></Button>
+				<Button on:click={() => deleteToken()}>
+					<BackIcon />
+					Log Out
+				</Button>
+				<Button on:click={() => router.navigate("dashboard")}>
+					Go to the Bay
+					<ForwardIcon />
+				</Button>
+				<Button on:click={() => router.navigate("scamming")}>
+					API Scamming
+					<ForwardIcon />
+				</Button>
 			</div>
 		</div>
-	)
-}
+	);
+};
 
-export const RsvpPage: Component<{
-	animationRoot: HTMLElement,
-	root: HTMLElement,
-	"on:back": () => void,
-}, {
-	emailLink: string,
-	error: string | null,
-}> = function(cx) {
+export const RsvpPage: Component<
+	{
+		animationRoot: HTMLElement;
+		root: HTMLElement;
+		"on:back": () => void;
+	},
+	{
+		emailLink: string;
+		error: string | null;
+	}
+> = function (cx) {
 	cx.css = `
 		.content {
 			height: 100vh;
@@ -124,7 +150,6 @@ export const RsvpPage: Component<{
 		}
 	`;
 
-
 	return (
 		<div id="shore">
 			<ScrollingBackground animation="top" animationRoot={this.animationRoot}>
@@ -133,21 +158,34 @@ export const RsvpPage: Component<{
 					<Card title="Log In">
 						<div class="card">
 							<div>
-								Note that this is not the official site. You can return to the official site using the button below.
+								Note that this is not the official site. You can return to the
+								official site using the button below.
 							</div>
 							<div class="wisp">
 								Wisp Server:
-								<TextInput value={use(settings.wispServer).bind()} placeholder="Wisp Server" />
+								<TextInput
+									value={use(settings.wispServer).bind()}
+									placeholder="Wisp Server"
+								/>
 							</div>
 							{use(userInfo.data).andThen(<Info />, <LogIn />)}
 							<div class="options">
-								<Button on:click={this["on:back"]} label="Back"><BackIcon /></Button>
-								<Button on:click={() => window.open("https://shipwrecked.hackclub.com/bay/login")}>Open official site<ForwardIcon /></Button>
+								<Button on:click={this["on:back"]} label="Back">
+									<BackIcon />
+								</Button>
+								<Button
+									on:click={() =>
+										window.open("https://shipwrecked.hackclub.com/bay/login")
+									}
+								>
+									Open official site
+									<ForwardIcon />
+								</Button>
 							</div>
 						</div>
 					</Card>
 				</div>
 			</ScrollingBackground>
 		</div>
-	)
-}
+	);
+};

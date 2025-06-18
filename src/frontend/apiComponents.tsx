@@ -1,5 +1,16 @@
 import type { Component, DLPointer } from "dreamland/core";
-import { calculateProgress, calculateProjectProgress, calculateShells, getProjectHours, getTotalHours, type HackatimeLink, type MinimalProject, type Project, type ProjectCommon, type UserStatus } from "./api";
+import {
+	calculateProgress,
+	calculateProjectProgress,
+	calculateShells,
+	getProjectHours,
+	getTotalHours,
+	type HackatimeLink,
+	type MinimalProject,
+	type Project,
+	type ProjectCommon,
+	type UserStatus,
+} from "./api";
 import { Card } from "../ui/Card";
 
 import logo from "../sections/logo.svg";
@@ -7,8 +18,12 @@ import { Button } from "../ui/Button";
 import { ForwardIcon } from "../ui/Icon";
 import { router } from "../main";
 
-type UserNameUser = { image: string | null, name: string | null, status?: UserStatus } | null;
-export const UserName: Component<{ user: UserNameUser }> = function(cx) {
+type UserNameUser = {
+	image: string | null;
+	name: string | null;
+	status?: UserStatus;
+} | null;
+export const UserName: Component<{ user: UserNameUser }> = function (cx) {
 	cx.css = `
 		img {
 			width: 1.25em;
@@ -41,14 +56,18 @@ export const UserName: Component<{ user: UserNameUser }> = function(cx) {
 
 	return (
 		<span class="Ui-UserName">
-			<img src={use(this.user).map(x => x?.image || logo)} />
-			{use(this.user).map(x => x?.name || "#ERROR!")}
-			{use(this.user).map(x => x?.status).andThen((x: string) => <span class={`chip ${x}`}>{x}</span>)}
+			<img src={use(this.user).map((x) => x?.image || logo)} />
+			{use(this.user).map((x) => x?.name || "#ERROR!")}
+			{use(this.user)
+				.map((x) => x?.status)
+				.andThen((x: string) => (
+					<span class={`chip ${x}`}>{x}</span>
+				))}
 		</span>
-	)
-}
+	);
+};
 
-export const Loading: Component = function(cx) {
+export const Loading: Component = function (cx) {
 	cx.css = `
 		:scope {
 			display: flex;
@@ -61,11 +80,12 @@ export const Loading: Component = function(cx) {
 		<div>
 			<Card title="Loading"></Card>
 		</div>
-	)
-}
+	);
+};
 
-export const ProgressBar: Component<{ projects: MinimalProject[] }, {}> = function(cx) {
-	cx.css = `
+export const ProgressBar: Component<{ projects: MinimalProject[] }, {}> =
+	function (cx) {
+		cx.css = `
 		:scope {
 			max-width: 576px;
 			width: 100%;
@@ -114,24 +134,40 @@ export const ProgressBar: Component<{ projects: MinimalProject[] }, {}> = functi
 		}
 	`;
 
-	const progress = use(this.projects).map(x => x ? calculateProgress(x) : { viral: 0, shipped: 0, unshipped: 0 });
-	const shells = use(this.projects).map(x => x ? calculateShells(x) : 0);
+		const progress = use(this.projects).map((x) =>
+			x ? calculateProgress(x) : { viral: 0, shipped: 0, unshipped: 0 }
+		);
+		const shells = use(this.projects).map((x) => (x ? calculateShells(x) : 0));
 
-	return (
-		<div>
-			<div class="bar">
-				<div class="viral" style={progress.map(x => `width: ${x.viral}%`)} />
-				<div class="shipped" style={progress.map(x => `width: ${x.shipped}%`)} />
-				<div class="unshipped" style={progress.map(x => `width: ${x.unshipped}%`)} />
+		return (
+			<div>
+				<div class="bar">
+					<div
+						class="viral"
+						style={progress.map((x) => `width: ${x.viral}%`)}
+					/>
+					<div
+						class="shipped"
+						style={progress.map((x) => `width: ${x.shipped}%`)}
+					/>
+					<div
+						class="unshipped"
+						style={progress.map((x) => `width: ${x.unshipped}%`)}
+					/>
+				</div>
+				<b>
+					{progress.map((x) => getTotalHours(x).toFixed(0))}% - {shells} 🐚
+				</b>
 			</div>
-			<b>{progress.map(x => getTotalHours(x).toFixed(0))}% - {shells} 🐚</b>
-		</div>
-	)
-}
+		);
+	};
 
 type MaybeCommonProject = ProjectCommon | Project;
 
-const ProjectsTable: Component<{ projects: MaybeCommonProject[], selectedId: string | null }> = function(cx) {
+const ProjectsTable: Component<{
+	projects: MaybeCommonProject[];
+	selectedId: string | null;
+}> = function (cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -154,14 +190,10 @@ const ProjectsTable: Component<{ projects: MaybeCommonProject[], selectedId: str
 	`;
 
 	function mapState(project: MaybeCommonProject): string {
-		if ("in_review" in project && project.in_review)
-			return "In Review";
-		else if (project.viral)
-			return "Viral";
-		else if (project.shipped)
-			return "Shipped";
-		else
-			return "Unshipped";
+		if ("in_review" in project && project.in_review) return "In Review";
+		else if (project.viral) return "Viral";
+		else if (project.shipped) return "Shipped";
+		else return "Unshipped";
 	}
 
 	return (
@@ -172,22 +204,29 @@ const ProjectsTable: Component<{ projects: MaybeCommonProject[], selectedId: str
 				<th>Contribution</th>
 				<th>State</th>
 			</thead>
-			{use(this.projects).map(x => (x || []).sort((a, b) => getProjectHours(b) - getProjectHours(a))).mapEach((x, i) => {
-				let contrib = calculateProjectProgress(x);
-				return (
-					<tr on:click={() => this.selectedId = x.projectID}>
-						<th>{x.name}</th>
-						<td>{getProjectHours(x).toFixed(0)}h</td>
-						<td>{((i < 4 ? getTotalHours(contrib) : 0) / 60 * 100).toFixed(0)}%</td>
-						<td>{mapState(x)}</td>
-					</tr>
+			{use(this.projects)
+				.map((x) =>
+					(x || []).sort((a, b) => getProjectHours(b) - getProjectHours(a))
 				)
-			})}
+				.mapEach((x, i) => {
+					let contrib = calculateProjectProgress(x);
+					return (
+						<tr on:click={() => (this.selectedId = x.projectID)}>
+							<th>{x.name}</th>
+							<td>{getProjectHours(x).toFixed(0)}h</td>
+							<td>
+								{(((i < 4 ? getTotalHours(contrib) : 0) / 60) * 100).toFixed(0)}
+								%
+							</td>
+							<td>{mapState(x)}</td>
+						</tr>
+					);
+				})}
 		</table>
-	)
-}
+	);
+};
 
-const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
+const HackatimeTable: Component<{ links: HackatimeLink[] }> = function (cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -216,7 +255,7 @@ const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
 				<th>Hours</th>
 				<th>Approved Hours</th>
 			</thead>
-			{this.links.map(x => (
+			{this.links.map((x) => (
 				<tr>
 					<th>{x.hackatimeName}</th>
 					<td>{x.rawHours}h</td>
@@ -224,10 +263,15 @@ const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
 				</tr>
 			))}
 		</table>
-	)
-}
+	);
+};
 
-const SelectedProject: Component<{ project: MaybeCommonProject, projects: MaybeCommonProject[], user: UserNameUser, "on:close": () => void }> = function(cx) {
+const SelectedProject: Component<{
+	project: MaybeCommonProject;
+	projects: MaybeCommonProject[];
+	user: UserNameUser;
+	"on:close": () => void;
+}> = function (cx) {
 	cx.css = `
 		:scope, :scope :global(.Ui-card) {
 			height: 100%;
@@ -275,7 +319,10 @@ const SelectedProject: Component<{ project: MaybeCommonProject, projects: MaybeC
 		}
 	`;
 
-	const contributes = this.projects.sort((a, b) => getProjectHours(b) - getProjectHours(a)).findIndex(x => x.projectID === this.project.projectID) < 4;
+	const contributes =
+		this.projects
+			.sort((a, b) => getProjectHours(b) - getProjectHours(a))
+			.findIndex((x) => x.projectID === this.project.projectID) < 4;
 
 	let contrib = { viral: 0, shipped: 0, unshipped: 0 };
 	if (contributes) contrib = calculateProjectProgress(this.project);
@@ -283,23 +330,20 @@ const SelectedProject: Component<{ project: MaybeCommonProject, projects: MaybeC
 	let contribString = "";
 
 	if (contrib.viral) {
-		contribString += `${contrib.viral} viral hours (${(contrib.viral / 60 * 100).toFixed(0)}%)`;
+		contribString += `${contrib.viral} viral hours (${((contrib.viral / 60) * 100).toFixed(0)}%)`;
 	}
 
 	if (contrib.shipped) {
-		if (contribString.length)
-			contribString += ", "
-		contribString += `${contrib.shipped} shipped hours (${(contrib.shipped / 60 * 100).toFixed(0)}%)`;
+		if (contribString.length) contribString += ", ";
+		contribString += `${contrib.shipped} shipped hours (${((contrib.shipped / 60) * 100).toFixed(0)}%)`;
 	}
 
 	if (contrib.unshipped) {
-		if (contribString.length)
-			contribString += ", "
-		contribString += `${contrib.unshipped} unshipped hours (${(contrib.unshipped / 60 * 100).toFixed(0)}%)`;
+		if (contribString.length) contribString += ", ";
+		contribString += `${contrib.unshipped} unshipped hours (${((contrib.unshipped / 60) * 100).toFixed(0)}%)`;
 	}
 
-	if (!contribString.length)
-		contribString = "no hours";
+	if (!contribString.length) contribString = "no hours";
 
 	return (
 		<div>
@@ -310,45 +354,100 @@ const SelectedProject: Component<{ project: MaybeCommonProject, projects: MaybeC
 				<div class="content">
 					<div>
 						<div class="headline">Time</div>
-						<div>Contributes {contribString} to <UserName user={use(this.user)} />'s progress.</div>
+						<div>
+							Contributes {contribString} to <UserName user={use(this.user)} />
+							's progress.
+						</div>
 						<HackatimeTable links={this.project.hackatimeLinks || []} />
 					</div>
 					<div>
 						<div class="headline">Description</div>
-						{this.project.screenshot ? <img src={this.project.screenshot} /> : null}
-						<div>
-							{this.project.description}
-						</div>
+						{this.project.screenshot ? (
+							<img src={this.project.screenshot} />
+						) : null}
+						<div>{this.project.description}</div>
 					</div>
 					<div>
 						<div class="headline">Stats</div>
-						<div><b>Viral:</b> {this.project.viral}</div>
-						<div><b>Shipped:</b> {this.project.shipped}</div>
-						{"in_review" in this.project ? <div><b>In review:</b> {this.project.in_review}</div> : null}
+						<div>
+							<b>Viral:</b> {this.project.viral}
+						</div>
+						<div>
+							<b>Shipped:</b> {this.project.shipped}
+						</div>
+						{"in_review" in this.project ? (
+							<div>
+								<b>In review:</b> {this.project.in_review}
+							</div>
+						) : null}
 					</div>
 					<div class="buttons">
-						{this.project.codeUrl ? <Button on:click={() => window.open(this.project.codeUrl)}>Code<ForwardIcon /></Button> : null}
-						{this.project.playableUrl ? <Button on:click={() => window.open(this.project.playableUrl)}>Demo<ForwardIcon /></Button> : null}
-						<Button on:click={() => router.navigate("/reviews/" + this.project.projectID + "/dashboard")}>View Reviews<ForwardIcon /></Button>
-						{this.project.chat_enabled ?
-							<div><Button on:click={() => router.navigate("/chat/" + this.project.projectID + "/dashboard")}>View Chat<ForwardIcon /></Button></div>
-							: null}
-						{this.project.chat_enabled ?
-							<div><Button on:click={() => router.navigate("/chat/" + this.project.projectID + "/dashboard-doxx")}>View Chat (doxx)<ForwardIcon /></Button></div>
-							: null}
+						{this.project.codeUrl ? (
+							<Button on:click={() => window.open(this.project.codeUrl)}>
+								Code
+								<ForwardIcon />
+							</Button>
+						) : null}
+						{this.project.playableUrl ? (
+							<Button on:click={() => window.open(this.project.playableUrl)}>
+								Demo
+								<ForwardIcon />
+							</Button>
+						) : null}
+						<Button
+							on:click={() =>
+								router.navigate(
+									"/reviews/" + this.project.projectID + "/dashboard"
+								)
+							}
+						>
+							View Reviews
+							<ForwardIcon />
+						</Button>
+						{this.project.chat_enabled ? (
+							<div>
+								<Button
+									on:click={() =>
+										router.navigate(
+											"/chat/" + this.project.projectID + "/dashboard"
+										)
+									}
+								>
+									View Chat
+									<ForwardIcon />
+								</Button>
+							</div>
+						) : null}
+						{this.project.chat_enabled ? (
+							<div>
+								<Button
+									on:click={() =>
+										router.navigate(
+											"/chat/" + this.project.projectID + "/dashboard-doxx"
+										)
+									}
+								>
+									View Chat (doxx)
+									<ForwardIcon />
+								</Button>
+							</div>
+						) : null}
 					</div>
 				</div>
 			</Card>
 		</div>
-	)
-}
+	);
+};
 
-export const DashboardComponent: Component<{
-	user: UserNameUser,
-	projects: MaybeCommonProject[],
-}, {
-	selectedId: string | null
-}> = function(cx) {
+export const DashboardComponent: Component<
+	{
+		user: UserNameUser;
+		projects: MaybeCommonProject[];
+	},
+	{
+		selectedId: string | null;
+	}
+> = function (cx) {
 	cx.css = `
 		:scope {
 			padding: 1rem;
@@ -387,24 +486,37 @@ export const DashboardComponent: Component<{
 	return (
 		<div class="dashboard">
 			<div class="progress">
-				<Card title={<span><UserName user={use(this.user)} />'s Progress</span>} small={true}>
+				<Card
+					title={
+						<span>
+							<UserName user={use(this.user)} />
+							's Progress
+						</span>
+					}
+					small={true}
+				>
 					<ProgressBar projects={use(this.projects) as DLPointer<Project[]>} />
 				</Card>
 			</div>
 			<div class="projects">
 				<Card title="Projects" small={true}>
-					<ProjectsTable projects={use(this.projects)} selectedId={use(this.selectedId).bind()} />
+					<ProjectsTable
+						projects={use(this.projects)}
+						selectedId={use(this.selectedId).bind()}
+					/>
 				</Card>
 				{use(this.selectedId).andThen(
-					(id: string) => <SelectedProject
-						projects={this.projects}
-						project={this.projects.find(x => x.projectID === id)!}
-						user={this.user}
-						on:close={() => this.selectedId = null}
-					/>,
+					(id: string) => (
+						<SelectedProject
+							projects={this.projects}
+							project={this.projects.find((x) => x.projectID === id)!}
+							user={this.user}
+							on:close={() => (this.selectedId = null)}
+						/>
+					),
 					<div />
 				)}
 			</div>
 		</div>
-	)
-}
+	);
+};

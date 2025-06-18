@@ -1,6 +1,9 @@
 import type { Component, ComponentChild } from "dreamland/core";
 
-export const ToggleButton: Component<{ value: boolean, children: ComponentChild[] | ComponentChild }> = function(cx) {
+export const ToggleButton: Component<{
+	value: boolean;
+	children: ComponentChild[] | ComponentChild;
+}> = function (cx) {
 	cx.css = `
 		:scope {
 			background: #f6f3f4;
@@ -26,6 +29,11 @@ export const ToggleButton: Component<{ value: boolean, children: ComponentChild[
 	`;
 
 	return (
-		<div aria-checked={use(this.value)} on:click={() => this.value = !this.value}>{cx.children}</div>
-	)
-}
+		<div
+			aria-checked={use(this.value)}
+			on:click={() => (this.value = !this.value)}
+		>
+			{cx.children}
+		</div>
+	);
+};

@@ -1,6 +1,6 @@
 import type { Component } from "dreamland/core";
 
-import { fetchGallery, userInfo, } from "./api";
+import { fetchGallery, userInfo } from "./api";
 import { RandomBackground } from "./background";
 import { DashboardComponent, Loading } from "./apiComponents";
 import { Button } from "../ui/Button";
@@ -8,7 +8,11 @@ import { router } from "../main";
 import { BackIcon } from "../ui/Icon";
 import { galleryToUsers, type GalleryUser } from "./scamming";
 
-export const Impersonation: Component<{ user?: string }, { data?: GalleryUser }, { "on:routeshown": () => void }> = function(cx) {
+export const Impersonation: Component<
+	{ user?: string },
+	{ data?: GalleryUser },
+	{ "on:routeshown": () => void }
+> = function (cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -36,20 +40,33 @@ export const Impersonation: Component<{ user?: string }, { data?: GalleryUser },
 		this.data = undefined;
 		await fetchGallery();
 		if (this.user && userInfo.gallery) {
-			let x = galleryToUsers(userInfo.gallery).find(x => x.user.id === this.user);
-			if (x)
-				this.data = x;
+			let x = galleryToUsers(userInfo.gallery).find(
+				(x) => x.user.id === this.user
+			);
+			if (x) this.data = x;
 		}
-	}
+	};
 	this["on:routeshown"] = reload;
 
 	return (
 		<div>
 			<RandomBackground />
-			{use(this.data).andThen((x: GalleryUser) => <DashboardComponent user={x.user} projects={x.projects} />, <Loading />)}
+			{use(this.data).andThen(
+				(x: GalleryUser) => (
+					<DashboardComponent user={x.user} projects={x.projects} />
+				),
+				<Loading />
+			)}
 			<div class="logout-container">
-				<Button on:click={() => { router.navigate("/scamming") }}><BackIcon />Back</Button>
+				<Button
+					on:click={() => {
+						router.navigate("/scamming");
+					}}
+				>
+					<BackIcon />
+					Back
+				</Button>
 			</div>
 		</div>
-	)
-}
+	);
+};

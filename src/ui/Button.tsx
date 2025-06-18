@@ -1,6 +1,10 @@
-import { type Component, type ComponentChild } from "dreamland/core"
+import { type Component, type ComponentChild } from "dreamland/core";
 
-export const Button: Component<{ children: ComponentChild | ComponentChild[], "on:click": () => void, label?: string }> = function(cx) {
+export const Button: Component<{
+	children: ComponentChild | ComponentChild[];
+	"on:click": () => void;
+	label?: string;
+}> = function (cx) {
 	cx.css = `
 		:scope {
 			background: #007bbd;
@@ -40,16 +44,24 @@ export const Button: Component<{ children: ComponentChild | ComponentChild[], "o
 			height: 2rem;
 		}
 
-		${(cx.children instanceof Array ? cx.children.length === 1 : !!cx.children) ? `
+		${
+			(cx.children instanceof Array ? cx.children.length === 1 : !!cx.children)
+				? `
 		:scope {
 			padding: 0.5rem;
 		}
-		` : ""}
+		`
+				: ""
+		}
 	`;
 
 	return (
-		<button on:click={this["on:click"]} aria-label={this.label ? this.label : ""} class="Ui-button">
+		<button
+			on:click={this["on:click"]}
+			aria-label={this.label ? this.label : ""}
+			class="Ui-button"
+		>
 			{cx.children}
 		</button>
-	)
-}
+	);
+};

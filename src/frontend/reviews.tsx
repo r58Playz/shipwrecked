@@ -8,7 +8,10 @@ import { router } from "../main";
 import { BackIcon, ForwardIcon } from "../ui/Icon";
 import { Card } from "../ui/Card";
 
-const RealReviews: Component<{ review: Review[], "on:submit": (comment: string) => Promise<void> }, { comment: string }> = function(cx) {
+const RealReviews: Component<
+	{ review: Review[]; "on:submit": (comment: string) => Promise<void> },
+	{ comment: string }
+> = function (cx) {
 	cx.css = `
 		:scope {
 			padding: 1em;
@@ -59,23 +62,39 @@ const RealReviews: Component<{ review: Review[], "on:submit": (comment: string) 
 				<div class="reviewbox">
 					<textarea value={use(this.comment).bind()} />
 					<div>
-						<b>THIS DOES NOT MARK THE PROJECT FOR REVIEW! USE THE OFFICIAL SITE TO DO THAT!</b>
-						<Button on:click={async () => { await this["on:submit"](this.comment); this.comment = ""; }}>Submit<ForwardIcon /></Button>
+						<b>
+							THIS DOES NOT MARK THE PROJECT FOR REVIEW! USE THE OFFICIAL SITE
+							TO DO THAT!
+						</b>
+						<Button
+							on:click={async () => {
+								await this["on:submit"](this.comment);
+								this.comment = "";
+							}}
+						>
+							Submit
+							<ForwardIcon />
+						</Button>
 					</div>
 				</div>
 			</Card>
-			{use(this.review).mapEach(x => (
-				<Card title={<UserName user={x.reviewer as any as DLBasePointer<User>} />} project={true}>
-					<div class="comment">
-						{x.comment}
-					</div>
+			{use(this.review).mapEach((x) => (
+				<Card
+					title={<UserName user={x.reviewer as any as DLBasePointer<User>} />}
+					project={true}
+				>
+					<div class="comment">{x.comment}</div>
 				</Card>
 			))}
 		</div>
-	)
-}
+	);
+};
 
-export const Reviews: Component<{ project?: string, location?: string }, { review?: Review[] }, { "on:routeshown": () => void }> = function(cx) {
+export const Reviews: Component<
+	{ project?: string; location?: string },
+	{ review?: Review[] },
+	{ "on:routeshown": () => void }
+> = function (cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -106,20 +125,32 @@ export const Reviews: Component<{ project?: string, location?: string }, { revie
 			let x = await fetchReviews(this.project);
 			this.review = x;
 		}
-	}
+	};
 	this["on:routeshown"] = reload;
 	const submit = async (comment: string) => {
 		await submitReview(this.project!, comment);
 		await reload();
-	}
+	};
 
 	return (
 		<div>
 			<RandomBackground />
-			{use(this.review).andThen((x: Review[]) => <RealReviews review={x} on:submit={submit} />, <Loading />)}
+			{use(this.review).andThen(
+				(x: Review[]) => (
+					<RealReviews review={x} on:submit={submit} />
+				),
+				<Loading />
+			)}
 			<div class="logout-container">
-				<Button on:click={() => { router.navigate("/" + this.location) }}><BackIcon />Back</Button>
+				<Button
+					on:click={() => {
+						router.navigate("/" + this.location);
+					}}
+				>
+					<BackIcon />
+					Back
+				</Button>
 			</div>
 		</div>
-	)
-}
+	);
+};

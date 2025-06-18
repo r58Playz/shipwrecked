@@ -18,14 +18,18 @@ import { ApiScamming } from "./frontend/scamming";
 import { Chat } from "./frontend/chat";
 import { Impersonation } from "./frontend/impersonation";
 
-const Hero: Component<{}, {
-	shoreRoot: HTMLElement,
-	hutTop: HTMLElement,
-	hutBottom: HTMLElement,
-	bayTop: HTMLElement,
-	bayBottom: HTMLElement,
-	rsvpRoot: HTMLElement,
-}, { "on:routeshown": () => void }> = function(cx) {
+const Hero: Component<
+	{},
+	{
+		shoreRoot: HTMLElement;
+		hutTop: HTMLElement;
+		hutBottom: HTMLElement;
+		bayTop: HTMLElement;
+		bayBottom: HTMLElement;
+		rsvpRoot: HTMLElement;
+	},
+	{ "on:routeshown": () => void }
+> = function (cx) {
 	cx.css = `
 		.signup {
 			position: fixed;
@@ -38,7 +42,7 @@ const Hero: Component<{}, {
 	this["on:routeshown"] = async () => {
 		clearCache();
 		await fetchInfo();
-	}
+	};
 
 	return (
 		<div id="app">
@@ -67,46 +71,48 @@ const Hero: Component<{}, {
 				on:back={() => this.bayBottom.scrollIntoView({ block: "center" })}
 			/>
 			<div class="signup">
-				<Button on:click={() => this.rsvpRoot.scrollIntoView({ block: "center" })}>
+				<Button
+					on:click={() => this.rsvpRoot.scrollIntoView({ block: "center" })}
+				>
 					Log In <ForwardIcon />
 				</Button>
 			</div>
 		</div>
-	)
-}
+	);
+};
 
 export let router = new Router([
 	{
-		show: <Hero />
+		show: <Hero />,
 	},
 	{
 		path: "dashboard",
-		show: <Dashboard />
+		show: <Dashboard />,
 	},
 	{
 		path: "gallery",
-		show: <Gallery />
+		show: <Gallery />,
 	},
 	{
 		path: "scamming",
-		show: <ApiScamming />
+		show: <ApiScamming />,
 	},
 	{
 		path: "reviews",
 		children: [
 			{
 				path: ":project/:location",
-				show: <Reviews />
-			}
-		]
+				show: <Reviews />,
+			},
+		],
 	},
 	{
 		path: "chat/:project/:location",
-		show: <Chat />
+		show: <Chat />,
 	},
 	{
 		path: "impersonate/:user",
-		show: <Impersonation />
-	}
+		show: <Impersonation />,
+	},
 ]);
-router.mount(document.querySelector("#app")!)
+router.mount(document.querySelector("#app")!);

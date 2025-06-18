@@ -1,4 +1,8 @@
-import epoxyInit, { EpoxyClient, EpoxyClientOptions, info as epoxyInfo } from "@mercuryworkshop/epoxy-tls/minimal-epoxy";
+import epoxyInit, {
+	EpoxyClient,
+	EpoxyClientOptions,
+	info as epoxyInfo,
+} from "@mercuryworkshop/epoxy-tls/minimal-epoxy";
 import { settings } from "./store";
 import EPOXY_PATH from "../node_modules/@mercuryworkshop/epoxy-tls/minimal/epoxy.wasm?url";
 
@@ -18,7 +22,7 @@ async function evictEpoxy() {
 
 async function instantiateEpoxy() {
 	if (!cache) cache = await window.caches.open("epoxy");
-	if (!await cache.match(EPOXY_PATH)) {
+	if (!(await cache.match(EPOXY_PATH))) {
 		await cache.add(EPOXY_PATH);
 	}
 	const module = await cache.match(EPOXY_PATH);
@@ -42,7 +46,9 @@ export async function fetch(url: string, options?: any): Promise<Response> {
 		} else {
 			await evictEpoxy();
 			await instantiateEpoxy();
-			console.log(`evicted epoxy "${settings.epoxyVersion}" from cache because epoxy "${epoxyVersion}" is available`);
+			console.log(
+				`evicted epoxy "${settings.epoxyVersion}" from cache because epoxy "${epoxyVersion}" is available`
+			);
 			settings.epoxyVersion = epoxyVersion;
 		}
 	}

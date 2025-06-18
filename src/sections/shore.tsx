@@ -1,4 +1,4 @@
-import { type Component, } from "dreamland/core";
+import { type Component } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Button } from "../ui/Button";
@@ -10,10 +10,10 @@ import calendar from "./calendar.webp";
 import location from "./location.webp";
 
 export const ShorePage: Component<{
-	animationRoot: HTMLElement,
-	root: HTMLElement,
-	"on:next": () => void,
-}> = function(cx) {
+	animationRoot: HTMLElement;
+	root: HTMLElement;
+	"on:next": () => void;
+}> = function (cx) {
 	cx.css = `
 		.content {
 			height: 100vh;
@@ -55,21 +55,28 @@ export const ShorePage: Component<{
 
 	return (
 		<div id="shore">
-			<ScrollingBackground animation="bottom" animationRoot={this.animationRoot}>
+			<ScrollingBackground
+				animation="bottom"
+				animationRoot={this.animationRoot}
+			>
 				<img src={shore} alt="Shore Background" />
 				<div class="content" this={use(this.root).bind()}>
 					<img class="logo" src={logo} alt="Shipwrecked logo" />
 					<div class="info">
-						<img src={calendar} alt="Calendar icon" /><span>August 8-11, 2025</span>
+						<img src={calendar} alt="Calendar icon" />
+						<span>August 8-11, 2025</span>
 					</div>
 					<div class="info">
-						<img src={location} alt="Location icon" /><span>Cathleen Stone Island, Boston Harbor</span>
+						<img src={location} alt="Location icon" />
+						<span>Cathleen Stone Island, Boston Harbor</span>
 					</div>
 					<div>
-						<Button on:click={this["on:next"]}>What's Hack Club Shipwrecked? <ForwardIcon /></Button>
+						<Button on:click={this["on:next"]}>
+							What's Hack Club Shipwrecked? <ForwardIcon />
+						</Button>
 					</div>
 				</div>
 			</ScrollingBackground>
 		</div>
-	)
-}
+	);
+};

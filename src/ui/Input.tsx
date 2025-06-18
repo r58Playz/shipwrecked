@@ -1,6 +1,9 @@
 import type { Component, DLBoundPointer } from "dreamland/core";
 
-export const TextInput: Component<{ value: DLBoundPointer<string>, placeholder?: string }> = function(cx) {
+export const TextInput: Component<{
+	value: DLBoundPointer<string>;
+	placeholder?: string;
+}> = function (cx) {
 	cx.css = `
 		:scope {
 			background: #f3f4f6;
@@ -15,5 +18,11 @@ export const TextInput: Component<{ value: DLBoundPointer<string>, placeholder?:
 		}
 	`;
 
-	return <input type="text" placeholder={this.placeholder || ""} value={use(this.value).bind()} />
-}
+	return (
+		<input
+			type="text"
+			placeholder={this.placeholder || ""}
+			value={use(this.value).bind()}
+		/>
+	);
+};

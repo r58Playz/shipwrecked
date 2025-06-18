@@ -3,7 +3,14 @@ import { stateProxy, type Component } from "dreamland/core";
 import { router } from "../main";
 import { Loading, UserName } from "./apiComponents";
 import { RandomBackground } from "./background";
-import { clearCache, fetchGallery, getProjectHours, upvote, userInfo, type ProjectGallery } from "./api";
+import {
+	clearCache,
+	fetchGallery,
+	getProjectHours,
+	upvote,
+	userInfo,
+	type ProjectGallery,
+} from "./api";
 
 import { BackIcon } from "../ui/Icon";
 import { Button } from "../ui/Button";
@@ -14,8 +21,14 @@ import { ToggleButton } from "../ui/ToggleButton";
 
 let parser = new DOMParser();
 
-async function fetchTransform(url: URL, callback: (doc: Document) => string): Promise<URL> {
-	let html = parser.parseFromString(await fetch(url.toString()).then(r => r.text()), "text/html");
+async function fetchTransform(
+	url: URL,
+	callback: (doc: Document) => string
+): Promise<URL> {
+	let html = parser.parseFromString(
+		await fetch(url.toString()).then((r) => r.text()),
+		"text/html"
+	);
 
 	let src = callback(html);
 	let srcUrl = new URL(src);
@@ -24,18 +37,22 @@ async function fetchTransform(url: URL, callback: (doc: Document) => string): Pr
 	return srcUrl;
 }
 
-async function fetchDrive(url: URL, set: (str: string) => void, useVideo: () => void): Promise<string> {
+async function fetchDrive(
+	url: URL,
+	set: (str: string) => void,
+	useVideo: () => void
+): Promise<string> {
 	let id: string;
 	if (url.pathname.toLowerCase().startsWith("uc")) {
 		id = url.searchParams.get("id") || "";
 	} else {
 		let path = url.pathname.split("/");
-		id = path[path.findIndex(x => x === "d") + 1] || "";
+		id = path[path.findIndex((x) => x === "d") + 1] || "";
 	}
 
 	let raw = `https://drive.usercontent.google.com/download?id=${id}`;
 	set(raw);
-	let res = await fetch(raw)
+	let res = await fetch(raw);
 	let blob = await res.blob();
 
 	if (new URL(res.url).hostname.toLowerCase() === "accounts.google.com") {
@@ -54,13 +71,17 @@ async function fetchDrive(url: URL, set: (str: string) => void, useVideo: () => 
 		};
 		reader.onerror = () => {
 			rej(reader.error);
-		}
+		};
 
 		reader.readAsDataURL(blob);
 	});
 }
 
-async function preprocessScreenshot(urlStr: string, set: (str: string) => void, useVideo: () => void): Promise<string> {
+async function preprocessScreenshot(
+	urlStr: string,
+	set: (str: string) => void,
+	useVideo: () => void
+): Promise<string> {
 	let url;
 	try {
 		url = new URL(urlStr);
@@ -75,16 +96,32 @@ async function preprocessScreenshot(urlStr: string, set: (str: string) => void, 
 		let host = url.host.toLowerCase();
 
 		if (host === "imgur.com")
-			url = await fetchTransform(url, x => (x.querySelector("meta[name='twitter:image']") as HTMLMetaElement).content);
+			url = await fetchTransform(
+				url,
+				(x) =>
+					(x.querySelector("meta[name='twitter:image']") as HTMLMetaElement)
+						.content
+			);
 		else if (host === "ibb.co")
-			url = await fetchTransform(url, x => (x.querySelector(".image-viewer-container img") as HTMLImageElement).src);
+			url = await fetchTransform(
+				url,
+				(x) =>
+					(x.querySelector(".image-viewer-container img") as HTMLImageElement)
+						.src
+			);
 		else if (host === "postimg.cc")
-			url = await fetchTransform(url, x => (x.querySelector("#main-image") as HTMLImageElement).src);
-		else if (host === "github.com" && (!url.search.toLowerCase().includes("raw") || !url.pathname.toLowerCase().includes("raw")))
+			url = await fetchTransform(
+				url,
+				(x) => (x.querySelector("#main-image") as HTMLImageElement).src
+			);
+		else if (
+			host === "github.com" &&
+			(!url.search.toLowerCase().includes("raw") ||
+				!url.pathname.toLowerCase().includes("raw"))
+		)
 			url.searchParams.set("raw", "true");
 		else if (host === "drive.google.com")
 			return await fetchDrive(url, set, useVideo);
-
 	} catch (err) {
 		console.warn("transform failed for", urlStr, err);
 		throw `Failed to apply host-specific transform for "${url.host}"${typeof err === "string" ? `: ${err}` : ""}`;
@@ -93,15 +130,20 @@ async function preprocessScreenshot(urlStr: string, set: (str: string) => void, 
 	return url.toString();
 }
 
-type ScreenshotEntry = { valid: true, url: string } | { valid: false, error: string };
+type ScreenshotEntry =
+	| { valid: true; url: string }
+	| { valid: false; error: string };
 let screenshotUrlCache = new Map<string, ScreenshotEntry>();
 
-const GalleryProject: Component<{ project: ProjectGallery }, {
-	img: HTMLImageElement | HTMLVideoElement | string,
-	transformed: string,
-	upvoted: boolean,
-	upvotes: number
-}> = function(cx) {
+const GalleryProject: Component<
+	{ project: ProjectGallery },
+	{
+		img: HTMLImageElement | HTMLVideoElement | string;
+		transformed: string;
+		upvoted: boolean;
+		upvotes: number;
+	}
+> = function (cx) {
 	cx.css = `
 		:scope :global(.Ui-card) {
 			height: 100%;
@@ -207,7 +249,11 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 		} else {
 			let entry: ScreenshotEntry = { valid: false, error: "" };
 			try {
-				this.transformed = await preprocessScreenshot(this.transformed, x => this.transformed = x, () => isVideo = true);
+				this.transformed = await preprocessScreenshot(
+					this.transformed,
+					(x) => (this.transformed = x),
+					() => (isVideo = true)
+				);
 				entry = { valid: true, url: this.transformed };
 			} catch (err) {
 				if (typeof err === "string") {
@@ -218,20 +264,26 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 
 			screenshotUrlCache.set(this.project.screenshot, entry);
 
-			if (!entry.valid)
-				return;
+			if (!entry.valid) return;
 		}
 
 		let embed = isVideo ? document.createElement("video") : new Image();
-		let promise = isVideo ? Promise.resolve() : new Promise((res, rej) => {
-			embed.addEventListener("load", res);
-			embed.addEventListener("error", rej);
-		});
+		let promise = isVideo
+			? Promise.resolve()
+			: new Promise((res, rej) => {
+					embed.addEventListener("load", res);
+					embed.addEventListener("error", rej);
+				});
 
 		embed.src = this.transformed;
 		embed.classList.add("embed");
 		if (this.transformed !== this.project.screenshot) {
-			console.debug("transformed", this.project.screenshot, "->", this.transformed.startsWith("data") ? "data url" : this.transformed);
+			console.debug(
+				"transformed",
+				this.project.screenshot,
+				"->",
+				this.transformed.startsWith("data") ? "data url" : this.transformed
+			);
 			embed.setAttribute("data-transform", this.project.screenshot);
 		}
 
@@ -254,56 +306,107 @@ const GalleryProject: Component<{ project: ProjectGallery }, {
 		this.upvoted = res.upvoted;
 		this.upvotes = res.count;
 		await fetchGallery();
-	}
+	};
 
 	return (
 		<div>
 			<Card title={this.project.name} project={true} noPadding={true}>
 				<div class="content">
-					<UserName user={use(this.project).map(x => x.user)} />
+					<UserName user={use(this.project).map((x) => x.user)} />
 					<div class="chips">
-						<span on:click={toggleUpvote} class="upvote" class:yellow={use(this.upvoted)}>{use(this.upvotes)} <span class="star">٭</span></span>
+						<span
+							on:click={toggleUpvote}
+							class="upvote"
+							class:yellow={use(this.upvoted)}
+						>
+							{use(this.upvotes)} <span class="star">٭</span>
+						</span>
 						<span class="blue">{getProjectHours(this.project)}h</span>
 						{this.project.viral ? <span class="pink">Viral</span> : null}
 						{this.project.shipped ? <span class="green">Shipped</span> : null}
-						{this.project.codeUrl ? <a href={this.project.codeUrl} target="_blank">Code</a> : null}
-						{this.project.playableUrl ? <a href={this.project.playableUrl} target="_blank">Demo</a> : null}
-						<span on:click={() => router.navigate("/reviews/" + this.project.projectID + "/gallery")} class="upvote">Reviews</span>
-						{this.project.chat_enabled ?
-							<span on:click={() => router.navigate("/chat/" + this.project.projectID + "/gallery")} class="upvote">Chat ({this.project.chatCount})</span>
-							: null}
+						{this.project.codeUrl ? (
+							<a href={this.project.codeUrl} target="_blank">
+								Code
+							</a>
+						) : null}
+						{this.project.playableUrl ? (
+							<a href={this.project.playableUrl} target="_blank">
+								Demo
+							</a>
+						) : null}
+						<span
+							on:click={() =>
+								router.navigate(
+									"/reviews/" + this.project.projectID + "/gallery"
+								)
+							}
+							class="upvote"
+						>
+							Reviews
+						</span>
+						{this.project.chat_enabled ? (
+							<span
+								on:click={() =>
+									router.navigate(
+										"/chat/" + this.project.projectID + "/gallery"
+									)
+								}
+								class="upvote"
+							>
+								Chat ({this.project.chatCount})
+							</span>
+						) : null}
 					</div>
-					{use(this.img).map(x => typeof x === "string" ? (
-						<div class="embed failed" data-url={this.project.screenshot} data-transform={this.transformed}>
-							{x}
-							{this.project.screenshot ? (
-								<div class="chips">
-									<a class="pink" href={this.project.screenshot} target="_blank">Open screenshot manually</a>
-								</div>
-							) : null}
-							{this.project.screenshot !== this.transformed ? (
-								<div class="chips">
-									<a class="pink" href={this.transformed} target="_blank">Open transformed screenshot manually</a>
-								</div>
-							) : null}
-						</div>
-					) : x)}
+					{use(this.img).map((x) =>
+						typeof x === "string" ? (
+							<div
+								class="embed failed"
+								data-url={this.project.screenshot}
+								data-transform={this.transformed}
+							>
+								{x}
+								{this.project.screenshot ? (
+									<div class="chips">
+										<a
+											class="pink"
+											href={this.project.screenshot}
+											target="_blank"
+										>
+											Open screenshot manually
+										</a>
+									</div>
+								) : null}
+								{this.project.screenshot !== this.transformed ? (
+									<div class="chips">
+										<a class="pink" href={this.transformed} target="_blank">
+											Open transformed screenshot manually
+										</a>
+									</div>
+								) : null}
+							</div>
+						) : (
+							x
+						)
+					)}
 					{this.project.description}
 				</div>
 			</Card>
 		</div>
-	)
-}
+	);
+};
 
-const RealGallery: Component<{}, {
-	projects: { el: HTMLElement, project: ProjectGallery }[],
-	search: string,
-	filterViral: boolean,
-	filterShipped: boolean,
-	filterChat: boolean,
-	sort: "upvotes" | "hours",
-	sortScreenshot: boolean,
-}> = function(cx) {
+const RealGallery: Component<
+	{},
+	{
+		projects: { el: HTMLElement; project: ProjectGallery }[];
+		search: string;
+		filterViral: boolean;
+		filterShipped: boolean;
+		filterChat: boolean;
+		sort: "upvotes" | "hours";
+		sortScreenshot: boolean;
+	}
+> = function (cx) {
 	cx.css = `
 		:scope {
 			padding: 1em;
@@ -356,26 +459,38 @@ const RealGallery: Component<{}, {
 	`;
 
 	this.search = "";
-	this.sort = "upvotes" as ("upvotes" | "hours");
+	this.sort = "upvotes" as "upvotes" | "hours";
 	this.filterShipped = false;
 	this.filterViral = false;
 	this.filterChat = false;
 	this.sortScreenshot = true;
 
-	stateProxy(this, "projects", use(userInfo.gallery).map(x => x || []).mapEach(x => ({ el: <GalleryProject project={x} />, project: x })));
+	stateProxy(
+		this,
+		"projects",
+		use(userInfo.gallery)
+			.map((x) => x || [])
+			.mapEach((x) => ({ el: <GalleryProject project={x} />, project: x }))
+	);
 
 	let projects = use(this.projects)
-		.zip(use(this.search), use(this.sort), use(this.sortScreenshot), use(this.filterViral), use(this.filterShipped), use(this.filterChat))
+		.zip(
+			use(this.search),
+			use(this.sort),
+			use(this.sortScreenshot),
+			use(this.filterViral),
+			use(this.filterShipped),
+			use(this.filterChat)
+		)
 		.map(([arr, search, sort, sortScreenshot, viral, shipped, chat]) => {
 			if (search)
-				arr = arr.filter(x => x.project.name.toLowerCase().includes(search.toLowerCase()));
+				arr = arr.filter((x) =>
+					x.project.name.toLowerCase().includes(search.toLowerCase())
+				);
 
-			if (viral)
-				arr = arr.filter(x => x.project.viral);
-			if (shipped)
-				arr = arr.filter(x => x.project.shipped);
-			if (chat)
-				arr = arr.filter(x => x.project.chat_enabled);
+			if (viral) arr = arr.filter((x) => x.project.viral);
+			if (shipped) arr = arr.filter((x) => x.project.shipped);
+			if (chat) arr = arr.filter((x) => x.project.chat_enabled);
 
 			return arr.sort(({ project: a }, { project: b }) => {
 				if (sortScreenshot) {
@@ -384,8 +499,7 @@ const RealGallery: Component<{}, {
 				}
 
 				let ret = 0;
-				if (sort === "upvotes")
-					ret = b.upvoteCount - a.upvoteCount;
+				if (sort === "upvotes") ret = b.upvoteCount - a.upvoteCount;
 				else if (sort === "hours")
 					ret = getProjectHours(b) - getProjectHours(a);
 
@@ -400,34 +514,64 @@ const RealGallery: Component<{}, {
 				<Card title="Gallery">
 					<div class="filtercard">
 						<div class="stats">
-							{projects.map(x => x.length)} projects shown out of {use(this.projects).map(x => x.length)}{" "}
-							({use(this.projects).map(x => x.length).zip(projects.map(x => x.length)).map(([b, t]) => (t / b * 100).toFixed(1))}%)
+							{projects.map((x) => x.length)} projects shown out of{" "}
+							{use(this.projects).map((x) => x.length)} (
+							{use(this.projects)
+								.map((x) => x.length)
+								.zip(projects.map((x) => x.length))
+								.map(([b, t]) => ((t / b) * 100).toFixed(1))}
+							%)
 						</div>
 						<TextInput value={use(this.search).bind()} placeholder="Search" />
 						<div class="filters">
 							Filter:
-							<ToggleButton value={use(this.filterViral).bind()}>Viral</ToggleButton>
-							<ToggleButton value={use(this.filterShipped).bind()}>Shipped</ToggleButton>
-							<ToggleButton value={use(this.filterChat).bind()}>Chat Enabled</ToggleButton>
+							<ToggleButton value={use(this.filterViral).bind()}>
+								Viral
+							</ToggleButton>
+							<ToggleButton value={use(this.filterShipped).bind()}>
+								Shipped
+							</ToggleButton>
+							<ToggleButton value={use(this.filterChat).bind()}>
+								Chat Enabled
+							</ToggleButton>
 						</div>
 						<div class="filters">
 							Sort:
-							<ToggleButton value={use(this.sort).bind().map(x => x === "upvotes", x => x ? "upvotes" : "hours")}>Upvotes</ToggleButton>
-							<ToggleButton value={use(this.sort).bind().map(x => x === "hours", x => x ? "hours" : "upvotes")}>Hours</ToggleButton>
+							<ToggleButton
+								value={use(this.sort)
+									.bind()
+									.map(
+										(x) => x === "upvotes",
+										(x) => (x ? "upvotes" : "hours")
+									)}
+							>
+								Upvotes
+							</ToggleButton>
+							<ToggleButton
+								value={use(this.sort)
+									.bind()
+									.map(
+										(x) => x === "hours",
+										(x) => (x ? "hours" : "upvotes")
+									)}
+							>
+								Hours
+							</ToggleButton>
 						</div>
-						<ToggleButton value={use(this.sortScreenshot).bind()}>Sort screenshotless projects away</ToggleButton>
+						<ToggleButton value={use(this.sortScreenshot).bind()}>
+							Sort screenshotless projects away
+						</ToggleButton>
 					</div>
 				</Card>
 			</div>
-			<div class="grid">
-				{projects}
-			</div>
+			<div class="grid">{projects}</div>
 		</div>
-	)
-}
+	);
+};
 
-export const Gallery: Component<{}, {}, { "on:routeshown": () => void }> = function(cx) {
-	cx.css = `
+export const Gallery: Component<{}, {}, { "on:routeshown": () => void }> =
+	function (cx) {
+		cx.css = `
 		:scope {
 			width: 100%;
 			height: 100%;
@@ -448,20 +592,27 @@ export const Gallery: Component<{}, {}, { "on:routeshown": () => void }> = funct
 		}
 	`;
 
-	let allData = use(userInfo.gallery);
+		let allData = use(userInfo.gallery);
 
-	this["on:routeshown"] = async () => {
-		clearCache();
-		await fetchGallery();
-	}
+		this["on:routeshown"] = async () => {
+			clearCache();
+			await fetchGallery();
+		};
 
-	return (
-		<div>
-			<RandomBackground />
-			{allData.andThen(<RealGallery />, <Loading />)}
-			<div class="logout-container">
-				<Button on:click={() => { router.navigate("/dashboard") }}><BackIcon />Back</Button>
+		return (
+			<div>
+				<RandomBackground />
+				{allData.andThen(<RealGallery />, <Loading />)}
+				<div class="logout-container">
+					<Button
+						on:click={() => {
+							router.navigate("/dashboard");
+						}}
+					>
+						<BackIcon />
+						Back
+					</Button>
+				</div>
 			</div>
-		</div>
-	)
-}
+		);
+	};
