@@ -1,4 +1,4 @@
-import { type Component, type DLBoundPointer } from "dreamland/core";
+import { type Component } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Card } from "../ui/Card";
@@ -9,8 +9,8 @@ import bay from "./bay.webp";
 
 export const BayPage: Component<{
 	animationRoot: HTMLElement,
-	top: DLBoundPointer<HTMLElement>,
-	bottom: DLBoundPointer<HTMLElement>,
+	top: HTMLElement,
+	bottom: HTMLElement,
 	"on:back": () => void,
 	"on:next": () => void,
 }, {

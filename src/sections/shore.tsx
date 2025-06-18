@@ -1,4 +1,4 @@
-import { type Component, type DLBoundPointer } from "dreamland/core";
+import { type Component, } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Button } from "../ui/Button";
@@ -11,7 +11,7 @@ import location from "./location.webp";
 
 export const ShorePage: Component<{
 	animationRoot: HTMLElement,
-	root: DLBoundPointer<HTMLElement>,
+	root: HTMLElement,
 	"on:next": () => void,
 }> = function(cx) {
 	cx.css = `

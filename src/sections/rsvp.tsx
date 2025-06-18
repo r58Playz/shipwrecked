@@ -1,4 +1,4 @@
-import { type Component, type DLBoundPointer } from "dreamland/core";
+import { type Component } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Button } from "../ui/Button";
@@ -84,7 +84,7 @@ const Info: Component = function(cx) {
 
 export const RsvpPage: Component<{
 	animationRoot: HTMLElement,
-	root: DLBoundPointer<HTMLElement>,
+	root: HTMLElement,
 	"on:back": () => void,
 }, {
 	emailLink: string,

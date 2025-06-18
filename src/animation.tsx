@@ -1,4 +1,4 @@
-import { DLBasePointer, type Component, type ComponentChild } from "dreamland/core";
+import { type Component, type ComponentChild } from "dreamland/core";
 
 export const ScrollingBackground: Component<{
 	animation?: "both" | "bottom" | "top",
@@ -122,7 +122,7 @@ export const ScrollingBackground: Component<{
 }
 
 // @ts-expect-error
-const WaveAnimationCanvas: Component<{ progress: DLBasePointer<number> }> = function(cx) {
+const WaveAnimationCanvas: Component<{ progress: number }> = function(cx) {
 	cx.css = `
 		:scope {
 			z-index: 1;
@@ -174,7 +174,7 @@ async function fetchImages() {
 }
 const imagePromise = fetchImages();
 
-const WaveAnimationImage: Component<{ progress: DLBasePointer<number> }> = function(cx) {
+const WaveAnimationImage: Component<{ progress: number }> = function(cx) {
 	cx.css = `
 		:scope {
 			transform: scale(1, -1);

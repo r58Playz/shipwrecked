@@ -1,4 +1,4 @@
-import type { Component, DLBasePointer, DLBoundPointer, DLPointer } from "dreamland/core";
+import type { Component, DLPointer } from "dreamland/core";
 import { calculateProgress, calculateProjectProgress, calculateShells, getProjectHours, getTotalHours, type HackatimeLink, type MinimalProject, type Project, type ProjectCommon, type UserStatus } from "./api";
 import { Card } from "../ui/Card";
 
@@ -8,7 +8,7 @@ import { ForwardIcon } from "../ui/Icon";
 import { router } from "../main";
 
 type UserNameUser = { image: string | null, name: string | null, status?: UserStatus } | null;
-export const UserName: Component<{ user: DLBasePointer<UserNameUser> }> = function(cx) {
+export const UserName: Component<{ user: UserNameUser }> = function(cx) {
 	cx.css = `
 		img {
 			width: 1.25em;
@@ -64,7 +64,7 @@ export const Loading: Component = function(cx) {
 	)
 }
 
-export const ProgressBar: Component<{ projects: DLBasePointer<MinimalProject[]> }, {}> = function(cx) {
+export const ProgressBar: Component<{ projects: MinimalProject[] }, {}> = function(cx) {
 	cx.css = `
 		:scope {
 			max-width: 576px;
@@ -131,7 +131,7 @@ export const ProgressBar: Component<{ projects: DLBasePointer<MinimalProject[]> 
 
 type MaybeCommonProject = ProjectCommon | Project;
 
-const ProjectsTable: Component<{ projects: DLPointer<MaybeCommonProject[]>, selectedId: DLBoundPointer<string | null> }> = function(cx) {
+const ProjectsTable: Component<{ projects: MaybeCommonProject[], selectedId: string | null }> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;

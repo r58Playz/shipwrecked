@@ -1,6 +1,6 @@
-import type { Component, ComponentChild, DLBoundPointer } from "dreamland/core";
+import type { Component, ComponentChild } from "dreamland/core";
 
-export const ToggleButton: Component<{ value: DLBoundPointer<boolean>, children: ComponentChild[] | ComponentChild }> = function(cx) {
+export const ToggleButton: Component<{ value: boolean, children: ComponentChild[] | ComponentChild }> = function(cx) {
 	cx.css = `
 		:scope {
 			background: #f6f3f4;
