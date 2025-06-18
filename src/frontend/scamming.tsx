@@ -174,10 +174,10 @@ export const RealScamming: Component<{
 	let viral = use(this.gallery)
 		.mapEach(project => {
 			let review = project.reviews?.find(x => x.comment.includes("Viral: No → Yes"));
-			return { ...project, viralDate: review ? new Date(review.createdAt) : new Date() };
+			return { ...project, viralDate: review ? new Date(review.createdAt) : null };
 		})
 		.map(x => x.sort((a, b) => {
-			return +a.viralDate - +b.viralDate;
+			return +(a.viralDate || new Date()) - +(b.viralDate || new Date());
 		}))
 		.map(x => x.filter((x, i, s) => x.project.viral && i === s.findIndex(y => x.project.userId === y.project.userId)))
 	let shipped = use(this.gallery)
@@ -199,7 +199,7 @@ export const RealScamming: Component<{
 						</div>
 						<ol>
 							{viral.mapEach(x => (
-								<li><UserName user={x.project.user as any} /> at {x.viralDate.toLocaleString()}</li>
+								<li><UserName user={x.project.user as any} /> at {x.viralDate ? x.viralDate.toLocaleString() : "Unknown"}</li>
 							))}
 						</ol>
 					</div>
