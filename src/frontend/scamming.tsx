@@ -101,7 +101,7 @@ function lookupGraham(graham: UserClusterAnalysis, id: string) {
 function islandStatus(
 	user: GalleryUser
 ): "invitation" | "waitlist" | undefined {
-	if (user.projects.filter((x) => getProjectHours(x) >= 15).length >= 4) {
+	if (user.projects.filter((x) => getProjectHours(x) >= 15 && x.shipped).length >= 4) {
 		if (!!user.projects.find((x) => x.viral)) return "invitation";
 		return "waitlist";
 	}
