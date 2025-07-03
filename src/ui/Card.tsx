@@ -1,4 +1,4 @@
-import { DLPointer, type Component, type ComponentChild } from "dreamland/core";
+import { Pointer, type Component, type ComponentChild } from "dreamland/core";
 
 export const Card: Component<{
 	title: ComponentChild;
@@ -56,8 +56,8 @@ export const Card: Component<{
 	return (
 		<div
 			class="Ui-card"
-			class:small={use(this.small) as DLPointer<boolean>}
-			class:project={use(this.project) as DLPointer<boolean>}
+			class:small={use(this.small) as Pointer<boolean>}
+			class:project={use(this.project) as Pointer<boolean>}
 			class:padding={use(this.noPadding).map((x) => !x)}
 		>
 			<h1>{this.title}</h1>

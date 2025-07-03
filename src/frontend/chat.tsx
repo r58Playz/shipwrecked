@@ -1,4 +1,4 @@
-import type { Component, DLBasePointer } from "dreamland/core";
+import type { Component } from "dreamland/core";
 
 import {
 	clearCache,
@@ -7,7 +7,6 @@ import {
 	submitChat,
 	userInfo,
 	type ChatMessage,
-	type User,
 } from "./api";
 import { RandomBackground } from "./background";
 import { Loading, UserName } from "./apiComponents";
@@ -30,7 +29,7 @@ const RealChat: Component<
 		"on:submit": (comment: string) => Promise<void>;
 	},
 	{ comment: string }
-> = function (cx) {
+> = function(cx) {
 	cx.css = `
 		:scope {
 			padding: 1em;
@@ -79,7 +78,7 @@ const RealChat: Component<
 			<Card title="Project Chat" />
 			{use(this.messages).mapEach((x) => (
 				<Card
-					title={<UserName user={x.user as any as DLBasePointer<User>} />}
+					title={<UserName user={x.user} />}
 					project={true}
 				>
 					<div class="comment">{x.content}</div>
@@ -109,7 +108,7 @@ export const Chat: Component<
 	{ project?: string; location?: string },
 	{ chat?: ExtendedChatMessage[] },
 	{ "on:routeshown": () => void }
-> = function (cx) {
+> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;

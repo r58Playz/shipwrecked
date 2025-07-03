@@ -1,6 +1,6 @@
-import type { Component, DLBasePointer } from "dreamland/core";
+import type { Component } from "dreamland/core";
 
-import { fetchReviews, submitReview, type Review, type User } from "./api";
+import { fetchReviews, submitReview, type Review } from "./api";
 import { RandomBackground } from "./background";
 import { Loading, UserName } from "./apiComponents";
 import { Button } from "../ui/Button";
@@ -80,7 +80,7 @@ const RealReviews: Component<
 			</Card>
 			{use(this.review).mapEach((x) => (
 				<Card
-					title={<UserName user={x.reviewer as any as DLBasePointer<User>} />}
+					title={<UserName user={x.reviewer} />}
 					project={true}
 				>
 					<div class="comment">{x.comment}</div>

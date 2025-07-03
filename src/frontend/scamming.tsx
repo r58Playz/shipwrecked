@@ -1,4 +1,4 @@
-import type { Component, DLPointer } from "dreamland/core";
+import type { Component } from "dreamland/core";
 
 import {
 	calculateProgress,
@@ -11,7 +11,6 @@ import {
 	getProjectHours,
 	getTotalHours,
 	userInfo,
-	type MinimalProject,
 	type ProjectGallery,
 	type Review,
 	type UserData,
@@ -341,7 +340,7 @@ export const RealScamming: Component<{
 										</div>
 									</div>
 									<ProgressBar
-										projects={x.projects as any as DLPointer<MinimalProject[]>}
+										projects={x.projects}
 									/>
 									<Button
 										on:click={() =>

@@ -1,4 +1,4 @@
-import type { Component, DLPointer } from "dreamland/core";
+import type { Component } from "dreamland/core";
 import {
 	calculateProgress,
 	calculateProjectProgress,
@@ -23,7 +23,7 @@ type UserNameUser = {
 	name: string | null;
 	status?: UserStatus;
 } | null;
-export const UserName: Component<{ user: UserNameUser }> = function (cx) {
+export const UserName: Component<{ user: UserNameUser }> = function(cx) {
 	cx.css = `
 		img {
 			width: 1.25em;
@@ -67,7 +67,7 @@ export const UserName: Component<{ user: UserNameUser }> = function (cx) {
 	);
 };
 
-export const Loading: Component = function (cx) {
+export const Loading: Component = function(cx) {
 	cx.css = `
 		:scope {
 			display: flex;
@@ -84,7 +84,7 @@ export const Loading: Component = function (cx) {
 };
 
 export const ProgressBar: Component<{ projects: MinimalProject[] }, {}> =
-	function (cx) {
+	function(cx) {
 		cx.css = `
 		:scope {
 			max-width: 576px;
@@ -167,7 +167,7 @@ type MaybeCommonProject = ProjectCommon | Project;
 const ProjectsTable: Component<{
 	projects: MaybeCommonProject[];
 	selectedId: string | null;
-}> = function (cx) {
+}> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -226,7 +226,7 @@ const ProjectsTable: Component<{
 	);
 };
 
-const HackatimeTable: Component<{ links: HackatimeLink[] }> = function (cx) {
+const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
 	cx.css = `
 		:scope {
 			width: 100%;
@@ -271,7 +271,7 @@ const SelectedProject: Component<{
 	projects: MaybeCommonProject[];
 	user: UserNameUser;
 	"on:close": () => void;
-}> = function (cx) {
+}> = function(cx) {
 	cx.css = `
 		:scope, :scope :global(.Ui-card) {
 			height: 100%;
@@ -447,7 +447,7 @@ export const DashboardComponent: Component<
 	{
 		selectedId: string | null;
 	}
-> = function (cx) {
+> = function(cx) {
 	cx.css = `
 		:scope {
 			padding: 1rem;
@@ -495,7 +495,7 @@ export const DashboardComponent: Component<
 					}
 					small={true}
 				>
-					<ProgressBar projects={use(this.projects) as DLPointer<Project[]>} />
+					<ProgressBar projects={use(this.projects)} />
 				</Card>
 			</div>
 			<div class="projects">

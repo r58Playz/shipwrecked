@@ -1,7 +1,7 @@
-import type { Component, DLBoundPointer } from "dreamland/core";
+import type { Component } from "dreamland/core";
 
 export const TextInput: Component<{
-	value: DLBoundPointer<string>;
+	value: string;
 	placeholder?: string;
 }> = function (cx) {
 	cx.css = `
