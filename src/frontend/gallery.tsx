@@ -382,23 +382,23 @@ GalleryProject.css = `
 
 	.yellow {
 		background-color: #efb10033;
-		color: #efb100;
+		color: #894b00 !important;
 	}
 	.blue {
 		background-color: #155dfc33;
-		color: #155dfc;
+		color: #155dfc !important;
 	}
 	.pink {
 		background-color: #a3004c33;
-		color: #a3004c;
+		color: #a3004c !important;
 	}
 	.green {
 		background-color: #01663033;
-		color: #016630;
+		color: #016630 !important;
 	}
 	.purple {
 		background-color: #9810fa33;
-		color: #9810fa;
+		color: #9810fa !important;
 	}
 
 	:scope :global(.Ui-UserName) {

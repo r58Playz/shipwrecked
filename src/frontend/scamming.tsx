@@ -311,7 +311,6 @@ RealScamming.css = `
 		backdrop-filter: blur(2px);
 		border-radius: 1rem;
 		padding: 0 0.5rem;
-		color: unset;
 		white-space: nowrap;
 	}
 
