@@ -64,6 +64,8 @@ export interface ProjectGallery extends ProjectCommon {
 
 export interface ProjectLeaderboard extends Project {
 	airtableId: string | null;
+	hasRepoBadge: boolean,
+	submitted: boolean,
 }
 
 export interface ProjectFixed extends Project {
@@ -72,6 +74,8 @@ export interface ProjectFixed extends Project {
 	chatCount: number;
 	lastChatActivity: string | null;
 	airtableId: string | null;
+	hasRepoBadge: boolean,
+	submitted: boolean,
 }
 
 export interface User {

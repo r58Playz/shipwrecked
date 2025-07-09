@@ -203,6 +203,8 @@ export const RealScamming: Component<{
 					<div>In review projects: {use(this.gallery).map(x=>x.filter(x=>x.project.in_review).length)}</div>
 					<div>Airtable synced projects: {use(this.gallery).map(x=>x.filter(x=>x.project.airtableId).length)}</div>
 					<div>Chat enabled projects: {use(this.gallery).map(x=>x.filter(x=>x.project.chat_enabled).length)}</div>
+					<div>Badged projects: {use(this.gallery).map(x=>x.filter(x=>x.project.hasRepoBadge).length)}</div>
+					<div>"Submitted" projects: {use(this.gallery).map(x=>x.filter(x=>x.project.submitted).length)}</div>
 				</Card>
 			</div>
 			<div class="group">

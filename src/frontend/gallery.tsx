@@ -246,6 +246,7 @@ const GalleryProject: Component<
 						{this.project.viral ? <span class="pink">Viral</span> : null}
 						{this.project.shipped ? <span class="green">Shipped</span> : null}
 						{this.project.in_review ? <span class="yellow">In Review</span> : null}
+						{this.project.hasRepoBadge ? <span class="purple">Has Badge</span> : null}
 						{this.project.codeUrl ? (
 							<a href={this.project.codeUrl} target="_blank">
 								Code
@@ -395,6 +396,10 @@ GalleryProject.css = `
 		background-color: #01663033;
 		color: #016630;
 	}
+	.purple {
+		background-color: #9810fa33;
+		color: #9810fa;
+	}
 
 	:scope :global(.Ui-UserName) {
 		font-size: 1.2em;
@@ -411,6 +416,7 @@ const RealGallery: Component<
 		filterShipped: boolean;
 		filterReview: boolean;
 		filterSynced: boolean;
+		filterBadge: boolean;
 		filterChat: boolean;
 		sort: "upvotes" | "hours";
 		sortScreenshot: boolean;
@@ -422,6 +428,7 @@ const RealGallery: Component<
 	this.filterViral = false;
 	this.filterReview = false;
 	this.filterSynced = false;
+	this.filterBadge = false;
 	this.filterChat = false;
 	this.sortScreenshot = true;
 
@@ -447,9 +454,10 @@ const RealGallery: Component<
 			use(this.filterShipped),
 			use(this.filterReview),
 			use(this.filterSynced),
+			use(this.filterBadge),
 			use(this.filterChat)
 		)
-		.map(([arr, search, sort, sortScreenshot, viral, shipped, review, synced, chat]) => {
+		.map(([arr, search, sort, sortScreenshot, viral, shipped, review, synced, badged, chat]) => {
 			if (search)
 				arr = arr.filter((x) =>
 					x.project.name.toLowerCase().includes(search.toLowerCase())
@@ -459,6 +467,7 @@ const RealGallery: Component<
 			if (shipped) arr = arr.filter((x) => x.project.shipped);
 			if (review) arr = arr.filter(x => x.project.in_review);
 			if (synced) arr = arr.filter(x => x.project.airtableId);
+			if (badged) arr = arr.filter(x => x.project.hasRepoBadge);
 			if (chat) arr = arr.filter((x) => x.project.chat_enabled);
 
 			return arr.sort(({ project: a }, { project: b }) => {
@@ -505,6 +514,9 @@ const RealGallery: Component<
 							</ToggleButton>
 							<ToggleButton value={use(this.filterSynced).bind()}>
 								Airtable Synced
+							</ToggleButton>
+							<ToggleButton value={use(this.filterBadge).bind()}>
+								Has Badge
 							</ToggleButton>
 							<ToggleButton value={use(this.filterChat).bind()}>
 								Chat Enabled
