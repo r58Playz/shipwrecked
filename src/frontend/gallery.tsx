@@ -9,7 +9,8 @@ import {
 	getProjectHours,
 	upvote,
 	userInfo,
-	type ProjectGallery,
+	type ProjectFixed,
+	type User,
 } from "./api";
 
 import { BackIcon } from "../ui/Icon";
@@ -136,95 +137,14 @@ type ScreenshotEntry =
 let screenshotUrlCache = new Map<string, ScreenshotEntry>();
 
 const GalleryProject: Component<
-	{ project: ProjectGallery },
+	{ project: ProjectFixed; user: User },
 	{
 		img: HTMLImageElement | HTMLVideoElement | string;
 		transformed: string;
 		upvoted: boolean;
 		upvotes: number;
 	}
-> = function (cx) {
-	cx.css = `
-		:scope :global(.Ui-card) {
-			height: 100%;
-		}
-
-		.content {
-			display: flex;
-			flex-direction: column;
-			gap: 0.5rem;
-			flex: 1;
-		}
-
-		.embed {
-			flex: 1;
-			width: 100%;
-
-			border: 1px rgb(230, 215, 214) solid;
-			border-radius: 0.375rem;
-			backdrop-filter: blur(2px);
-
-			object-fit: contain;
-
-			aspect-ratio: 16 / 8;
-		}
-		
-		.embed.failed {
-			padding: 1em;
-
-			display: flex;
-			flex-direction: column;
-			gap: 0.5em;
-			align-items: center;
-			justify-content: center;
-			text-align: center;
-		}
-
-		.chips {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.5rem;
-		}
-
-		.chips > span, .chips > a {
-			backdrop-filter: blur(2px);
-			border-radius: 1rem;
-			padding: 0 0.5rem;
-			color: unset;
-			white-space: nowrap;
-		}
-
-		.star {
-			transform: scale(1.5);
-			display: inline-block;
-		}
-		.upvote {
-			cursor: pointer;
-		}
-
-		.yellow {
-			background-color: #efb10033;
-			color: #efb100;
-		}
-		.blue {
-			background-color: #155dfc33;
-			color: #155dfc;
-		}
-		.pink {
-			background-color: #a3004c33;
-			color: #a3004c;
-		}
-		.green {
-			background-color: #01663033;
-			color: #016630;
-		}
-
-		:scope :global(.Ui-UserName) {
-			font-size: 1.2em;
-			margin-bottom: 1rem;
-		}
-	`;
-
+> = function(cx) {
 	this.img = "Loading";
 	this.transformed = this.project.screenshot;
 	this.upvoted = this.project.userUpvoted;
@@ -271,9 +191,9 @@ const GalleryProject: Component<
 		let promise = isVideo
 			? Promise.resolve()
 			: new Promise((res, rej) => {
-					embed.addEventListener("load", res);
-					embed.addEventListener("error", rej);
-				});
+				embed.addEventListener("load", res);
+				embed.addEventListener("error", rej);
+			});
 
 		embed.src = this.transformed;
 		embed.classList.add("embed");
@@ -311,8 +231,9 @@ const GalleryProject: Component<
 	return (
 		<div>
 			<Card title={this.project.name} project={true} noPadding={true}>
+				<div class="syncstatus">{this.project.airtableId ? "YSWS Airtable ID: " + this.project.airtableId : "Not synced"}</div>
 				<div class="content">
-					<UserName user={use(this.project).map((x) => x.user)} />
+					<UserName user={use(this.user)} />
 					<div class="chips">
 						<span
 							on:click={toggleUpvote}
@@ -324,6 +245,7 @@ const GalleryProject: Component<
 						<span class="blue">{getProjectHours(this.project)}h</span>
 						{this.project.viral ? <span class="pink">Viral</span> : null}
 						{this.project.shipped ? <span class="green">Shipped</span> : null}
+						{this.project.in_review ? <span class="yellow">In Review</span> : null}
 						{this.project.codeUrl ? (
 							<a href={this.project.codeUrl} target="_blank">
 								Code
@@ -394,83 +316,126 @@ const GalleryProject: Component<
 		</div>
 	);
 };
+GalleryProject.css = `
+	:scope :global(.Ui-card) {
+		height: 100%;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		flex: 1;
+	}
+
+	.syncstatus {
+		font-style: italic;
+		font-size: 0.8rem;
+	}
+
+	.embed {
+		flex: 1;
+		width: 100%;
+
+		border: 1px rgb(230, 215, 214) solid;
+		border-radius: 0.375rem;
+		backdrop-filter: blur(2px);
+
+		object-fit: contain;
+
+		aspect-ratio: 16 / 8;
+	}
+	
+	.embed.failed {
+		padding: 1em;
+
+		display: flex;
+		flex-direction: column;
+		gap: 0.5em;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.chips > span, .chips > a {
+		backdrop-filter: blur(2px);
+		border-radius: 1rem;
+		padding: 0 0.5rem;
+		color: unset;
+		white-space: nowrap;
+	}
+
+	.star {
+		transform: scale(1.5);
+		display: inline-block;
+	}
+	.upvote {
+		cursor: pointer;
+	}
+
+	.yellow {
+		background-color: #efb10033;
+		color: #efb100;
+	}
+	.blue {
+		background-color: #155dfc33;
+		color: #155dfc;
+	}
+	.pink {
+		background-color: #a3004c33;
+		color: #a3004c;
+	}
+	.green {
+		background-color: #01663033;
+		color: #016630;
+	}
+
+	:scope :global(.Ui-UserName) {
+		font-size: 1.2em;
+		margin-bottom: 1rem;
+	}
+`;
 
 const RealGallery: Component<
 	{},
 	{
-		projects: { el: HTMLElement; project: ProjectGallery }[];
+		projects: { el: HTMLElement; project: ProjectFixed; user: User }[];
 		search: string;
 		filterViral: boolean;
 		filterShipped: boolean;
+		filterReview: boolean;
+		filterSynced: boolean;
 		filterChat: boolean;
 		sort: "upvotes" | "hours";
 		sortScreenshot: boolean;
 	}
-> = function (cx) {
-	cx.css = `
-		:scope {
-			padding: 1em;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 1em;
-
-			overflow: scroll;
-		}
-
-		.grid {
-			align-self: stretch;
-			display: grid;
-			grid-template-columns: 1fr 1fr 1fr;
-			gap: 1em;
-		}
-
-		.filters {
-			display: flex;
-			gap: 0.5rem;
-			align-items: center;
-		}
-
-		.filtercard {
-			display: flex;
-			gap: 0.5rem;
-			flex-direction: column;
-		}
-
-		.stats {
-			text-align: center;
-		}
-
-		:scope > div > :global(.Ui-card > h1) {
-			text-align: center;
-		}
-
-		@media (max-width: 1330px) {
-			.grid {
-				grid-template-columns: 1fr 1fr;
-			}
-		}
-
-		@media (max-width: 900px) {
-			.grid {
-				grid-template-columns: 1fr;
-			}
-		}
-	`;
-
+> = function() {
 	this.search = "";
 	this.sort = "upvotes" as "upvotes" | "hours";
 	this.filterShipped = false;
 	this.filterViral = false;
+	this.filterReview = false;
+	this.filterSynced = false;
 	this.filterChat = false;
 	this.sortScreenshot = true;
 
 	stateProxy(
 		this,
 		"projects",
-		use(userInfo.gallery)
+		use(userInfo.users)
 			.map((x) => x || [])
-			.mapEach((x) => ({ el: <GalleryProject project={x} />, project: x }))
+			.map((x) => x.flatMap((x) => x.projects.map((y) => [y, x.user] as const)))
+			.mapEach(([p, u]) => ({
+				el: <GalleryProject project={p} user={u} />,
+				project: p,
+				user: u,
+			}))
 	);
 
 	let projects = use(this.projects)
@@ -480,9 +445,11 @@ const RealGallery: Component<
 			use(this.sortScreenshot),
 			use(this.filterViral),
 			use(this.filterShipped),
+			use(this.filterReview),
+			use(this.filterSynced),
 			use(this.filterChat)
 		)
-		.map(([arr, search, sort, sortScreenshot, viral, shipped, chat]) => {
+		.map(([arr, search, sort, sortScreenshot, viral, shipped, review, synced, chat]) => {
 			if (search)
 				arr = arr.filter((x) =>
 					x.project.name.toLowerCase().includes(search.toLowerCase())
@@ -490,6 +457,8 @@ const RealGallery: Component<
 
 			if (viral) arr = arr.filter((x) => x.project.viral);
 			if (shipped) arr = arr.filter((x) => x.project.shipped);
+			if (review) arr = arr.filter(x => x.project.in_review);
+			if (synced) arr = arr.filter(x => x.project.airtableId);
 			if (chat) arr = arr.filter((x) => x.project.chat_enabled);
 
 			return arr.sort(({ project: a }, { project: b }) => {
@@ -531,6 +500,12 @@ const RealGallery: Component<
 							<ToggleButton value={use(this.filterShipped).bind()}>
 								Shipped
 							</ToggleButton>
+							<ToggleButton value={use(this.filterReview).bind()}>
+								In Review
+							</ToggleButton>
+							<ToggleButton value={use(this.filterSynced).bind()}>
+								Airtable Synced
+							</ToggleButton>
 							<ToggleButton value={use(this.filterChat).bind()}>
 								Chat Enabled
 							</ToggleButton>
@@ -568,31 +543,60 @@ const RealGallery: Component<
 		</div>
 	);
 };
+RealGallery.css = `
+	:scope {
+		padding: 1em;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1em;
+
+		overflow: scroll;
+	}
+
+	.grid {
+		align-self: stretch;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 1em;
+	}
+
+	.filters {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.filtercard {
+		display: flex;
+		gap: 0.5rem;
+		flex-direction: column;
+	}
+
+	.stats {
+		text-align: center;
+	}
+
+	:scope > div > :global(.Ui-card > h1) {
+		text-align: center;
+	}
+
+	@media (max-width: 1330px) {
+		.grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media (max-width: 900px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
+	}
+`;
 
 export const Gallery: Component<{}, {}, { "on:routeshown": () => void }> =
-	function (cx) {
-		cx.css = `
-		:scope {
-			width: 100%;
-			height: 100%;
-
-			display: grid;
-			grid-template-areas: "a";
-		}
-
-		:scope > :global(*) {
-			grid-area: a;
-		}
-
-		.logout-container {
-			padding: 1em;
-			display: flex;
-			justify-content: space-between;
-			align-items: flex-start;
-		}
-	`;
-
-		let allData = use(userInfo.gallery);
+	function() {
+		let allData = use(userInfo.users);
 
 		this["on:routeshown"] = async () => {
 			clearCache();
@@ -616,3 +620,23 @@ export const Gallery: Component<{}, {}, { "on:routeshown": () => void }> =
 			</div>
 		);
 	};
+Gallery.css = `
+	:scope {
+		width: 100%;
+		height: 100%;
+
+		display: grid;
+		grid-template-areas: "a";
+	}
+
+	:scope > :global(*) {
+		grid-area: a;
+	}
+
+	.logout-container {
+		padding: 1em;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+	}
+`;

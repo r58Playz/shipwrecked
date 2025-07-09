@@ -13,46 +13,7 @@ export const ShorePage: Component<{
 	animationRoot: HTMLElement;
 	root: HTMLElement;
 	"on:next": () => void;
-}> = function (cx) {
-	cx.css = `
-		.content {
-			height: 100vh;
-			padding: min(3rem, 5vh) min(7.5rem, 10vw);
-			display: flex;
-			flex-direction: column;
-			align-items: left;
-			justify-content: start;
-		}
-
-		.logo {
-			width: 20rem;
-			height: 20rem;
-			object-fit: contain;
-		}
-
-		.info {
-			text-shadow: 2px 2px 2px #007bbd;
-			color: white;
-
-			font-optical-sizing: auto;
-			font-family: 'Baloo Da 2', sans-serif;
-			font-weight: 700;
-
-			text-transform: uppercase;
-
-			font-size: 2rem;
-
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-		}
-
-		.info img {
-			width: 3rem;
-			height: 3rem;
-		}
-	`;
-
+}> = function () {
 	return (
 		<div id="shore">
 			<ScrollingBackground
@@ -80,3 +41,41 @@ export const ShorePage: Component<{
 		</div>
 	);
 };
+ShorePage.css = `
+	.content {
+		height: 100vh;
+		padding: min(3rem, 5vh) min(7.5rem, 10vw);
+		display: flex;
+		flex-direction: column;
+		align-items: left;
+		justify-content: start;
+	}
+
+	.logo {
+		width: 20rem;
+		height: 20rem;
+		object-fit: contain;
+	}
+
+	.info {
+		text-shadow: 2px 2px 2px #007bbd;
+		color: white;
+
+		font-optical-sizing: auto;
+		font-family: 'Baloo Da 2', sans-serif;
+		font-weight: 700;
+
+		text-transform: uppercase;
+
+		font-size: 2rem;
+
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.info img {
+		width: 3rem;
+		height: 3rem;
+	}
+`;

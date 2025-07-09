@@ -18,39 +18,7 @@ export const BayPage: Component<
 	{
 		middle: HTMLElement;
 	}
-> = function (cx) {
-	cx.css = `
-		.bay {
-			object-position: right top;
-		}
-
-		.foreground {
-			width: 100%;
-		}
-		.page {
-			height: 100vh;
-			display: flex;
-			align-items: end;
-			justify-content: right;
-		}
-		.page > div {
-			max-width: 60rem;
-			padding: 0 1.5rem;
-
-			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-
-			margin-bottom: 6rem;
-		}
-
-		.buttons {
-			display: flex;
-			gap: 1rem;
-			justify-content: end;
-		}
-	`;
-
+> = function () {
 	return (
 		<div id="bay">
 			<ScrollingBackground animation="both" animationRoot={this.animationRoot}>
@@ -132,3 +100,34 @@ export const BayPage: Component<
 		</div>
 	);
 };
+BayPage.css = `
+	.bay {
+		object-position: right top;
+	}
+
+	.foreground {
+		width: 100%;
+	}
+	.page {
+		height: 100vh;
+		display: flex;
+		align-items: end;
+		justify-content: right;
+	}
+	.page > div {
+		max-width: 60rem;
+		padding: 0 1.5rem;
+
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+
+		margin-bottom: 6rem;
+	}
+
+	.buttons {
+		display: flex;
+		gap: 1rem;
+		justify-content: end;
+	}
+`;

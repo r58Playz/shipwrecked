@@ -1,4 +1,4 @@
-import { getProjectHours, type ProjectGallery } from "./api";
+import { getProjectHours, type UserWithProjects } from "./api";
 
 export interface UserMetrics {
 	userId: string;
@@ -66,30 +66,23 @@ export interface UserClusterAnalysis {
 	};
 }
 
-export function galleryToMetrics(gallery: ProjectGallery[]): UserMetrics[] {
-	let map = new Map<string, UserMetrics>();
+export function usersToMetrics(users: UserWithProjects[]): UserMetrics[] {
+	const userMetrics: UserMetrics[] = users.map((user) => {
+		const totalHours = user.projects.reduce((sum, project) => {
+			return sum + getProjectHours(project);
+		}, 0);
 
-	for (const project of gallery) {
-		const mapMetrics = map.get(project.userId);
-		let metrics: UserMetrics;
-		if (mapMetrics) {
-			metrics = mapMetrics;
-		} else {
-			metrics = {
-				userId: project.userId,
-				totalHours: 0,
-				projectCount: 0,
-				shippedProjectCount: 0,
-			};
-			map.set(project.userId, metrics);
-		}
+		const projectCount = user.projects.length;
+		const shippedProjectCount = user.projects.filter((p) => p.shipped).length;
 
-		metrics.projectCount++;
-		metrics.shippedProjectCount += project.shipped ? 1 : 0;
-		metrics.totalHours += getProjectHours(project);
-	}
-
-	return [...map.values()];
+		return {
+			userId: user.user.id,
+			totalHours,
+			projectCount,
+			shippedProjectCount,
+		};
+	});
+	return userMetrics;
 }
 
 // taken straight from lib/userClustering.ts

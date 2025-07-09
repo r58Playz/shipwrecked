@@ -29,16 +29,7 @@ const Hero: Component<
 		rsvpRoot: HTMLElement;
 	},
 	{ "on:routeshown": () => void }
-> = function (cx) {
-	cx.css = `
-		.signup {
-			position: fixed;
-			top: 2rem;
-			right: 2rem;
-			z-index: 2;
-		}
-	`;
-
+> = function () {
 	this["on:routeshown"] = async () => {
 		clearCache();
 		await fetchInfo();
@@ -80,6 +71,14 @@ const Hero: Component<
 		</div>
 	);
 };
+Hero.css = `
+	.signup {
+		position: fixed;
+		top: 2rem;
+		right: 2rem;
+		z-index: 2;
+	}
+`;
 
 export let router = new Router([
 	{

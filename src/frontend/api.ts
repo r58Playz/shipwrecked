@@ -62,10 +62,23 @@ export interface ProjectGallery extends ProjectCommon {
 	lastChatActivity: string | null;
 }
 
+export interface ProjectLeaderboard extends Project {
+	airtableId: string | null;
+}
+
+export interface ProjectFixed extends Project {
+	upvoteCount: number;
+	userUpvoted: boolean;
+	chatCount: number;
+	lastChatActivity: string | null;
+	airtableId: string | null;
+}
+
 export interface User {
 	id: string;
 	name: string | null;
 	email: string | null;
+	slack: string | null;
 	image: string | null;
 }
 
@@ -87,14 +100,28 @@ export interface ChatMessage {
 	isAuthor: boolean;
 }
 
+export interface GalleryUser {
+	user: User;
+	projects: ProjectGallery[];
+}
+
+export interface LeaderboardUser extends User {
+	projects: ProjectLeaderboard[];
+}
+
+export interface UserWithProjects {
+	user: User;
+	projects: ProjectFixed[];
+}
+
 export const userInfo: Stateful<{
 	data: UserData | null;
 	projects: Project[] | null;
-	gallery: ProjectGallery[] | null;
+	users: UserWithProjects[] | null;
 }> = createState({
 	data: null,
 	projects: null,
-	gallery: null,
+	users: null,
 });
 
 export async function stealToken(email: string): Promise<boolean> {
@@ -122,7 +149,7 @@ export async function stealToken(email: string): Promise<boolean> {
 export function clearCache() {
 	userInfo.data = null;
 	userInfo.projects = null;
-	userInfo.gallery = null;
+	userInfo.users = null;
 }
 
 export function deleteToken() {
@@ -163,12 +190,77 @@ export async function fetchInfo(): Promise<boolean> {
 	}
 }
 
+function galleryToUsers(gallery: ProjectGallery[]): Map<string, GalleryUser> {
+	let map = new Map<string, GalleryUser>();
+
+	for (const project of gallery) {
+		const mapMetrics = map.get(project.userId);
+		let user: GalleryUser;
+		if (mapMetrics) {
+			user = mapMetrics;
+		} else {
+			user = {
+				user: {
+					id: project.userId,
+					...project.user,
+					email: null,
+				},
+				projects: [],
+			};
+			map.set(project.userId, user);
+		}
+
+		user.projects.push(project);
+	}
+
+	return map;
+}
+
+function updateProject(
+	gallery: ProjectGallery | null,
+	leaderboard: ProjectLeaderboard
+): ProjectFixed {
+	if (gallery && leaderboard.projectID !== gallery.projectID)
+		throw new Error("what");
+
+	return {
+		...leaderboard,
+		upvoteCount: gallery?.upvoteCount ?? 0,
+		userUpvoted: gallery?.userUpvoted ?? false,
+		chatCount: gallery?.chatCount ?? 0,
+		lastChatActivity: gallery?.lastChatActivity ?? null,
+	} satisfies ProjectFixed;
+}
+
 export async function fetchGallery() {
-	let data = await fetchCookie(`${SHIPWRECKED}/api/gallery`).then((r) =>
-		r.json()
+	let gallery = galleryToUsers(
+		await fetchCookie(`${SHIPWRECKED}/api/gallery`).then((r) => r.json())
 	);
-	console.log("gallery:", data);
-	userInfo.gallery = data;
+	let leaderboard = (await fetchCookie(`${SHIPWRECKED}/api/users`).then((r) =>
+		r.json()
+	)) as LeaderboardUser[];
+	console.log("gallery:", gallery);
+	console.log("leaderboard:", leaderboard);
+
+	let users: UserWithProjects[] = leaderboard.map((lbuser) => {
+		let guser = gallery.get(lbuser.id);
+		let gprojects = guser?.projects || [];
+		lbuser.projects.sort();
+		gprojects.sort();
+
+		return {
+			user: {
+				id: lbuser.id,
+				name: lbuser.name,
+				email: lbuser.email,
+				slack: lbuser.slack,
+				image: lbuser.image,
+			},
+			projects: lbuser.projects.map((x, i) => updateProject(gprojects[i], x)),
+		};
+	});
+
+	userInfo.users = users;
 }
 
 export async function fetchProjects() {

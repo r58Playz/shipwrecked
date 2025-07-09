@@ -23,37 +23,7 @@ type UserNameUser = {
 	name: string | null;
 	status?: UserStatus;
 } | null;
-export const UserName: Component<{ user: UserNameUser }> = function(cx) {
-	cx.css = `
-		img {
-			width: 1.25em;
-			height: 1.25em;
-			vertical-align: middle;
-
-			margin-right: 0.25em;
-
-			border: 2px solid white;
-			border-radius: 100%;
-		}
-
-		.chip {
-			background: white;
-			padding: 0 0.5em;
-			border-radius: 2em;
-
-			margin-left: 0.25em;
-			vertical-align: 5%;
-
-			text-transform: uppercase;
-			font-size: 0.8em;
-		}
-
-		.chip.FraudSuspect {
-			background: red;
-			color: white;
-		}
-	`;
-
+export const UserName: Component<{ user: UserNameUser }> = function () {
 	return (
 		<span class="Ui-UserName">
 			<img src={use(this.user).map((x) => x?.image || logo)} />
@@ -66,74 +36,53 @@ export const UserName: Component<{ user: UserNameUser }> = function(cx) {
 		</span>
 	);
 };
+UserName.css = `
+	img {
+		width: 1.25em;
+		height: 1.25em;
+		vertical-align: middle;
 
-export const Loading: Component = function(cx) {
-	cx.css = `
-		:scope {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-	`;
+		margin-right: 0.25em;
 
+		border: 2px solid white;
+		border-radius: 100%;
+	}
+
+	.chip {
+		background: white;
+		padding: 0 0.5em;
+		border-radius: 2em;
+
+		margin-left: 0.25em;
+		vertical-align: 5%;
+
+		text-transform: uppercase;
+		font-size: 0.8em;
+	}
+
+	.chip.FraudSuspect {
+		background: red;
+		color: white;
+	}
+`;
+
+export const Loading: Component = function () {
 	return (
 		<div>
 			<Card title="Loading"></Card>
 		</div>
 	);
 };
+Loading.css = `
+	:scope {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+`;
 
 export const ProgressBar: Component<{ projects: MinimalProject[] }, {}> =
-	function(cx) {
-		cx.css = `
-		:scope {
-			max-width: 576px;
-			width: 100%;
-
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		.bar {
-			align-self: stretch;
-			height: 1rem;
-
-			background: #e5e7eb;
-			border-radius: 1rem;
-			overflow: hidden;
-
-			display: flex;
-			align-items: center;
-		}
-
-		.bar > * {
-			height: 1rem;
-		}
-
-		.viral {
-			background: #f59e0b;
-		}
-		.shipped {
-			background: #10b981;
-		}
-		.unshipped {
-			background-color: #3b82f6;
-			background-size: 30px 30px;
-			background-image: linear-gradient(135deg, rgba(255, 255, 255, .2) 25%, transparent 0, transparent 50%, rgba(255, 255, 255, .2) 0, rgba(255, 255, 255, .2) 75%, transparent 0, transparent);
-			animation: unshippedAnimation .75s linear infinite;
-		}
-
-		b {
-			font-size: 1.5rem;
-		}
-
-		@keyframes unshippedAnimation {
-			0% { background-position: 0 0 }
-			100% { background-position: 60px 0 }
-		}
-	`;
-
+	function () {
 		const progress = use(this.projects).map((x) =>
 			x ? calculateProgress(x) : { viral: 0, shipped: 0, unshipped: 0 }
 		);
@@ -161,34 +110,61 @@ export const ProgressBar: Component<{ projects: MinimalProject[] }, {}> =
 			</div>
 		);
 	};
+ProgressBar.css = `
+	:scope {
+		max-width: 576px;
+		width: 100%;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.bar {
+		align-self: stretch;
+		height: 1rem;
+
+		background: #e5e7eb;
+		border-radius: 1rem;
+		overflow: hidden;
+
+		display: flex;
+		align-items: center;
+	}
+
+	.bar > * {
+		height: 1rem;
+	}
+
+	.viral {
+		background: #f59e0b;
+	}
+	.shipped {
+		background: #10b981;
+	}
+	.unshipped {
+		background-color: #3b82f6;
+		background-size: 30px 30px;
+		background-image: linear-gradient(135deg, rgba(255, 255, 255, .2) 25%, transparent 0, transparent 50%, rgba(255, 255, 255, .2) 0, rgba(255, 255, 255, .2) 75%, transparent 0, transparent);
+		animation: unshippedAnimation .75s linear infinite;
+	}
+
+	b {
+		font-size: 1.5rem;
+	}
+
+	@keyframes unshippedAnimation {
+		0% { background-position: 0 0 }
+		100% { background-position: 60px 0 }
+	}
+`;
 
 type MaybeCommonProject = ProjectCommon | Project;
 
 const ProjectsTable: Component<{
 	projects: MaybeCommonProject[];
 	selectedId: string | null;
-}> = function(cx) {
-	cx.css = `
-		:scope {
-			width: 100%;
-		}
-
-		th {
-			text-align: left;
-		}
-
-		tr th {
-			width: 100%;
-		}
-
-		tr td {
-			white-space: nowrap;
-		}
-		thead th:not(:first-child), tr td {
-			padding: 0 0.5rem;
-		}
-	`;
-
+}> = function () {
 	function mapState(project: MaybeCommonProject): string {
 		if ("in_review" in project && project.in_review) return "In Review";
 		else if (project.viral) return "Viral";
@@ -225,29 +201,28 @@ const ProjectsTable: Component<{
 		</table>
 	);
 };
+ProjectsTable.css = `
+	:scope {
+		width: 100%;
+	}
 
-const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
-	cx.css = `
-		:scope {
-			width: 100%;
-		}
+	th {
+		text-align: left;
+	}
 
-		th {
-			text-align: left;
-		}
+	tr th {
+		width: 100%;
+	}
 
-		tr th {
-			width: 100%;
-		}
+	tr td {
+		white-space: nowrap;
+	}
+	thead th:not(:first-child), tr td {
+		padding: 0 0.5rem;
+	}
+`;
 
-		tr td, thead th {
-			white-space: nowrap;
-		}
-		thead th:not(:first-child), tr td {
-			padding: 0 0.5rem;
-		}
-	`;
-
+const HackatimeTable: Component<{ links: HackatimeLink[] }> = function () {
 	return (
 		<table>
 			<thead>
@@ -265,60 +240,33 @@ const HackatimeTable: Component<{ links: HackatimeLink[] }> = function(cx) {
 		</table>
 	);
 };
+HackatimeTable.css = `
+	:scope {
+		width: 100%;
+	}
+
+	th {
+		text-align: left;
+	}
+
+	tr th {
+		width: 100%;
+	}
+
+	tr td, thead th {
+		white-space: nowrap;
+	}
+	thead th:not(:first-child), tr td {
+		padding: 0 0.5rem;
+	}
+`;
 
 const SelectedProject: Component<{
 	project: MaybeCommonProject;
 	projects: MaybeCommonProject[];
 	user: UserNameUser;
 	"on:close": () => void;
-}> = function(cx) {
-	cx.css = `
-		:scope, :scope :global(.Ui-card) {
-			height: 100%;
-		}
-
-		:global(.Ui-card) {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.content {
-			display: flex;
-			flex-direction: column;
-			gap: 1em;
-			min-height: 0;
-
-			overflow: scroll;
-		}
-
-		.content img {
-			width: 100%;
-		}
-
-		.headline {
-			font-family: ohno-softie-variable, sans-serif;
-			line-height: 1.1;
-			font-weight: 600;
-			font-size: 1.75rem;
-		}
-
-		.buttons {
-			display: flex;
-			gap: 1em;
-			flex-wrap: wrap;
-		}
-
-		.close-container {
-			position: relative;
-			z-index: 1;
-		}
-		.close-container > :global(*) {
-			position: absolute;
-			top: 2rem;
-			right: 1rem;
-		}
-	`;
-
+}> = function () {
 	const contributes =
 		this.projects
 			.sort((a, b) => getProjectHours(b) - getProjectHours(a))
@@ -438,6 +386,52 @@ const SelectedProject: Component<{
 		</div>
 	);
 };
+SelectedProject.css = `
+	:scope, :scope :global(.Ui-card) {
+		height: 100%;
+	}
+
+	:global(.Ui-card) {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+		min-height: 0;
+
+		overflow: scroll;
+	}
+
+	.content img {
+		width: 100%;
+	}
+
+	.headline {
+		font-family: ohno-softie-variable, sans-serif;
+		line-height: 1.1;
+		font-weight: 600;
+		font-size: 1.75rem;
+	}
+
+	.buttons {
+		display: flex;
+		gap: 1em;
+		flex-wrap: wrap;
+	}
+
+	.close-container {
+		position: relative;
+		z-index: 1;
+	}
+	.close-container > :global(*) {
+		position: absolute;
+		top: 2rem;
+		right: 1rem;
+	}
+`;
 
 export const DashboardComponent: Component<
 	{
@@ -447,40 +441,7 @@ export const DashboardComponent: Component<
 	{
 		selectedId: string | null;
 	}
-> = function(cx) {
-	cx.css = `
-		:scope {
-			padding: 1rem;
-
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
-
-			min-height: 0;
-		}
-
-		.progress :global(.Ui-card) {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		.projects {
-			align-self: stretch;
-			flex: 1;
-
-			display: flex;
-			gap: 2rem;
-
-			min-height: 0;
-		}
-
-		.projects > :global(*) {
-			flex: 1;
-		}
-	`;
-
+> = function () {
 	this.selectedId = null;
 
 	return (
@@ -520,3 +481,35 @@ export const DashboardComponent: Component<
 		</div>
 	);
 };
+DashboardComponent.css = `
+	:scope {
+		padding: 1rem;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+
+		min-height: 0;
+	}
+
+	.progress :global(.Ui-card) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.projects {
+		align-self: stretch;
+		flex: 1;
+
+		display: flex;
+		gap: 2rem;
+
+		min-height: 0;
+	}
+
+	.projects > :global(*) {
+		flex: 1;
+	}
+`;

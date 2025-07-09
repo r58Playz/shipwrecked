@@ -13,35 +13,7 @@ export const HutPage: Component<{
 	bottom: HTMLElement;
 	"on:back": () => void;
 	"on:next": () => void;
-}> = function (cx) {
-	cx.css = `
-		.hut {
-			object-position: right top;
-		}
-
-		.foreground {
-			width: 100%;
-		}
-		.page {
-			height: 100vh;
-			display: flex;
-			align-items: center;
-		}
-		.page > div {
-			max-width: 60rem;
-			padding: 0 1rem;
-
-			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-		}
-
-		.buttons {
-			display: flex;
-			gap: 1rem;
-		}
-	`;
-
+}> = function () {
 	return (
 		<div id="hut">
 			<ScrollingBackground animation="both" animationRoot={this.animationRoot}>
@@ -106,3 +78,30 @@ export const HutPage: Component<{
 		</div>
 	);
 };
+HutPage.css = `
+	.hut {
+		object-position: right top;
+	}
+
+	.foreground {
+		width: 100%;
+	}
+	.page {
+		height: 100vh;
+		display: flex;
+		align-items: center;
+	}
+	.page > div {
+		max-width: 60rem;
+		padding: 0 1rem;
+
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.buttons {
+		display: flex;
+		gap: 1rem;
+	}
+`;

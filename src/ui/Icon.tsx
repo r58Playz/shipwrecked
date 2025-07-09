@@ -6,12 +6,11 @@ export const BackIcon: Component = function () {
 	return <img src={back} alt="Back icon" class="Ui-back-icon" />;
 };
 
-export const ForwardIcon: Component = function (cx) {
-	cx.css = `
-		:scope {
-			transform: scale(-1, 1);
-		}
-	`;
-
+export const ForwardIcon: Component = function () {
 	return <img src={back} alt="Forward icon" class="Ui-forward-icon" />;
 };
+ForwardIcon.css = `
+	:scope {
+		transform: scale(-1, 1);
+	}
+`;

@@ -11,48 +11,7 @@ import { Card } from "../ui/Card";
 const RealReviews: Component<
 	{ review: Review[]; "on:submit": (comment: string) => Promise<void> },
 	{ comment: string }
-> = function (cx) {
-	cx.css = `
-		:scope {
-			padding: 1em;
-			display: flex;
-			flex-direction: column;
-			align-items: start;
-			gap: 1em;
-
-			overflow: scroll;
-		}
-
-		:scope > :global(:first-child) {
-			align-self: center;
-		}
-
-		.comment {
-			white-space: pre-wrap;
-			word-break: break-all;
-		}
-
-		.reviewbox {
-			display: flex;
-			flex-direction: column;
-			gap: 0.5rem;
-		}
-
-		.reviewbox textarea {
-			min-height: 8rem;
-
-			background: #f3f4f6;
-			outline: 1px solid #e5e7eb;
-			border: none;
-			border-radius: 4px;
-
-			font-family: Poppins;
-			font-size: 18px;
-
-			padding: 0.5rem;
-		}
-	`;
-
+> = function () {
 	this.comment = "";
 
 	return (
@@ -79,43 +38,59 @@ const RealReviews: Component<
 				</div>
 			</Card>
 			{use(this.review).mapEach((x) => (
-				<Card
-					title={<UserName user={x.reviewer} />}
-					project={true}
-				>
+				<Card title={<UserName user={x.reviewer} />} project={true}>
 					<div class="comment">{x.comment}</div>
 				</Card>
 			))}
 		</div>
 	);
 };
+RealReviews.css = `
+	:scope {
+		padding: 1em;
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+		gap: 1em;
+
+		overflow: scroll;
+	}
+
+	:scope > :global(:first-child) {
+		align-self: center;
+	}
+
+	.comment {
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+
+	.reviewbox {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.reviewbox textarea {
+		min-height: 8rem;
+
+		background: #f3f4f6;
+		outline: 1px solid #e5e7eb;
+		border: none;
+		border-radius: 4px;
+
+		font-family: Poppins;
+		font-size: 18px;
+
+		padding: 0.5rem;
+	}
+`;
 
 export const Reviews: Component<
 	{ project?: string; location?: string },
 	{ review?: Review[] },
 	{ "on:routeshown": () => void }
-> = function (cx) {
-	cx.css = `
-		:scope {
-			width: 100%;
-			height: 100%;
-
-			display: grid;
-			grid-template-areas: "a";
-		}
-
-		:scope > :global(*) {
-			grid-area: a;
-		}
-
-		.logout-container {
-			padding: 1em;
-			display: flex;
-			justify-content: space-between;
-			align-items: flex-start;
-		}
-	`;
-
+> = function () {
 	this.review = undefined;
 	this.project = undefined;
 
@@ -154,3 +129,23 @@ export const Reviews: Component<
 		</div>
 	);
 };
+Reviews.css = `
+	:scope {
+		width: 100%;
+		height: 100%;
+
+		display: grid;
+		grid-template-areas: "a";
+	}
+
+	:scope > :global(*) {
+		grid-area: a;
+	}
+
+	.logout-container {
+		padding: 1em;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+	}
+`;

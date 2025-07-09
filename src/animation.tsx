@@ -12,45 +12,6 @@ export const ScrollingBackground: Component<
 		animationEnd?: HTMLElement;
 	}
 > = function (cx) {
-	cx.css = `
-		:scope, .background {
-			display: grid;
-			grid-template-areas: "a";
-		}
-
-		.background-outer {
-			position: relative;
-		}
-
-		.background {
-			position: sticky;
-			top: 0;
-		}
-		.background > :global(*) {
-			width: 100%;
-			height: 100vh;
-			object-fit: cover;
-		}
-
-		.background-outer, .foreground {
-			grid-area: a;
-		}
-
-		.foreground {
-			z-index: 1;
-		}
-		
-		.foreground .animation {
-			height: 100vh;
-			width: 100%;
-		}
-
-		:scope > .animation {
-			z-index: 2;
-			pointer-events: none;
-		}
-	`;
-
 	this.animationProgress = 0;
 
 	function doAnimation(
@@ -152,15 +113,46 @@ export const ScrollingBackground: Component<
 		</div>
 	);
 };
+ScrollingBackground.css = `
+	:scope, .background {
+		display: grid;
+		grid-template-areas: "a";
+	}
 
-// @ts-expect-error
+	.background-outer {
+		position: relative;
+	}
+
+	.background {
+		position: sticky;
+		top: 0;
+	}
+	.background > :global(*) {
+		width: 100%;
+		height: 100vh;
+		object-fit: cover;
+	}
+
+	.background-outer, .foreground {
+		grid-area: a;
+	}
+
+	.foreground {
+		z-index: 1;
+	}
+	
+	.foreground .animation {
+		height: 100vh;
+		width: 100%;
+	}
+
+	:scope > .animation {
+		z-index: 2;
+		pointer-events: none;
+	}
+`;
+
 const WaveAnimationCanvas: Component<{ progress: number }> = function (cx) {
-	cx.css = `
-		:scope {
-			z-index: 1;
-		}
-	`;
-
 	cx.mount = () => {
 		const root = cx.root as HTMLElement as HTMLCanvasElement;
 		const ctx = root.getContext("2d");
@@ -179,6 +171,11 @@ const WaveAnimationCanvas: Component<{ progress: number }> = function (cx) {
 
 	return <canvas class="animation" />;
 };
+WaveAnimationCanvas.css = `
+	:scope {
+		z-index: 1;
+	}
+`;
 
 let images: string[] = Array.from(Array(11), () => null!);
 
@@ -209,12 +206,6 @@ async function fetchImages() {
 const imagePromise = fetchImages();
 
 const WaveAnimationImage: Component<{ progress: number }> = function (cx) {
-	cx.css = `
-		:scope {
-			transform: scale(1, -1);
-		}
-	`;
-
 	cx.mount = async () => {
 		await imagePromise;
 		const root = cx.root as HTMLElement as HTMLImageElement;
@@ -235,5 +226,10 @@ const WaveAnimationImage: Component<{ progress: number }> = function (cx) {
 
 	return <img class="animation" />;
 };
+WaveAnimationImage.css = `
+	:scope {
+		transform: scale(1, -1);
+	}
+`;
 
 export const WaveAnimation = WaveAnimationImage;

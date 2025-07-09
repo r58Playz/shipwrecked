@@ -14,34 +14,7 @@ import { BackIcon, ForwardIcon } from "../ui/Icon";
 import { router } from "../main";
 
 export const Dashboard: Component<{}, {}, { "on:routeshown": () => void }> =
-	function (cx) {
-		cx.css = `
-		:scope {
-			width: 100%;
-			height: 100%;
-
-			display: grid;
-			grid-template-areas: "a";
-		}
-
-		/*
-		:scope:has(:global(.Ui-RandomBackground.idx-0)) :global(.dashboard .projects) {
-			flex-direction: row-reverse;
-		}
-		*/
-
-		:scope > :global(*) {
-			grid-area: a;
-		}
-
-		.logout-container {
-			padding: 1em;
-			display: flex;
-			justify-content: space-between;
-			align-items: flex-start;
-		}
-	`;
-
+	function () {
 		let allData = use(userInfo.data).zip(use(userInfo.projects));
 
 		this["on:routeshown"] = async () => {
@@ -86,3 +59,29 @@ export const Dashboard: Component<{}, {}, { "on:routeshown": () => void }> =
 			</div>
 		);
 	};
+Dashboard.css = `
+	:scope {
+		width: 100%;
+		height: 100%;
+
+		display: grid;
+		grid-template-areas: "a";
+	}
+
+	/*
+	:scope:has(:global(.Ui-RandomBackground.idx-0)) :global(.dashboard .projects) {
+		flex-direction: row-reverse;
+	}
+	*/
+
+	:scope > :global(*) {
+		grid-area: a;
+	}
+
+	.logout-container {
+		padding: 1em;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+	}
+`;

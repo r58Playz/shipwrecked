@@ -18,21 +18,7 @@ const LogIn: Component<
 		emailLink: string;
 		error: string | null;
 	}
-> = function (cx) {
-	cx.css = `
-		:scope {
-			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-		}
-
-		.options {
-			display: flex;
-			flex-direction: row;
-			gap: 1rem;
-		}
-	`;
-
+> = function () {
 	this.emailLink = "";
 	this.error = null as string | null;
 
@@ -65,22 +51,21 @@ const LogIn: Component<
 		</div>
 	);
 };
+LogIn.css = `
+	:scope {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
 
-const Info: Component = function (cx) {
-	cx.css = `
-		:scope {
-			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-		}
+	.options {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+	}
+`;
 
-		.options {
-			display: flex;
-			flex-direction: row;
-			gap: 1rem;
-		}
-	`;
-
+const Info: Component = function () {
 	return (
 		<div>
 			<div>
@@ -104,6 +89,19 @@ const Info: Component = function (cx) {
 		</div>
 	);
 };
+Info.css = `
+	:scope {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.options {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+	}
+`;
 
 export const RsvpPage: Component<
 	{
@@ -115,41 +113,7 @@ export const RsvpPage: Component<
 		emailLink: string;
 		error: string | null;
 	}
-> = function (cx) {
-	cx.css = `
-		.content {
-			height: 100vh;
-			padding: 1em;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.card {
-			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-		}
-
-		.options {
-			display: flex;
-			flex-direction: row;
-			gap: 1rem;
-		}
-
-		.error { color: red; }
-
-		.wisp {
-			display: flex;
-			gap: 0.5rem;
-			align-items: center;
-		}
-
-		.wisp :global(input) {
-			flex: 1;
-		}
-	`;
-
+> = function () {
 	return (
 		<div id="shore">
 			<ScrollingBackground animation="top" animationRoot={this.animationRoot}>
@@ -189,3 +153,36 @@ export const RsvpPage: Component<
 		</div>
 	);
 };
+RsvpPage.css = `
+	.content {
+		height: 100vh;
+		padding: 1em;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.options {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+	}
+
+	.error { color: red; }
+
+	.wisp {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.wisp :global(input) {
+		flex: 1;
+	}
+`;
