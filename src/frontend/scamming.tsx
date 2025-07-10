@@ -316,7 +316,7 @@ RealScamming.css = `
 
 	.shipper {
 		background-color: #efb10033;
-		color: #efb100;
+		color: #894b00;
 	}
 	.whale {
 		background-color: #155dfc33;
