@@ -29,7 +29,7 @@ Button.style = css`
 		background: #007bbd;
 		color: white;
 		border: 1px rgb(230, 215, 214) solid;
-		border-radius: 3.40282e+38px; /* ??? */
+		border-radius: 3.40282e38px; /* ??? */
 
 		font-size: 1rem;
 		font-style: italic;
@@ -37,7 +37,7 @@ Button.style = css`
 
 		padding: 0.5em 1em;
 
-		transition: all cubic-bezier(.4,0,.2,1) .3s;
+		transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
 
 		text-transform: uppercase;
 
@@ -49,7 +49,9 @@ Button.style = css`
 	:scope:hover {
 		border-color: rgb(245, 224, 24);
 
-		box-shadow: 0 1px 3px 0 #007bbd33, 0 1px 2px -1px #007bbd33;
+		box-shadow:
+			0 1px 3px 0 #007bbd33,
+			0 1px 2px -1px #007bbd33;
 
 		scale: 105% 105%;
 	}

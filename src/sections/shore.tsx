@@ -62,7 +62,7 @@ ShorePage.style = css`
 		color: white;
 
 		font-optical-sizing: auto;
-		font-family: 'Baloo Da 2', sans-serif;
+		font-family: "Baloo Da 2", sans-serif;
 		font-weight: 700;
 
 		text-transform: uppercase;

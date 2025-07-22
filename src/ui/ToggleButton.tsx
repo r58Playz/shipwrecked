@@ -24,14 +24,14 @@ ToggleButton.style = css`
 
 		cursor: pointer;
 
-		transition: .15s cubic-bezier(.4,0,.2,1) all;
+		transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1) all;
 	}
 
-	:scope:not([aria-checked='true']):hover {
+	:scope:not([aria-checked="true"]):hover {
 		background: #ebe6e7;
 	}
 
-	:scope[aria-checked='true'] {
+	:scope[aria-checked="true"] {
 		background: #155dfc;
 		color: #ffffff;
 	}

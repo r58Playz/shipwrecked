@@ -145,8 +145,17 @@ ProgressBar.style = css`
 	.unshipped {
 		background-color: #3b82f6;
 		background-size: 30px 30px;
-		background-image: linear-gradient(135deg, rgba(255, 255, 255, .2) 25%, transparent 0, transparent 50%, rgba(255, 255, 255, .2) 0, rgba(255, 255, 255, .2) 75%, transparent 0, transparent);
-		animation: unshippedAnimation .75s linear infinite;
+		background-image: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.2) 25%,
+			transparent 0,
+			transparent 50%,
+			rgba(255, 255, 255, 0.2) 0,
+			rgba(255, 255, 255, 0.2) 75%,
+			transparent 0,
+			transparent
+		);
+		animation: unshippedAnimation 0.75s linear infinite;
 	}
 
 	b {
@@ -154,8 +163,12 @@ ProgressBar.style = css`
 	}
 
 	@keyframes unshippedAnimation {
-		0% { background-position: 0 0 }
-		100% { background-position: 60px 0 }
+		0% {
+			background-position: 0 0;
+		}
+		100% {
+			background-position: 60px 0;
+		}
 	}
 `;
 
@@ -217,7 +230,8 @@ ProjectsTable.style = css`
 	tr td {
 		white-space: nowrap;
 	}
-	thead th:not(:first-child), tr td {
+	thead th:not(:first-child),
+	tr td {
 		padding: 0 0.5rem;
 	}
 `;
@@ -253,10 +267,12 @@ HackatimeTable.style = css`
 		width: 100%;
 	}
 
-	tr td, thead th {
+	tr td,
+	thead th {
 		white-space: nowrap;
 	}
-	thead th:not(:first-child), tr td {
+	thead th:not(:first-child),
+	tr td {
 		padding: 0 0.5rem;
 	}
 `;
@@ -387,7 +403,8 @@ const SelectedProject: Component<{
 	);
 };
 SelectedProject.style = css`
-	:scope, :scope :global(.Ui-card) {
+	:scope,
+	:scope :global(.Ui-card) {
 		height: 100%;
 	}
 

@@ -19,7 +19,8 @@ RandomBackground.style = css`
 		object-fit: cover;
 	}
 
-	:scope.idx-1, :scope.idx-2 {
+	:scope.idx-1,
+	:scope.idx-2 {
 		object-position: right top;
 	}
 `;

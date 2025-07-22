@@ -1,4 +1,9 @@
-import { css, Pointer, type Component, type ComponentChild } from "dreamland/core";
+import {
+	css,
+	Pointer,
+	type Component,
+	type ComponentChild,
+} from "dreamland/core";
 
 export const Card: Component<{
 	title: ComponentChild;

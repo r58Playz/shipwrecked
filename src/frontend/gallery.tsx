@@ -144,7 +144,7 @@ const GalleryProject: Component<
 		upvoted: boolean;
 		upvotes: number;
 	}
-> = function(cx) {
+> = function (cx) {
 	this.img = "Loading";
 	this.transformed = this.project.screenshot;
 	this.upvoted = this.project.userUpvoted;
@@ -191,9 +191,9 @@ const GalleryProject: Component<
 		let promise = isVideo
 			? Promise.resolve()
 			: new Promise((res, rej) => {
-				embed.addEventListener("load", res);
-				embed.addEventListener("error", rej);
-			});
+					embed.addEventListener("load", res);
+					embed.addEventListener("error", rej);
+				});
 
 		embed.src = this.transformed;
 		embed.classList.add("embed");
@@ -231,7 +231,11 @@ const GalleryProject: Component<
 	return (
 		<div>
 			<Card title={this.project.name} project={true} noPadding={true}>
-				<div class="syncstatus">{this.project.airtableId ? "YSWS Airtable ID: " + this.project.airtableId : "Not synced"}</div>
+				<div class="syncstatus">
+					{this.project.airtableId
+						? "YSWS Airtable ID: " + this.project.airtableId
+						: "Not synced"}
+				</div>
 				<div class="content">
 					<UserName user={use(this.user)} />
 					<div class="chips">
@@ -245,8 +249,12 @@ const GalleryProject: Component<
 						<span class="blue">{getProjectHours(this.project)}h</span>
 						{this.project.viral ? <span class="pink">Viral</span> : null}
 						{this.project.shipped ? <span class="green">Shipped</span> : null}
-						{this.project.in_review ? <span class="yellow">In Review</span> : null}
-						{this.project.hasRepoBadge ? <span class="purple">Has Badge</span> : null}
+						{this.project.in_review ? (
+							<span class="yellow">In Review</span>
+						) : null}
+						{this.project.hasRepoBadge ? (
+							<span class="purple">Has Badge</span>
+						) : null}
 						{this.project.codeUrl ? (
 							<a href={this.project.codeUrl} target="_blank">
 								Code
@@ -346,7 +354,7 @@ GalleryProject.style = css`
 
 		aspect-ratio: 16 / 8;
 	}
-	
+
 	.embed.failed {
 		padding: 1em;
 
@@ -364,7 +372,8 @@ GalleryProject.style = css`
 		gap: 0.5rem;
 	}
 
-	.chips > span, .chips > a {
+	.chips > span,
+	.chips > a {
 		backdrop-filter: blur(2px);
 		border-radius: 1rem;
 		padding: 0 0.5rem;
@@ -421,7 +430,7 @@ const RealGallery: Component<
 		sort: "upvotes" | "hours";
 		sortScreenshot: boolean;
 	}
-> = function() {
+> = function () {
 	this.search = "";
 	this.sort = "upvotes" as "upvotes" | "hours";
 	this.filterShipped = false;
@@ -445,45 +454,58 @@ const RealGallery: Component<
 			}))
 	);
 
-	let projects = use(this.projects)
-		.zip(
-			use(this.search),
-			use(this.sort),
-			use(this.sortScreenshot),
-			use(this.filterViral),
-			use(this.filterShipped),
-			use(this.filterReview),
-			use(this.filterSynced),
-			use(this.filterBadge),
-			use(this.filterChat)
+	let projects = use(
+		this.projects,
+		this.search,
+		this.sort,
+		this.sortScreenshot,
+		this.filterViral,
+		this.filterShipped,
+		this.filterReview,
+		this.filterSynced,
+		this.filterBadge,
+		this.filterChat
+	)
+		.map(
+			([
+				arr,
+				search,
+				sort,
+				sortScreenshot,
+				viral,
+				shipped,
+				review,
+				synced,
+				badged,
+				chat,
+			]) => {
+				if (search)
+					arr = arr.filter((x) =>
+						x.project.name.toLowerCase().includes(search.toLowerCase())
+					);
+
+				if (viral) arr = arr.filter((x) => x.project.viral);
+				if (shipped) arr = arr.filter((x) => x.project.shipped);
+				if (review) arr = arr.filter((x) => x.project.in_review);
+				if (synced) arr = arr.filter((x) => x.project.airtableId);
+				if (badged) arr = arr.filter((x) => x.project.hasRepoBadge);
+				if (chat) arr = arr.filter((x) => x.project.chat_enabled);
+
+				return arr.sort(({ project: a }, { project: b }) => {
+					if (sortScreenshot) {
+						if (a.screenshot && !b.screenshot) return -1;
+						if (b.screenshot && !a.screenshot) return 1;
+					}
+
+					let ret = 0;
+					if (sort === "upvotes") ret = b.upvoteCount - a.upvoteCount;
+					else if (sort === "hours")
+						ret = getProjectHours(b) - getProjectHours(a);
+
+					return ret === 0 ? a.name.localeCompare(b.name) : ret;
+				});
+			}
 		)
-		.map(([arr, search, sort, sortScreenshot, viral, shipped, review, synced, badged, chat]) => {
-			if (search)
-				arr = arr.filter((x) =>
-					x.project.name.toLowerCase().includes(search.toLowerCase())
-				);
-
-			if (viral) arr = arr.filter((x) => x.project.viral);
-			if (shipped) arr = arr.filter((x) => x.project.shipped);
-			if (review) arr = arr.filter(x => x.project.in_review);
-			if (synced) arr = arr.filter(x => x.project.airtableId);
-			if (badged) arr = arr.filter(x => x.project.hasRepoBadge);
-			if (chat) arr = arr.filter((x) => x.project.chat_enabled);
-
-			return arr.sort(({ project: a }, { project: b }) => {
-				if (sortScreenshot) {
-					if (a.screenshot && !b.screenshot) return -1;
-					if (b.screenshot && !a.screenshot) return 1;
-				}
-
-				let ret = 0;
-				if (sort === "upvotes") ret = b.upvoteCount - a.upvoteCount;
-				else if (sort === "hours")
-					ret = getProjectHours(b) - getProjectHours(a);
-
-				return ret === 0 ? a.name.localeCompare(b.name) : ret;
-			});
-		})
 		.mapEach(({ el }) => el);
 
 	return (
@@ -607,7 +629,7 @@ RealGallery.style = css`
 `;
 
 export const Gallery: Component<{}, {}, { "on:routeshown": () => void }> =
-	function() {
+	function () {
 		let allData = use(userInfo.users);
 
 		this["on:routeshown"] = async () => {

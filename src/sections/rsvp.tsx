@@ -174,7 +174,9 @@ RsvpPage.style = css`
 		gap: 1rem;
 	}
 
-	.error { color: red; }
+	.error {
+		color: red;
+	}
 
 	.wisp {
 		display: flex;

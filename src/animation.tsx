@@ -114,7 +114,8 @@ export const ScrollingBackground: Component<
 	);
 };
 ScrollingBackground.style = css`
-	:scope, .background {
+	:scope,
+	.background {
 		display: grid;
 		grid-template-areas: "a";
 	}
@@ -133,14 +134,15 @@ ScrollingBackground.style = css`
 		object-fit: cover;
 	}
 
-	.background-outer, .foreground {
+	.background-outer,
+	.foreground {
 		grid-area: a;
 	}
 
 	.foreground {
 		z-index: 1;
 	}
-	
+
 	.foreground .animation {
 		height: 100vh;
 		width: 100%;

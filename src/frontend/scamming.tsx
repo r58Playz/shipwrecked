@@ -198,13 +198,48 @@ export const RealScamming: Component<{
 					</div>
 				</Card>
 				<Card title="Stats" project={true}>
-					<div>Viral projects: {use(this.gallery).map(x=>x.filter(x=>x.project.viral).length)}</div>
-					<div>Shipped projects: {use(this.gallery).map(x=>x.filter(x=>x.project.shipped).length)}</div>
-					<div>In review projects: {use(this.gallery).map(x=>x.filter(x=>x.project.in_review).length)}</div>
-					<div>Airtable synced projects: {use(this.gallery).map(x=>x.filter(x=>x.project.airtableId).length)}</div>
-					<div>Chat enabled projects: {use(this.gallery).map(x=>x.filter(x=>x.project.chat_enabled).length)}</div>
-					<div>Badged projects: {use(this.gallery).map(x=>x.filter(x=>x.project.hasRepoBadge).length)}</div>
-					<div>"Submitted" projects: {use(this.gallery).map(x=>x.filter(x=>x.project.submitted).length)}</div>
+					<div>
+						Viral projects:{" "}
+						{use(this.gallery).map(
+							(x) => x.filter((x) => x.project.viral).length
+						)}
+					</div>
+					<div>
+						Shipped projects:{" "}
+						{use(this.gallery).map(
+							(x) => x.filter((x) => x.project.shipped).length
+						)}
+					</div>
+					<div>
+						In review projects:{" "}
+						{use(this.gallery).map(
+							(x) => x.filter((x) => x.project.in_review).length
+						)}
+					</div>
+					<div>
+						Airtable synced projects:{" "}
+						{use(this.gallery).map(
+							(x) => x.filter((x) => x.project.airtableId).length
+						)}
+					</div>
+					<div>
+						Chat enabled projects:{" "}
+						{use(this.gallery).map(
+							(x) => x.filter((x) => x.project.chat_enabled).length
+						)}
+					</div>
+					<div>
+						Badged projects:{" "}
+						{use(this.gallery).map(
+							(x) => x.filter((x) => x.project.hasRepoBadge).length
+						)}
+					</div>
+					<div>
+						"Submitted" projects:{" "}
+						{use(this.gallery).map(
+							(x) => x.filter((x) => x.project.submitted).length
+						)}
+					</div>
 				</Card>
 			</div>
 			<div class="group">
@@ -263,7 +298,8 @@ RealScamming.style = css`
 		flex-direction: column;
 		gap: 0.5rem;
 	}
-	ul, ol {
+	ul,
+	ol {
 		margin: 0;
 	}
 
@@ -307,7 +343,8 @@ RealScamming.style = css`
 		gap: 0.5rem;
 	}
 
-	.chips > span, .chips > a {
+	.chips > span,
+	.chips > a {
 		backdrop-filter: blur(2px);
 		border-radius: 1rem;
 		padding: 0 0.5rem;
