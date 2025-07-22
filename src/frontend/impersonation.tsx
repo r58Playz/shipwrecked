@@ -1,4 +1,4 @@
-import type { Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import { fetchGallery, userInfo, type UserWithProjects } from "./api";
 import { RandomBackground } from "./background";
@@ -46,7 +46,7 @@ export const Impersonation: Component<
 		</div>
 	);
 };
-Impersonation.css = `
+Impersonation.style = css`
 	:scope {
 		width: 100%;
 		height: 100%;

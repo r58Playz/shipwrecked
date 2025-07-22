@@ -1,4 +1,4 @@
-import type { Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 import {
 	calculateProgress,
 	calculateProjectProgress,
@@ -36,7 +36,7 @@ export const UserName: Component<{ user: UserNameUser }> = function () {
 		</span>
 	);
 };
-UserName.css = `
+UserName.style = css`
 	img {
 		width: 1.25em;
 		height: 1.25em;
@@ -73,7 +73,7 @@ export const Loading: Component = function () {
 		</div>
 	);
 };
-Loading.css = `
+Loading.style = css`
 	:scope {
 		display: flex;
 		align-items: center;
@@ -110,7 +110,7 @@ export const ProgressBar: Component<{ projects: MinimalProject[] }, {}> =
 			</div>
 		);
 	};
-ProgressBar.css = `
+ProgressBar.style = css`
 	:scope {
 		max-width: 576px;
 		width: 100%;
@@ -201,7 +201,7 @@ const ProjectsTable: Component<{
 		</table>
 	);
 };
-ProjectsTable.css = `
+ProjectsTable.style = css`
 	:scope {
 		width: 100%;
 	}
@@ -240,7 +240,7 @@ const HackatimeTable: Component<{ links: HackatimeLink[] }> = function () {
 		</table>
 	);
 };
-HackatimeTable.css = `
+HackatimeTable.style = css`
 	:scope {
 		width: 100%;
 	}
@@ -386,7 +386,7 @@ const SelectedProject: Component<{
 		</div>
 	);
 };
-SelectedProject.css = `
+SelectedProject.style = css`
 	:scope, :scope :global(.Ui-card) {
 		height: 100%;
 	}
@@ -481,7 +481,7 @@ export const DashboardComponent: Component<
 		</div>
 	);
 };
-DashboardComponent.css = `
+DashboardComponent.style = css`
 	:scope {
 		padding: 1rem;
 

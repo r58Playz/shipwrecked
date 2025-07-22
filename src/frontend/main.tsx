@@ -1,4 +1,4 @@
-import type { Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import { RandomBackground } from "./background";
 import {
@@ -59,7 +59,7 @@ export const Dashboard: Component<{}, {}, { "on:routeshown": () => void }> =
 			</div>
 		);
 	};
-Dashboard.css = `
+Dashboard.style = css`
 	:scope {
 		width: 100%;
 		height: 100%;

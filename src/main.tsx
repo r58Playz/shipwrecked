@@ -1,4 +1,4 @@
-import { type Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 import { Router } from "dreamland/router";
 
 import "./style.css";
@@ -71,7 +71,7 @@ const Hero: Component<
 		</div>
 	);
 };
-Hero.css = `
+Hero.style = css`
 	.signup {
 		position: fixed;
 		top: 2rem;

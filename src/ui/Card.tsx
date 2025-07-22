@@ -1,4 +1,4 @@
-import { Pointer, type Component, type ComponentChild } from "dreamland/core";
+import { css, Pointer, type Component, type ComponentChild } from "dreamland/core";
 
 export const Card: Component<{
 	title: ComponentChild;
@@ -19,7 +19,7 @@ export const Card: Component<{
 		</div>
 	);
 };
-Card.css = `
+Card.style = css`
 	:scope {
 		background: #e6d7d699;
 		backdrop-filter: blur(12px);

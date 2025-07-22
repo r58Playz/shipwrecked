@@ -1,4 +1,4 @@
-import type { Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import shore from "../sections/shore.webp";
 import hut from "../sections/hut.webp";
@@ -12,7 +12,7 @@ export const RandomBackground: Component = function () {
 	let background = backgrounds[idx];
 	return <img src={background} class={`Ui-RandomBackground idx-${idx}`} />;
 };
-RandomBackground.css = `
+RandomBackground.style = css`
 	:scope {
 		width: 100%;
 		height: 100vh;

@@ -1,4 +1,4 @@
-import { type Component, type ComponentChild } from "dreamland/core";
+import { css, type Component, type ComponentChild } from "dreamland/core";
 
 export const ScrollingBackground: Component<
 	{
@@ -113,7 +113,7 @@ export const ScrollingBackground: Component<
 		</div>
 	);
 };
-ScrollingBackground.css = `
+ScrollingBackground.style = css`
 	:scope, .background {
 		display: grid;
 		grid-template-areas: "a";
@@ -171,7 +171,7 @@ const WaveAnimationCanvas: Component<{ progress: number }> = function (cx) {
 
 	return <canvas class="animation" />;
 };
-WaveAnimationCanvas.css = `
+WaveAnimationCanvas.style = css`
 	:scope {
 		z-index: 1;
 	}
@@ -226,7 +226,7 @@ const WaveAnimationImage: Component<{ progress: number }> = function (cx) {
 
 	return <img class="animation" />;
 };
-WaveAnimationImage.css = `
+WaveAnimationImage.style = css`
 	:scope {
 		transform: scale(1, -1);
 	}

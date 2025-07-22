@@ -1,4 +1,4 @@
-import type { Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 export const TextInput: Component<{
 	value: string;
@@ -12,7 +12,7 @@ export const TextInput: Component<{
 		/>
 	);
 };
-TextInput.css = `
+TextInput.style = css`
 	:scope {
 		background: #f3f4f6;
 		outline: 1px solid #e5e7eb;

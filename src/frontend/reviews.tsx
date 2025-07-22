@@ -1,4 +1,4 @@
-import type { Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import { fetchReviews, submitReview, type Review } from "./api";
 import { RandomBackground } from "./background";
@@ -45,7 +45,7 @@ const RealReviews: Component<
 		</div>
 	);
 };
-RealReviews.css = `
+RealReviews.style = css`
 	:scope {
 		padding: 1em;
 		display: flex;
@@ -129,7 +129,7 @@ export const Reviews: Component<
 		</div>
 	);
 };
-Reviews.css = `
+Reviews.style = css`
 	:scope {
 		width: 100%;
 		height: 100%;

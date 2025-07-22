@@ -1,4 +1,4 @@
-import { type Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Button } from "../ui/Button";
@@ -51,7 +51,7 @@ const LogIn: Component<
 		</div>
 	);
 };
-LogIn.css = `
+LogIn.style = css`
 	:scope {
 		display: flex;
 		flex-direction: column;
@@ -89,7 +89,7 @@ const Info: Component = function () {
 		</div>
 	);
 };
-Info.css = `
+Info.style = css`
 	:scope {
 		display: flex;
 		flex-direction: column;
@@ -153,7 +153,7 @@ export const RsvpPage: Component<
 		</div>
 	);
 };
-RsvpPage.css = `
+RsvpPage.style = css`
 	.content {
 		height: 100vh;
 		padding: 1em;

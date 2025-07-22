@@ -1,4 +1,4 @@
-import type { Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import {
 	calculateProgress,
@@ -248,7 +248,7 @@ export const RealScamming: Component<{
 		</div>
 	);
 };
-RealScamming.css = `
+RealScamming.style = css`
 	:scope {
 		display: flex;
 		flex-direction: column;
@@ -410,7 +410,7 @@ export const ApiScamming: Component<
 		</div>
 	);
 };
-ApiScamming.css = `
+ApiScamming.style = css`
 	:scope {
 		width: 100%;
 		height: 100%;

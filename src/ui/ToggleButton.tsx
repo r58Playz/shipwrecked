@@ -1,4 +1,4 @@
-import type { Component, ComponentChild } from "dreamland/core";
+import { css, type Component, type ComponentChild } from "dreamland/core";
 
 export const ToggleButton: Component<{
 	value: boolean;
@@ -13,7 +13,7 @@ export const ToggleButton: Component<{
 		</div>
 	);
 };
-ToggleButton.css = `
+ToggleButton.style = css`
 	:scope {
 		background: #f6f3f4;
 		color: #364153;

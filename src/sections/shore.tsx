@@ -1,4 +1,4 @@
-import { type Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Button } from "../ui/Button";
@@ -41,7 +41,7 @@ export const ShorePage: Component<{
 		</div>
 	);
 };
-ShorePage.css = `
+ShorePage.style = css`
 	.content {
 		height: 100vh;
 		padding: min(3rem, 5vh) min(7.5rem, 10vw);

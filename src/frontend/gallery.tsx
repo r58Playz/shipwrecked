@@ -1,4 +1,4 @@
-import { stateProxy, type Component } from "dreamland/core";
+import { css, stateProxy, type Component } from "dreamland/core";
 
 import { router } from "../main";
 import { Loading, UserName } from "./apiComponents";
@@ -317,7 +317,7 @@ const GalleryProject: Component<
 		</div>
 	);
 };
-GalleryProject.css = `
+GalleryProject.style = css`
 	:scope :global(.Ui-card) {
 		height: 100%;
 	}
@@ -555,7 +555,7 @@ const RealGallery: Component<
 		</div>
 	);
 };
-RealGallery.css = `
+RealGallery.style = css`
 	:scope {
 		padding: 1em;
 		display: flex;
@@ -632,7 +632,7 @@ export const Gallery: Component<{}, {}, { "on:routeshown": () => void }> =
 			</div>
 		);
 	};
-Gallery.css = `
+Gallery.style = css`
 	:scope {
 		width: 100%;
 		height: 100%;

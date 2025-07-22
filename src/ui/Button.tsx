@@ -1,4 +1,4 @@
-import { type Component, type ComponentChild } from "dreamland/core";
+import { css, type Component, type ComponentChild } from "dreamland/core";
 
 export const Button: Component<{
 	children: ComponentChild | ComponentChild[];
@@ -24,7 +24,7 @@ export const Button: Component<{
 		</button>
 	);
 };
-Button.css = `
+Button.style = css`
 	:scope {
 		background: #007bbd;
 		color: white;

@@ -1,4 +1,4 @@
-import { type Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Card } from "../ui/Card";
@@ -100,7 +100,7 @@ export const BayPage: Component<
 		</div>
 	);
 };
-BayPage.css = `
+BayPage.style = css`
 	.bay {
 		object-position: right top;
 	}

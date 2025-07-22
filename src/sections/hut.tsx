@@ -1,4 +1,4 @@
-import { type Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import { ScrollingBackground } from "../animation";
 import { Card } from "../ui/Card";
@@ -78,7 +78,7 @@ export const HutPage: Component<{
 		</div>
 	);
 };
-HutPage.css = `
+HutPage.style = css`
 	.hut {
 		object-position: right top;
 	}

@@ -1,4 +1,4 @@
-import type { Component } from "dreamland/core";
+import { css, type Component } from "dreamland/core";
 
 import {
 	clearCache,
@@ -59,7 +59,7 @@ const RealChat: Component<
 		</div>
 	);
 };
-RealChat.css = `
+RealChat.style = css`
 	:scope {
 		padding: 1em;
 		display: flex;
@@ -241,7 +241,7 @@ export const Chat: Component<
 		</div>
 	);
 };
-Chat.css = `
+Chat.style = css`
 	:scope {
 		width: 100%;
 		height: 100%;
