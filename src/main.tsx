@@ -1,5 +1,5 @@
 import { css, type Component } from "dreamland/core";
-import { Router } from "dreamland/router";
+import { Route, Router } from "dreamland/router";
 
 import "./style.css";
 
@@ -80,38 +80,17 @@ Hero.style = css`
 	}
 `;
 
-export let router = new Router([
-	{
-		show: <Hero />,
-	},
-	{
-		path: "dashboard",
-		show: <Dashboard />,
-	},
-	{
-		path: "gallery",
-		show: <Gallery />,
-	},
-	{
-		path: "scamming",
-		show: <ApiScamming />,
-	},
-	{
-		path: "reviews",
-		children: [
-			{
-				path: ":project/:location",
-				show: <Reviews />,
-			},
-		],
-	},
-	{
-		path: "chat/:project/:location",
-		show: <Chat />,
-	},
-	{
-		path: "impersonate/:user",
-		show: <Impersonation />,
-	},
-]);
+export let router = new Router(
+	<Route>
+		<Route show={<Hero />} />
+		<Route path="dashboard" show={<Dashboard />} />
+		<Route path="gallery" show={<Gallery />} />
+		<Route path="scamming" show={<ApiScamming />} />
+		<Route path="reviews">
+			<Route path=":project/:location" show={<Reviews />} />
+		</Route>
+		<Route path="chat/:project/:location" show={<Chat />} />
+		<Route path="impersonate/:user" show={<Impersonation />} />
+	</Route>
+)
 router.mount(document.querySelector("#app")!);
